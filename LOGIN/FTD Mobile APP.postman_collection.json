@@ -1,0 +1,607 @@
+{
+  "info": {
+    "_postman_id": "53b59aa6-edda-44be-88b9-edc87a200f67",
+    "name": "FTD Mobile APP",
+    "schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json",
+    "_exporter_id": "6271541"
+  },
+  "item": [
+    {
+      "name": "App Sign in",
+      "request": {
+        "method": "POST",
+        "header": [],
+        "body": {
+          "mode": "raw",
+          "raw": "// {\r\n//     \"appType\": 2,\r\n//     \"appUser\": \"ftdtest\",\r\n//     \"appPassword\": \"123456\",\r\n//     \"appVersion\": \"1.0\"\r\n// }\r\n{\r\n    \"appType\": 1,\r\n    \"appUser\": \"ftdiostest\",\r\n    \"appPassword\": \"123456\",\r\n    \"appVersion\": \"1.0\",\r\n    \"deviceID\"  : \"ios_12345\"\r\n}",
+          "options": {
+            "raw": {
+              "language": "json"
+            }
+          }
+        },
+        "url": {
+          "raw": "http://13.200.42.214/book/mapp/auth/app_sigin",
+          "protocol": "http",
+          "host": [
+            "13",
+            "200",
+            "42",
+            "214"
+          ],
+          "path": [
+            "book",
+            "mapp",
+            "auth",
+            "app_sigin"
+          ]
+        }
+      },
+      "response": []
+    },
+    {
+      "name": "Agent Login",
+      "request": {
+        "method": "POST",
+        "header": [
+          {
+            "key": "App-Token",
+            "value": "{{json_web_token_05bq}}",
+            "type": "text"
+          },
+          {
+            "key": "Content-Type",
+            "value": "application/json",
+            "type": "text"
+          }
+        ],
+        "body": {
+          "mode": "raw",
+          "raw": "{\r\n    \"email\": \"support@ftd.travel\",\r\n    \"password\": \"Praveen01\",\r\n    \"device_id\": \"ios_12345\"\r\n}",
+          "options": {
+            "raw": {
+              "language": "json"
+            }
+          }
+        },
+        "url": {
+          "raw": "http://13.200.42.214/book/mapp/mapp_b2b/agent_login",
+          "protocol": "http",
+          "host": [
+            "13",
+            "200",
+            "42",
+            "214"
+          ],
+          "path": [
+            "book",
+            "mapp",
+            "mapp_b2b",
+            "agent_login"
+          ]
+        }
+      },
+      "response": []
+    },
+    {
+      "name": "Agent Verify OTP",
+      "request": {
+        "method": "POST",
+        "header": [
+          {
+            "key": "App-Token",
+            "value": "{{json_web_token_05bq}}",
+            "type": "text"
+          },
+          {
+            "key": "Content-Type",
+            "value": "application/json",
+            "type": "text"
+          }
+        ],
+        "body": {
+          "mode": "raw",
+          "raw": "{\r\n    \"agent_no\": \"SMSA18012166\",\r\n    \"otp\": \"8971\",\r\n    \"device_id\": \"ios_12345\",\r\n    \"screen_size\": \"1080x2400\",\r\n    \"device_model\": \"Samsung Galaxy S24 Ultra\",\r\n    \"os_version\": \"Android 15\"\r\n}"
+        },
+        "url": {
+          "raw": "http://13.200.42.214/book/mapp/mapp_b2b/verify_otp",
+          "protocol": "http",
+          "host": [
+            "13",
+            "200",
+            "42",
+            "214"
+          ],
+          "path": [
+            "book",
+            "mapp",
+            "mapp_b2b",
+            "verify_otp"
+          ]
+        }
+      },
+      "response": []
+    },
+    {
+      "name": "Agent Resend OTP",
+      "request": {
+        "method": "POST",
+        "header": [
+          {
+            "key": "App-Token",
+            "value": "{{json_web_token_05bq}}",
+            "type": "text"
+          },
+          {
+            "key": "Content-Type",
+            "value": "application/json",
+            "type": "text"
+          }
+        ],
+        "body": {
+          "mode": "raw",
+          "raw": "{\r\n    \"agent_no\": \"SMSA18012166\"\r\n}"
+        },
+        "url": {
+          "raw": "http://13.200.42.214/book/mapp/mapp_b2b/resend_otp",
+          "protocol": "http",
+          "host": [
+            "13",
+            "200",
+            "42",
+            "214"
+          ],
+          "path": [
+            "book",
+            "mapp",
+            "mapp_b2b",
+            "resend_otp"
+          ]
+        }
+      },
+      "response": []
+    },
+    {
+      "name": "Refresh Token",
+      "request": {
+        "method": "POST",
+        "header": [
+          {
+            "key": "App-Token",
+            "value": "{{json_web_token_05bq}}",
+            "type": "text"
+          },
+          {
+            "key": "Content-Type",
+            "value": "application/json",
+            "type": "text"
+          }
+        ],
+        "body": {
+          "mode": "raw",
+          "raw": "{\r\n    \"refresh_token\": \"5a2083d69a9623774cfd0a64a773123f2c0b88ae7a19172f1ec0fad7be9bd04b1590455b2138f8150e39a5fe050d3ab57179722edd45ceee0729408c553adf55\"\r\n}",
+          "options": {
+            "raw": {
+              "language": "json"
+            }
+          }
+        },
+        "url": {
+          "raw": "http://13.200.42.214/book/mapp/mapp_b2b/refresh_token",
+          "protocol": "http",
+          "host": [
+            "13",
+            "200",
+            "42",
+            "214"
+          ],
+          "path": [
+            "book",
+            "mapp",
+            "mapp_b2b",
+            "refresh_token"
+          ]
+        }
+      },
+      "response": []
+    },
+    {
+      "name": "My Bookings",
+      "request": {
+        "auth": {
+          "type": "bearer",
+          "bearer": [
+            {
+              "key": "token",
+              "value": "{{auth_secret_0k34}}",
+              "type": "string"
+            }
+          ]
+        },
+        "method": "POST",
+        "header": [
+          {
+            "key": "App-Token",
+            "value": "{{json_web_token_05bq}}",
+            "type": "text"
+          },
+          {
+            "key": "Content-Type",
+            "value": "application/json",
+            "type": "text"
+          }
+        ],
+        "body": {
+          "mode": "raw",
+          "raw": "{\r\n    \"search_type\": 1,\r\n\r\n    \"first_name\": \"TJA XII\",\r\n    \"pnr\": \"GH6TUR\",\r\n    \"status\": \"confirmed\",\r\n    \"bookingdate\": \"2026-07-09\",\r\n    \"uniquerefno\": \"FTD521QJV9S44PS\",\r\n    \"depart_date\": \"2026-07-29\",\r\n    \"from_date\": \"2026-07-01\",\r\n    \"to_date\": \"2026-07-31\",\r\n    \"airline\": \"SG\",\r\n\r\n    \"b_Booking_Status\": \"Success\",\r\n    \"b_from_date\": \"2026-04-01\",\r\n    \"b_to_date\": \"2026-07-31\",\r\n    \"b_booking_date\": \"2026-05-20 06:21:51\",\r\n    \"b_uniqueRefNo\": \"SMSY2605207JKUT062031\",\r\n    \"b_booking_reference_no1\": \"6BD6Y4EM\",\r\n    \"b_pass_name\": \"ADANI VIJA KUMAR\",\r\n    \"b_depart_date\": \"2026-05-31\",\r\n\r\n    \"c_pnr\": \"\",\r\n    \"c_uniquerefno\": \"SR2605077DZEI095355\",\r\n    \"c_from_date\": \"2026-02-01\",\r\n    \"c_to_date\": \"2026-07-31\",\r\n    \"c_depart_date\": \"2026-05-27\",\r\n    \"c_status\": \"booked\",\r\n    \"c_first_name\": \"B L\",\r\n    \"c_bookingdate\": \"2026-05-07 15:33:00\",\r\n    \"car_type\": \"suv\",\r\n\r\n    \"pnr_hotel\": \"7358301290652\",\r\n    \"uniquerefno_hotel\": \"SQ2601287WFSB094709\",\r\n    \"check_in_date\": \"2026-03-24\",\r\n    \"check_out_date\": \"2026-03-25\",\r\n    \"hotel_status\": \"Confirmed\",\r\n\r\n    \"reference_insurance\": \"SZ2607037A14410553730\",\r\n    \"onward_date\": \"2026-07-19\",\r\n    \"return_date\": \"2026-07-20\",\r\n    \"country_name\": \"\",\r\n    \"insurance_status\": \"Charged\",\r\n    \"insurance_type\": \"\",\r\n\r\n    \"reference_visa\": \"SMSX2507048261730\",\r\n    \"onward_date_visa\": \"2025-07-13\",\r\n    \"return_date_visa\": \"2025-07-14\",\r\n    \"country_name_visa\": \"Vietnam\",\r\n\r\n    \"reference_esim\": \"SMSW2509267GJCY102903\",\r\n    \"esim_from_date\": \"2025-09-26\",\r\n    \"esim_to_date\": \"2025-09-26\",\r\n    \"esim_destination\": \"\",\r\n    \"esim_status\": \"KYC Pending\",\r\n    \"esim_pax\": \"\"\r\n}"
+        },
+        "url": {
+          "raw": "http://13.200.42.214/book/mapp/mapp_b2b/my_bookings",
+          "protocol": "http",
+          "host": [
+            "13",
+            "200",
+            "42",
+            "214"
+          ],
+          "path": [
+            "book",
+            "mapp",
+            "mapp_b2b",
+            "my_bookings"
+          ]
+        }
+      },
+      "response": []
+    },
+    {
+      "name": "Agent Refunds",
+      "request": {
+        "auth": {
+          "type": "bearer",
+          "bearer": [
+            {
+              "key": "token",
+              "value": "{{auth_secret_11qm}}",
+              "type": "string"
+            }
+          ]
+        },
+        "method": "POST",
+        "header": [
+          {
+            "key": "App-Token",
+            "value": "{{json_web_token_05bq}}",
+            "type": "text"
+          },
+          {
+            "key": "Content-Type",
+            "value": "application/json",
+            "type": "text"
+          }
+        ],
+        "body": {
+          "mode": "raw",
+          "raw": "{\r\n  \"search_type\": 1,\r\n\r\n  \"fromdate\": \"2026-07-01\",\r\n  \"todate\": \"2026-07-31\",\r\n  \"bookingid\": \"SZ2607017W05293862438\",\r\n\r\n  \"h_fromdate\": \"2026-03-01\",\r\n  \"h_todate\": \"2026-07-31\",\r\n  \"h_bookingid\": \"\",\r\n\r\n  \"b_fromdate\": \"2026-03-01\",\r\n  \"b_todate\": \"2026-07-31\",\r\n  \"b_bookingid\": \"SMSY2604097GZMB112816\",\r\n\r\n  \"c_fromdate\": \"2026-03-01\",\r\n  \"c_todate\": \"2026-07-31\",\r\n  \"c_bookingid\": \"SR2605017UQLL061921\",\r\n\r\n  \"i_fromdate\": \"2026-03-01\",\r\n  \"i_todate\": \"2026-07-31\",\r\n  \"i_bookingid\": \"SMSW2601307OWOG093416\",\r\n\r\n  \"v_fromdate\": \"2026-03-01\",\r\n  \"v_todate\": \"2026-07-31\",\r\n  \"v_bookingid\": \"SMSX2505059163757\",\r\n\r\n  \"e_fromdate\": \"2026-03-01\",\r\n  \"e_todate\": \"2026-07-31\",\r\n  \"e_bookingid\": \"SU2605297IIDP112950\"\r\n}"
+        },
+        "url": {
+          "raw": "http://13.200.42.214/book/mapp/mapp_b2b/agent_refunds",
+          "protocol": "http",
+          "host": [
+            "13",
+            "200",
+            "42",
+            "214"
+          ],
+          "path": [
+            "book",
+            "mapp",
+            "mapp_b2b",
+            "agent_refunds"
+          ]
+        }
+      },
+      "response": []
+    },
+    {
+      "name": "Agent Statement",
+      "request": {
+        "auth": {
+          "type": "bearer",
+          "bearer": [
+            {
+              "key": "token",
+              "value": "{{auth_secret_11qm}}",
+              "type": "string"
+            }
+          ]
+        },
+        "method": "POST",
+        "header": [
+          {
+            "key": "App-Token",
+            "value": "{{json_web_token_05bq}}",
+            "type": "text"
+          },
+          {
+            "key": "Content-Type",
+            "value": "application/json",
+            "type": "text"
+          }
+        ],
+        "body": {
+          "mode": "raw",
+          "raw": "{\r\n  \"fromdate\": \"2026-07-01\",\r\n  \"todate\": \"2026-07-31\",\r\n  \"trasactiontype\": \"\"\r\n}"
+        },
+        "url": {
+          "raw": "http://13.200.42.214/book/mapp/mapp_b2b/agency_statement",
+          "protocol": "http",
+          "host": [
+            "13",
+            "200",
+            "42",
+            "214"
+          ],
+          "path": [
+            "book",
+            "mapp",
+            "mapp_b2b",
+            "agency_statement"
+          ]
+        }
+      },
+      "response": []
+    },
+    {
+      "name": "Agent Profile",
+      "protocolProfileBehavior": {
+        "disableBodyPruning": true
+      },
+      "request": {
+        "auth": {
+          "type": "bearer",
+          "bearer": [
+            {
+              "key": "token",
+              "value": "{{auth_secret_11qm}}",
+              "type": "string"
+            }
+          ]
+        },
+        "method": "GET",
+        "header": [
+          {
+            "key": "App-Token",
+            "value": "{{json_web_token_05bq}}",
+            "type": "text"
+          },
+          {
+            "key": "Content-Type",
+            "value": "application/json",
+            "type": "text"
+          }
+        ],
+        "body": {
+          "mode": "raw",
+          "raw": ""
+        },
+        "url": {
+          "raw": "http://13.200.42.214/book/mapp/mapp_b2b/agent_profile",
+          "protocol": "http",
+          "host": [
+            "13",
+            "200",
+            "42",
+            "214"
+          ],
+          "path": [
+            "book",
+            "mapp",
+            "mapp_b2b",
+            "agent_profile"
+          ]
+        }
+      },
+      "response": []
+    },
+    {
+      "name": "Agent Markups",
+      "protocolProfileBehavior": {
+        "disableBodyPruning": true
+      },
+      "request": {
+        "auth": {
+          "type": "bearer",
+          "bearer": [
+            {
+              "key": "token",
+              "value": "{{auth_secret_11qm}}",
+              "type": "string"
+            }
+          ]
+        },
+        "method": "GET",
+        "header": [
+          {
+            "key": "App-Token",
+            "value": "{{json_web_token_05bq}}",
+            "type": "text"
+          },
+          {
+            "key": "Content-Type",
+            "value": "application/json",
+            "type": "text"
+          }
+        ],
+        "body": {
+          "mode": "raw",
+          "raw": ""
+        },
+        "url": {
+          "raw": "http://13.200.42.214/book/mapp/mapp_b2b/agent_markups",
+          "protocol": "http",
+          "host": [
+            "13",
+            "200",
+            "42",
+            "214"
+          ],
+          "path": [
+            "book",
+            "mapp",
+            "mapp_b2b",
+            "agent_markups"
+          ]
+        }
+      },
+      "response": []
+    },
+    {
+      "name": "Agent Calendar",
+      "protocolProfileBehavior": {
+        "disableBodyPruning": true
+      },
+      "request": {
+        "auth": {
+          "type": "bearer",
+          "bearer": [
+            {
+              "key": "token",
+              "value": "{{auth_secret_11qm}}",
+              "type": "string"
+            }
+          ]
+        },
+        "method": "GET",
+        "header": [
+          {
+            "key": "App-Token",
+            "value": "{{json_web_token_05bq}}",
+            "type": "text"
+          },
+          {
+            "key": "Content-Type",
+            "value": "application/json",
+            "type": "text"
+          }
+        ],
+        "body": {
+          "mode": "raw",
+          "raw": ""
+        },
+        "url": {
+          "raw": "http://13.200.42.214/book/mapp/mapp_b2b/agent_calendar",
+          "protocol": "http",
+          "host": [
+            "13",
+            "200",
+            "42",
+            "214"
+          ],
+          "path": [
+            "book",
+            "mapp",
+            "mapp_b2b",
+            "agent_calendar"
+          ]
+        }
+      },
+      "response": []
+    },
+    {
+      "name": "Group Fares",
+      "request": {
+        "method": "GET",
+        "header": []
+      },
+      "response": []
+    },
+    {
+      "name": "Group Fares Request",
+      "request": {
+        "auth": {
+          "type": "bearer",
+          "bearer": [
+            {
+              "key": "token",
+              "value": "{{auth_secret_11qm}}",
+              "type": "string"
+            }
+          ]
+        },
+        "method": "POST",
+        "header": [
+          {
+            "key": "App-Token",
+            "value": "{{json_web_token_05bq}}",
+            "type": "text"
+          },
+          {
+            "key": "Content-Type",
+            "value": "application/json",
+            "type": "text"
+          }
+        ],
+        "body": {
+          "mode": "raw",
+          "raw": "{\r\n  \"trip_type\": \"Round Trip\",\r\n  \"mobile_no\": \"9876543210\",\r\n  \"fromCity\": \"BLR\",\r\n  \"toCity\": \"DXB\",\r\n  \"departureDate\": \"2026-08-15\",\r\n  \"returnDate\": \"2026-08-20\",\r\n  \"numAdults\": 20,\r\n  \"numChild\": 2,\r\n  \"numInfant\": 1,\r\n  \"trip_purpose\": \"Corporate Travel\",\r\n  \"expFare\": \"18000\",\r\n  \"airlineDetailso\": \"IndiGo, Emirates\",\r\n  \"airlineDetailsr\": \"Emirates\",\r\n  \"remarks\": \"Need refundable fares with baggage included.\"\r\n}"
+        },
+        "url": {
+          "raw": "http://13.200.42.214/book/mapp/mapp_b2b/group_fares_request",
+          "protocol": "http",
+          "host": [
+            "13",
+            "200",
+            "42",
+            "214"
+          ],
+          "path": [
+            "book",
+            "mapp",
+            "mapp_b2b",
+            "group_fares_request"
+          ]
+        }
+      },
+      "response": []
+    }
+  ],
+  "event": [
+    {
+      "listen": "prerequest",
+      "script": {
+        "type": "text/javascript",
+        "packages": {},
+        "requests": {},
+        "exec": [
+          ""
+        ]
+      }
+    },
+    {
+      "listen": "test",
+      "script": {
+        "type": "text/javascript",
+        "packages": {},
+        "requests": {},
+        "exec": [
+          ""
+        ]
+      }
+    }
+  ],
+  "variable": [
+    {
+      "key": "json_web_token_05bq",
+      "secret": true
+    },
+    {
+      "key": "auth_secret_11qm",
+      "secret": true
+    },
+    {
+      "key": "auth_secret_0mmd",
+      "secret": true
+    }
+  ]
+}

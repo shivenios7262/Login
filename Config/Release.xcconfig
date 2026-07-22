@@ -1,0 +1,17 @@
+// Release / production configuration.
+//
+// SECURITY: This file must be gitignored — it will contain production credentials.
+// Populate from CI environment before archiving:
+//   echo "APP_USER = $FTD_PROD_APP_USER" >> Config/Release.xcconfig
+//   echo "APP_PASSWORD = $FTD_PROD_APP_PASSWORD" >> Config/Release.xcconfig
+
+INFOPLIST_FILE = Config/Info.plist
+
+// xcconfig treats // as a comment, so use $(SLASH) to embed // in a URL value.
+SLASH = /
+APP_API_BASE_URL = http:$(SLASH)$(SLASH)13.200.42.214
+APP_TYPE = 1
+// TODO: Replace with production app credentials once provided by the backend team.
+APP_USER = ftdiostest
+APP_PASSWORD = 123456
+APP_VERSION = 1.0
