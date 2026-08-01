@@ -8,43 +8,42 @@ struct FTDSecureField: View {
     var errorMessage: String?
 
     var body: some View {
-        VStack(alignment: .leading, spacing: 4) {
-            Text(label)
-                .font(.caption)
-                .foregroundStyle(Color("TextSecondary"))
+        VStack(alignment: .leading, spacing: DesignTokens.Spacing.xs) {
+            VStack(alignment: .leading, spacing: DesignTokens.Spacing.inputLabelGap) {
+                if !label.isEmpty {
+                    Text(label)
+                        .font(.caption)
+                        .foregroundStyle(Color.ftdTextSecondary)
+                }
 
-            HStack(spacing: 4) {
-                Group {
-                    if isVisible {
-                        TextField(placeholder, text: $text)
-                            .textInputAutocapitalization(.never)
-                            .autocorrectionDisabled()
-                    } else {
-                        SecureField(placeholder, text: $text)
+                HStack(spacing: DesignTokens.Spacing.sm) {
+                    Group {
+                        if isVisible {
+                            TextField(placeholder, text: $text)
+                                .textInputAutocapitalization(.never)
+                                .autocorrectionDisabled()
+                        } else {
+                            SecureField(placeholder, text: $text)
+                        }
+                    }
+                    .frame(maxWidth: .infinity)
+
+                    Button {
+                        isVisible.toggle()
+                    } label: {
+                        Image(systemName: isVisible ? "eye.slash" : "eye")
+                            .foregroundStyle(Color.ftdTextSecondary)
+                            .font(.ftdIconEye)
                     }
                 }
-                .padding(.vertical, 10)
-
-                Button {
-                    isVisible.toggle()
-                } label: {
-                    Image(systemName: isVisible ? "eye.slash" : "eye")
-                        .foregroundStyle(Color("TextSecondary"))
-                        .font(.system(size: 16))
-                }
             }
-            .overlay(alignment: .bottom) {
-                Rectangle()
-                    .frame(height: 1)
-                    .foregroundStyle(
-                        errorMessage != nil ? Color("DestructiveRed") : Color("BorderColor")
-                    )
-            }
+            .ftdInputContainer(hasError: errorMessage != nil)
 
             if let error = errorMessage {
                 Text(error)
                     .font(.caption)
-                    .foregroundStyle(Color("DestructiveRed"))
+                    .foregroundStyle(Color.ftdDestructiveRed)
+                    .padding(.horizontal, DesignTokens.Spacing.xxs)
             }
         }
     }

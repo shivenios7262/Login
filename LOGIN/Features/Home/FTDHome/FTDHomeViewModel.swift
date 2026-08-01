@@ -10,6 +10,12 @@ final class FTDHomeViewModel {
 
     private let authManager: AuthManager
 
+    // MARK: - Init
+
+    init(authManager: AuthManager) {
+        self.authManager = authManager
+    }
+
     // MARK: - Derived agent info
 
     var agentName: String {
@@ -20,7 +26,6 @@ final class FTDHomeViewModel {
 
     var agentEmail: String { authManager.currentUser?.agentEmail ?? "" }
 
-    /// Shows live creditBalance from the server if available, falls back to a label.
     var creditBalanceLabel: String {
         guard let balance = authManager.currentUser?.creditBalance, !balance.isEmpty else {
             return "₹ Balance"
@@ -28,16 +33,12 @@ final class FTDHomeViewModel {
         return "₹\(balance)"
     }
 
-    // MARK: - Init
-
-    init(authManager: AuthManager) {
-        self.authManager = authManager
-    }
-
-    // MARK: - Intent handlers
+    // MARK: - Side menu
 
     func toggleSideMenu() { isSideMenuOpen.toggle() }
-    func closeSideMenu()   { isSideMenuOpen = false }
+    func closeSideMenu()  { isSideMenuOpen = false }
+
+    // MARK: - Session
 
     func checkAndRefreshTokenIfNeeded() async {
         await authManager.checkAndRefreshTokenIfNeeded()

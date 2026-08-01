@@ -1,20 +1,5 @@
 import SwiftUI
 
-//#Preview {
-//    let keychain = KeychainService()
-//    let apiClient = APIClient(
-//        httpClient: URLSessionHTTPClient(),
-//        baseURL: URL(string: "http://localhost")!,
-//        keychain: keychain,
-//        appCredentials: AppCredentials(appType: 1, appUser: "", appPassword: "", appVersion: "1.0", persistAppToken: false)
-//    )
-//    let authManager = AuthManager(apiClient: apiClient, keychain: keychain)
-//    NavigationStack {
-//        VerifyOTPView(authManager: authManager)
-//    }
-//    .environment(authManager)
-//}
-
 struct VerifyOTPView: View {
     @State private var viewModel: VerifyOTPViewModel
 
@@ -26,7 +11,7 @@ struct VerifyOTPView: View {
         @Bindable var vm = viewModel
 
         ScrollView {
-            VStack(spacing: 24) {
+            VStack(spacing: DesignTokens.Spacing.xxl) {
                 header
                     .padding(.top, 32)
 
@@ -41,13 +26,13 @@ struct VerifyOTPView: View {
                 if let error = vm.apiError {
                     Text(error)
                         .font(.subheadline)
-                        .foregroundStyle(Color("DestructiveRed"))
+                        .foregroundStyle(Color.ftdDestructiveRed)
                         .multilineTextAlignment(.center)
                         .frame(maxWidth: .infinity)
-                        .padding(.vertical, 10)
-                        .padding(.horizontal, 12)
-                        .background(Color("DestructiveRed").opacity(0.08))
-                        .clipShape(RoundedRectangle(cornerRadius: 8))
+                        .padding(.vertical, DesignTokens.Spacing.inputVertical)
+                        .padding(.horizontal, DesignTokens.Spacing.inputHorizontal)
+                        .background(Color.ftdDestructiveRed.opacity(0.08))
+                        .clipShape(RoundedRectangle(cornerRadius: DesignTokens.Radius.field))
                 }
 
                 if let msg = vm.resendMessage {
@@ -56,10 +41,10 @@ struct VerifyOTPView: View {
                         .foregroundStyle(Color.green)
                         .multilineTextAlignment(.center)
                         .frame(maxWidth: .infinity)
-                        .padding(.vertical, 10)
-                        .padding(.horizontal, 12)
+                        .padding(.vertical, DesignTokens.Spacing.inputVertical)
+                        .padding(.horizontal, DesignTokens.Spacing.inputHorizontal)
                         .background(Color.green.opacity(0.08))
-                        .clipShape(RoundedRectangle(cornerRadius: 8))
+                        .clipShape(RoundedRectangle(cornerRadius: DesignTokens.Radius.field))
                 }
 
                 FTDPrimaryButton(
@@ -71,51 +56,53 @@ struct VerifyOTPView: View {
 
                 resendSection
             }
-            .padding(.horizontal, 24)
-            .padding(.bottom, 36)
+            .padding(.horizontal, DesignTokens.Spacing.screenHorizontal)
+            .padding(.bottom, DesignTokens.Spacing.screenBottom)
         }
-        .background(Color("CardBackground").ignoresSafeArea())
+        .background(Color.ftdCardBackground.ignoresSafeArea())
         .navigationBarTitleDisplayMode(.inline)
         .navigationBarBackButtonHidden(false)
         .onDisappear { viewModel.onDisappear() }
     }
 
-    // MARK: - Subviews
+    // MARK: - Header
 
     private var header: some View {
-        VStack(spacing: 8) {
+        VStack(spacing: DesignTokens.Spacing.sm) {
             Image(systemName: "lock.shield")
-                .font(.system(size: 48))
-                .foregroundStyle(Color("AccentOrange"))
+                .font(.ftdHeroIcon)
+                .foregroundStyle(Color.ftdAccentOrange)
             Text("Verify OTP")
                 .font(.title2)
                 .fontWeight(.bold)
-                .foregroundStyle(Color("TextPrimary"))
+                .foregroundStyle(Color.ftdTextPrimary)
             if viewModel.otpEmail.isEmpty {
                 Text("Enter the OTP sent to your registered email address")
                     .font(.subheadline)
-                    .foregroundStyle(Color("TextSecondary"))
+                    .foregroundStyle(Color.ftdTextSecondary)
                     .multilineTextAlignment(.center)
             } else {
                 Group {
                     Text("OTP sent to ") +
                     Text(viewModel.otpEmail)
                         .fontWeight(.semibold)
-                        .foregroundStyle(Color("TextPrimary"))
+                        .foregroundStyle(Color.ftdTextPrimary)
                 }
                 .font(.subheadline)
-                .foregroundStyle(Color("TextSecondary"))
+                .foregroundStyle(Color.ftdTextSecondary)
                 .multilineTextAlignment(.center)
             }
         }
     }
 
+    // MARK: - Resend Section
+
     private var resendSection: some View {
-        VStack(spacing: 8) {
+        VStack(spacing: DesignTokens.Spacing.sm) {
             if viewModel.resendCooldown > 0 {
                 Text("Resend OTP in \(viewModel.timerDisplay)")
                     .font(.subheadline)
-                    .foregroundStyle(Color("TextSecondary"))
+                    .foregroundStyle(Color.ftdTextSecondary)
             }
 
             Button {
@@ -123,13 +110,13 @@ struct VerifyOTPView: View {
             } label: {
                 if viewModel.isResending {
                     ProgressView()
-                        .tint(Color("AccentOrange"))
+                        .tint(Color.ftdAccentOrange)
                 } else {
                     Text("Resend OTP")
                         .font(.subheadline)
                         .fontWeight(.semibold)
                         .foregroundStyle(
-                            viewModel.canResend ? Color("AccentOrange") : Color("TextSecondary")
+                            viewModel.canResend ? Color.ftdAccentOrange : Color.ftdTextSecondary
                         )
                 }
             }

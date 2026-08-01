@@ -2,29 +2,29 @@ import SwiftUI
 
 struct TrustBanner: View {
     var body: some View {
-        HStack(spacing: 12) {
+        HStack(spacing: DesignTokens.Spacing.md) {
             Image(systemName: "checkmark.shield.fill")
                 .font(.title2)
-                .foregroundStyle(Color("AccentOrange"))
+                .foregroundStyle(Color.ftdAccentTeal)
 
-            VStack(alignment: .leading, spacing: 2) {
+            VStack(alignment: .leading, spacing: DesignTokens.Spacing.xxs) {
                 Text("Secure & Trusted")
                     .font(.subheadline)
                     .fontWeight(.semibold)
-                    .foregroundStyle(Color("TextPrimary"))
-                Text("Your data is safe with us, we never share")
+                    .foregroundStyle(Color.ftdAccentTeal)
+                Text("Your data is safe with us, We never share your information")
                     .font(.caption)
-                    .foregroundStyle(Color("TextSecondary"))
+                    .foregroundStyle(Color.ftdTextSecondary)
             }
 
             Spacer()
         }
         .padding()
-        .background(Color("InputBackground"))
-        .clipShape(RoundedRectangle(cornerRadius: 12))
+        .background(Color.ftdInputBackground)
+        .clipShape(RoundedRectangle(cornerRadius: DesignTokens.Radius.card))
         .overlay(
-            RoundedRectangle(cornerRadius: 12)
-                .stroke(Color("BorderColor"), lineWidth: 1)
+            RoundedRectangle(cornerRadius: DesignTokens.Radius.card)
+                .stroke(Color.ftdBorder, lineWidth: 1)
         )
     }
 }
