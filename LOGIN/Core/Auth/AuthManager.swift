@@ -100,6 +100,31 @@ final class AuthManager {
         return response.message
     }
 
+    func fetchBookings(request: AgentBookingsRequest) async throws -> AgentBookingsResponse {
+        return try await apiClient.send(.agentBookings(request))
+    }
+
+    func fetchProfile() async throws -> AgentProfileResponse {
+        return try await apiClient.send(.agentProfile)
+    }
+
+    func fetchStatement(request: AgencyStatementRequest) async throws -> AgencyStatementResponse {
+        return try await apiClient.send(.agencyStatement(request))
+    }
+
+    func fetchMarkups() async throws -> AgentMarkupsResponse {
+        return try await apiClient.send(.agentMarkups)
+    }
+
+    func register(request: AgentRegisterRequest) async throws {
+        let response: GenericAPIResponse = try await apiClient.send(.agentRegister(request))
+        guard response.status else {
+            throw NetworkError.serverError(
+                response.message ?? String(localized: "Registration failed. Please try again.")
+            )
+        }
+    }
+
     func cancelPendingOTP() {
         pendingAgentNo = nil
         pendingOTPEmail = nil

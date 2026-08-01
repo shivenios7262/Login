@@ -23,4 +23,6 @@ enum UserType: String, CaseIterable, Hashable {
         case .sales:        return "chart.bar"
         }
     }
+
+    var apiValue: String { displayName }
 }

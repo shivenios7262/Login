@@ -13,7 +13,7 @@ struct FTDPrimaryButton: View {
                     ProgressView()
                         .tint(.white)
                 } else {
-                    HStack(spacing: 8) {
+                    HStack(spacing: DesignTokens.Spacing.sm) {
                         Text(title)
                             .fontWeight(.semibold)
                         if let icon = trailingIcon {
@@ -26,8 +26,8 @@ struct FTDPrimaryButton: View {
             }
             .frame(maxWidth: .infinity)
             .frame(height: 48)
-            .background(Color("AccentOrange"))
-            .clipShape(RoundedRectangle(cornerRadius: 10))
+            .background(Color.ftdAccentOrange)
+            .clipShape(RoundedRectangle(cornerRadius: DesignTokens.Radius.button))
         }
         .disabled(isLoading)
     }

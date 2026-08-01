@@ -63,8 +63,13 @@ struct SideMenuView: View {
 
     private func menuRow(_ item: SideMenuItem) -> some View {
         Button {
-            viewModel.closeSideMenu()
-            // TODO: navigate to each section once screens are built
+            switch item {
+            case .myBookings:    viewModel.openBookings()
+            case .statement:     viewModel.openStatement()
+            case .markup:        viewModel.openMarkups()
+            case .myProfile:     viewModel.openProfile()
+            default:             viewModel.closeSideMenu()
+            }
         } label: {
             HStack(spacing: 14) {
                 Image(systemName: item.systemImage)

@@ -11,40 +11,40 @@ struct FTDDropdownField<T: Hashable>: View {
     @State private var isPresented = false
 
     var body: some View {
-        VStack(alignment: .leading, spacing: 4) {
-            Text(label)
-                .font(.caption)
-                .foregroundStyle(Color("TextSecondary"))
-
+        VStack(alignment: .leading, spacing: DesignTokens.Spacing.xs) {
             Button {
                 isPresented = true
             } label: {
-                HStack {
-                    let displayText = optionLabel(selection)
-                    Text(displayText.isEmpty ? placeholder : displayText)
-                        .foregroundStyle(
-                            displayText.isEmpty ? Color("TextSecondary") : Color("TextPrimary")
-                        )
-                    Spacer()
-                    Image(systemName: "chevron.down")
+                VStack(alignment: .leading, spacing: DesignTokens.Spacing.inputLabelGap) {
+                    Text(label)
                         .font(.caption)
-                        .foregroundStyle(Color("TextSecondary"))
+                        .foregroundStyle(Color.ftdTextSecondary)
+
+                    HStack(spacing: DesignTokens.Spacing.xs) {
+                        let displayText = optionLabel(selection)
+                        Text(displayText.isEmpty ? placeholder : displayText)
+                            .foregroundStyle(
+                                displayText.isEmpty ? Color.ftdTextSecondary : Color.ftdTextPrimary
+                            )
+                            .frame(maxWidth: .infinity, alignment: .leading)
+
+                        Image(systemName: "chevron.down")
+                            .font(.caption)
+                            .foregroundStyle(Color.ftdTextSecondary)
+                    }
                 }
-                .padding(.vertical, 10)
+                .ftdInputContainer(hasError: errorMessage != nil)
+                .background(Color.ftdCardBackground, in: RoundedRectangle(cornerRadius: DesignTokens.Radius.field))
+                .frame(maxWidth: .infinity)
                 .contentShape(Rectangle())
             }
-            .overlay(alignment: .bottom) {
-                Rectangle()
-                    .frame(height: 1)
-                    .foregroundStyle(
-                        errorMessage != nil ? Color("DestructiveRed") : Color("BorderColor")
-                    )
-            }
+            .buttonStyle(.plain)
 
             if let error = errorMessage {
                 Text(error)
                     .font(.caption)
-                    .foregroundStyle(Color("DestructiveRed"))
+                    .foregroundStyle(Color.ftdDestructiveRed)
+                    .padding(.horizontal, DesignTokens.Spacing.xxs)
             }
         }
         .sheet(isPresented: $isPresented) {
@@ -56,7 +56,7 @@ struct FTDDropdownField<T: Hashable>: View {
                     } label: {
                         HStack {
                             Text(optionLabel(option))
-                                .foregroundStyle(Color("TextPrimary"))
+                                .foregroundStyle(Color.ftdTextPrimary)
                             Spacer()
                             Image(
                                 systemName: selection == option
@@ -64,7 +64,7 @@ struct FTDDropdownField<T: Hashable>: View {
                                     : "circle"
                             )
                             .foregroundStyle(
-                                selection == option ? Color("AccentOrange") : Color("BorderColor")
+                                selection == option ? Color.ftdAccentOrange : Color.ftdBorder
                             )
                         }
                     }
@@ -77,7 +77,7 @@ struct FTDDropdownField<T: Hashable>: View {
                         Button(String(localized: "Cancel")) {
                             isPresented = false
                         }
-                        .foregroundStyle(Color("AccentOrange"))
+                        .foregroundStyle(Color.ftdAccentOrange)
                     }
                 }
             }

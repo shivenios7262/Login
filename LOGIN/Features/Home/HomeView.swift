@@ -27,6 +27,18 @@ struct HomeView: View {
                 .animation(.easeInOut(duration: 0.25), value: viewModel.isSideMenuOpen)
         }
         .navigationBarHidden(true)
+        .sheet(isPresented: $viewModel.showBookings) {
+            HomeBookingsView(viewModel: viewModel)
+        }
+        .sheet(isPresented: $viewModel.showProfile) {
+            AgentProfileView(viewModel: viewModel)
+        }
+        .sheet(isPresented: $viewModel.showStatement) {
+            StatementView(viewModel: viewModel)
+        }
+        .sheet(isPresented: $viewModel.showMarkups) {
+            MarkupView(viewModel: viewModel)
+        }
         .task {
             await viewModel.checkAndRefreshTokenIfNeeded()
         }

@@ -9,28 +9,27 @@ struct FTDTextField: View {
     var autocapitalization: TextInputAutocapitalization = .sentences
 
     var body: some View {
-        VStack(alignment: .leading, spacing: 4) {
-            Text(label)
-                .font(.caption)
-                .foregroundStyle(Color("TextSecondary"))
-
-            TextField(placeholder, text: $text)
-                .keyboardType(keyboardType)
-                .textInputAutocapitalization(autocapitalization)
-                .autocorrectionDisabled()
-                .padding(.vertical, 10)
-                .overlay(alignment: .bottom) {
-                    Rectangle()
-                        .frame(height: 1)
-                        .foregroundStyle(
-                            errorMessage != nil ? Color("DestructiveRed") : Color("BorderColor")
-                        )
+        VStack(alignment: .leading, spacing: DesignTokens.Spacing.xs) {
+            VStack(alignment: .leading, spacing: DesignTokens.Spacing.inputLabelGap) {
+                if !label.isEmpty {
+                    Text(label)
+                        .font(.caption)
+                        .foregroundStyle(Color.ftdTextSecondary)
                 }
+
+                TextField(placeholder, text: $text)
+                    .keyboardType(keyboardType)
+                    .textInputAutocapitalization(autocapitalization)
+                    .autocorrectionDisabled()
+                    .frame(maxWidth: .infinity)
+            }
+            .ftdInputContainer(hasError: errorMessage != nil)
 
             if let error = errorMessage {
                 Text(error)
                     .font(.caption)
-                    .foregroundStyle(Color("DestructiveRed"))
+                    .foregroundStyle(Color.ftdDestructiveRed)
+                    .padding(.horizontal, DesignTokens.Spacing.xxs)
             }
         }
     }

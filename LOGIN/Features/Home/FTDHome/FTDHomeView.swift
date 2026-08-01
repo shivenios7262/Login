@@ -1,14 +1,21 @@
 import SwiftUI
 
 // MARK: - FTDHomeView
-// MakeMyTrip-inspired redesign of the home screen.
-// Routing: see RootView.swift — comment-toggle between HomeView and FTDHomeView.
 
 struct FTDHomeView: View {
-    @State private var viewModel: FTDHomeViewModel
+    @State private var viewModel:   FTDHomeViewModel
+    @State private var bookingsVM:  BookingsViewModel
+    @State private var profileVM:   ProfileViewModel
+    @State private var statementVM: StatementViewModel
+    @State private var markupsVM:   MarkupsViewModel
+    @Environment(AppRouter.self) private var router
 
     init(authManager: AuthManager) {
-        _viewModel = State(initialValue: FTDHomeViewModel(authManager: authManager))
+        _viewModel   = State(initialValue: FTDHomeViewModel(authManager: authManager))
+        _bookingsVM  = State(initialValue: BookingsViewModel(authManager: authManager))
+        _profileVM   = State(initialValue: ProfileViewModel(authManager: authManager))
+        _statementVM = State(initialValue: StatementViewModel(authManager: authManager))
+        _markupsVM   = State(initialValue: MarkupsViewModel(authManager: authManager))
     }
 
     var body: some View {
@@ -20,20 +27,44 @@ struct FTDHomeView: View {
             Color.black
                 .opacity(viewModel.isSideMenuOpen ? 0.45 : 0)
                 .ignoresSafeArea()
-                .animation(.easeInOut(duration: 0.25), value: viewModel.isSideMenuOpen)
+                .animation(.easeInOut(duration: DesignTokens.Animation.standard), value: viewModel.isSideMenuOpen)
                 .allowsHitTesting(viewModel.isSideMenuOpen)
                 .onTapGesture { viewModel.closeSideMenu() }
 
-            // Slide-in drawer
-            FTDSideMenuView(viewModel: viewModel)
+            FTDSideMenuView(context: sideMenuContext)
                 .frame(width: 280)
                 .offset(x: viewModel.isSideMenuOpen ? 0 : -280)
-                .animation(.easeInOut(duration: 0.25), value: viewModel.isSideMenuOpen)
+                .animation(.easeInOut(duration: DesignTokens.Animation.standard), value: viewModel.isSideMenuOpen)
         }
         .navigationBarHidden(true)
+        .sheet(item: Bindable(router).homeSheet) { sheet in
+            switch sheet {
+            case .myBookings: MyBookingsView(viewModel: bookingsVM)
+            case .profile:    AgentProfileView(viewModel: profileVM)
+            case .statement:  StatementView(viewModel: statementVM)
+            case .markups:    MarkupView(viewModel: markupsVM)
+            }
+        }
         .task {
             await viewModel.checkAndRefreshTokenIfNeeded()
         }
+    }
+
+    // MARK: - Side Menu Context
+
+    private var sideMenuContext: SideMenuContext {
+        SideMenuContext(
+            agentName:    viewModel.agentName,
+            agentEmail:   viewModel.agentEmail,
+            onMyBookings: { viewModel.closeSideMenu(); router.presentHome(.myBookings) },
+            onUploadMoney:{ viewModel.closeSideMenu() },
+            onMyRefund:   { viewModel.closeSideMenu() },
+            onStatement:  { viewModel.closeSideMenu(); router.presentHome(.statement) },
+            onMarkups:    { viewModel.closeSideMenu(); router.presentHome(.markups) },
+            onProfile:    { viewModel.closeSideMenu(); router.presentHome(.profile) },
+            onClose:      { viewModel.closeSideMenu() },
+            onLogout:     { viewModel.logout() }
+        )
     }
 
     // MARK: - Tab Layout
@@ -64,71 +95,67 @@ struct FTDHomeView: View {
             ScrollView(showsIndicators: false) {
                 VStack(spacing: 0) {
                     aiSearchBar
-                        .padding(.horizontal, 16)
-                        .padding(.vertical, 12)
+                        .padding(.horizontal, DesignTokens.Spacing.lg)
+                        .padding(.vertical, DesignTokens.Spacing.md)
                     categoryPanel
                     offersSection
-                        .padding(.top, 20)
-                    Spacer(minLength: 24)
+                        .padding(.top, DesignTokens.Spacing.xl)
+                    Spacer(minLength: DesignTokens.Spacing.xxl)
                 }
             }
-            .background(Color("InputBackground"))
+            .background(Color.ftdInputBackground)
         }
-        .background(Color("InputBackground"))
+        .background(Color.ftdInputBackground)
     }
 
     // MARK: - Top Bar
 
     private var topBar: some View {
-        HStack(spacing: 10) {
+        HStack(spacing: DesignTokens.Spacing.inputVertical) {
             Button { viewModel.toggleSideMenu() } label: {
                 Image(systemName: "line.3.horizontal")
                     .font(.title2)
-                    .foregroundStyle(Color("TextPrimary"))
+                    .foregroundStyle(Color.ftdTextPrimary)
             }
 
             Spacer()
 
-            HStack(spacing: 4) {
+            HStack(spacing: DesignTokens.Spacing.xs) {
                 Image(systemName: "airplane")
                     .fontWeight(.bold)
-                    .foregroundStyle(Color("AccentOrange"))
+                    .foregroundStyle(Color.ftdAccentOrange)
                 Text("FTD")
-                    .font(.headline)
-                    .fontWeight(.black)
-                    .foregroundStyle(Color("AccentOrange"))
+                    .font(.headline).fontWeight(.black)
+                    .foregroundStyle(Color.ftdAccentOrange)
             }
 
             Spacer()
 
-            // Shows live creditBalance from User model; falls back to a label
             Button { /* TODO: open agent wallet */ } label: {
                 Text(viewModel.creditBalanceLabel)
-                    .font(.caption)
-                    .fontWeight(.semibold)
-                    .padding(.horizontal, 10)
+                    .font(.caption).fontWeight(.semibold)
+                    .padding(.horizontal, DesignTokens.Spacing.inputVertical)
                     .padding(.vertical, 5)
-                    .background(Color("AccentOrange").opacity(0.12))
-                    .foregroundStyle(Color("AccentOrange"))
+                    .background(Color.ftdAccentOrange.opacity(0.12))
+                    .foregroundStyle(Color.ftdAccentOrange)
                     .clipShape(Capsule())
-                    .overlay(Capsule().stroke(Color("AccentOrange").opacity(0.4), lineWidth: 1))
+                    .overlay(Capsule().stroke(Color.ftdAccentOrange.opacity(0.4), lineWidth: 1))
             }
 
             Button { /* TODO: open B2B portal */ } label: {
                 Text("B2B")
-                    .font(.caption)
-                    .fontWeight(.bold)
-                    .padding(.horizontal, 10)
+                    .font(.caption).fontWeight(.bold)
+                    .padding(.horizontal, DesignTokens.Spacing.inputVertical)
                     .padding(.vertical, 5)
-                    .background(Color("AccentTeal").opacity(0.12))
-                    .foregroundStyle(Color("AccentTeal"))
+                    .background(Color.ftdAccentTeal.opacity(0.12))
+                    .foregroundStyle(Color.ftdAccentTeal)
                     .clipShape(Capsule())
-                    .overlay(Capsule().stroke(Color("AccentTeal").opacity(0.4), lineWidth: 1))
+                    .overlay(Capsule().stroke(Color.ftdAccentTeal.opacity(0.4), lineWidth: 1))
             }
         }
-        .padding(.horizontal, 16)
-        .padding(.vertical, 12)
-        .background(Color("CardBackground"))
+        .padding(.horizontal, DesignTokens.Spacing.lg)
+        .padding(.vertical, DesignTokens.Spacing.md)
+        .background(Color.ftdCardBackground)
         .shadow(color: .black.opacity(0.06), radius: 4, y: 2)
     }
 
@@ -136,85 +163,78 @@ struct FTDHomeView: View {
 
     private var aiSearchBar: some View {
         Button { /* TODO: open AI travel assistant */ } label: {
-            HStack(spacing: 10) {
+            HStack(spacing: DesignTokens.Spacing.inputVertical) {
                 Image(systemName: "sparkles")
-                    .foregroundStyle(Color("AccentOrange"))
+                    .foregroundStyle(Color.ftdAccentOrange)
                     .font(.subheadline)
 
                 Text("Ask FTD about travel options...")
                     .font(.subheadline)
-                    .foregroundStyle(Color("TextSecondary"))
+                    .foregroundStyle(Color.ftdTextSecondary)
                     .frame(maxWidth: .infinity, alignment: .leading)
 
-                HStack(spacing: 4) {
-                    Image(systemName: "waveform")
-                        .font(.caption)
-                    Text("Speak")
-                        .font(.caption)
-                        .fontWeight(.semibold)
+                HStack(spacing: DesignTokens.Spacing.xs) {
+                    Image(systemName: "waveform").font(.caption)
+                    Text("Speak").font(.caption).fontWeight(.semibold)
                 }
-                .padding(.horizontal, 12)
-                .padding(.vertical, 6)
-                .background(Color("AccentOrange").opacity(0.1))
-                .foregroundStyle(Color("AccentOrange"))
+                .padding(.horizontal, DesignTokens.Spacing.md)
+                .padding(.vertical, DesignTokens.Spacing.sm - 2)
+                .background(Color.ftdAccentOrange.opacity(0.1))
+                .foregroundStyle(Color.ftdAccentOrange)
                 .clipShape(Capsule())
-                .overlay(Capsule().stroke(Color("AccentOrange").opacity(0.3), lineWidth: 1))
+                .overlay(Capsule().stroke(Color.ftdAccentOrange.opacity(0.3), lineWidth: 1))
             }
             .padding(.horizontal, 14)
-            .padding(.vertical, 10)
-            .background(Color("CardBackground"))
-            .clipShape(RoundedRectangle(cornerRadius: 24))
-            .overlay(RoundedRectangle(cornerRadius: 24).stroke(Color("BorderColor"), lineWidth: 1))
+            .padding(.vertical, DesignTokens.Spacing.inputVertical)
+            .background(Color.ftdCardBackground)
+            .clipShape(RoundedRectangle(cornerRadius: DesignTokens.Radius.search))
+            .overlay(RoundedRectangle(cornerRadius: DesignTokens.Radius.search).stroke(Color.ftdBorder, lineWidth: 1))
             .shadow(color: .black.opacity(0.05), radius: 6, y: 2)
         }
         .buttonStyle(.plain)
     }
 
-    // MARK: - Category Panel (primary row + secondary grid on one card)
+    // MARK: - Category Panel
 
     private var categoryPanel: some View {
         VStack(spacing: 0) {
             primaryCategoryRow
-            Divider()
-                .padding(.horizontal, 12)
+            Divider().padding(.horizontal, DesignTokens.Spacing.md)
             secondaryCategoryGrid
         }
-        .background(Color("CardBackground"))
+        .background(Color.ftdCardBackground)
         .shadow(color: .black.opacity(0.05), radius: 4, y: 2)
     }
 
-    // Four tiles filling the full width equally
     private var primaryCategoryRow: some View {
         HStack(spacing: 0) {
             ForEach(ServiceCategory.primaryCategories) { category in
                 primaryTile(category)
             }
         }
-        .padding(.vertical, 4)
+        .padding(.vertical, DesignTokens.Spacing.xs)
     }
 
     private func primaryTile(_ category: ServiceCategory) -> some View {
         Button { /* TODO: navigate to category */ } label: {
-            VStack(spacing: 8) {
+            VStack(spacing: DesignTokens.Spacing.sm) {
                 Image(systemName: category.icon)
-                    .font(.system(size: 34))
-                    .foregroundStyle(Color("AccentOrange"))
+                    .font(.ftdPrimaryIcon)
+                    .foregroundStyle(Color.ftdAccentOrange)
                     .frame(height: 42)
                 Text(category.label)
-                    .font(.caption)
-                    .fontWeight(.semibold)
+                    .font(.caption).fontWeight(.semibold)
                     .multilineTextAlignment(.center)
-                    .foregroundStyle(Color("TextPrimary"))
+                    .foregroundStyle(Color.ftdTextPrimary)
                     .lineLimit(2)
                     .fixedSize(horizontal: false, vertical: true)
             }
             .frame(maxWidth: .infinity)
-            .padding(.vertical, 16)
+            .padding(.vertical, DesignTokens.Spacing.lg)
         }
         .buttonStyle(.plain)
     }
 
-    // Twelve tiles in a 4-column grid
     private var secondaryCategoryGrid: some View {
         VStack(spacing: 0) {
             LazyVGrid(
@@ -226,45 +246,44 @@ struct FTDHomeView: View {
                 }
             }
 
-            // Collapse affordance — matches the up-chevron in the design reference
             Image(systemName: "chevron.up")
                 .font(.caption2)
-                .foregroundStyle(Color("TextSecondary"))
-                .padding(.vertical, 8)
+                .foregroundStyle(Color.ftdTextSecondary)
+                .padding(.vertical, DesignTokens.Spacing.sm)
         }
     }
 
     private func secondaryTile(_ category: ServiceCategory) -> some View {
         Button { /* TODO: navigate to category */ } label: {
             ZStack(alignment: .topTrailing) {
-                VStack(spacing: 6) {
+                VStack(spacing: DesignTokens.Spacing.sm - 2) {
                     Image(systemName: category.icon)
-                        .font(.system(size: 24))
-                        .foregroundStyle(Color("AccentOrange"))
+                        .font(.ftdSecondaryIcon)
+                        .foregroundStyle(Color.ftdAccentOrange)
                         .frame(height: 30)
                     Text(category.label)
-                        .font(.system(size: 10, weight: .medium))
+                        .font(.ftdLabelXS)
                         .multilineTextAlignment(.center)
-                        .foregroundStyle(Color("TextPrimary"))
+                        .foregroundStyle(Color.ftdTextPrimary)
                         .lineLimit(2)
                         .fixedSize(horizontal: false, vertical: true)
                 }
                 .frame(maxWidth: .infinity)
-                .padding(.vertical, 12)
-                .padding(.horizontal, 4)
+                .padding(.vertical, DesignTokens.Spacing.md)
+                .padding(.horizontal, DesignTokens.Spacing.xs)
 
                 if let badge = category.badge {
                     Text(badge)
-                        .font(.system(size: 7, weight: .bold))
-                        .padding(.horizontal, 4)
-                        .padding(.vertical, 2)
-                        .background(Color.red)
+                        .font(.ftdBadgeXS)
+                        .padding(.horizontal, DesignTokens.Spacing.xs)
+                        .padding(.vertical, DesignTokens.Spacing.xxs)
+                        .background(Color.ftdDestructiveRed)
                         .foregroundStyle(.white)
                         .clipShape(Capsule())
-                        .offset(x: -4, y: 4)
+                        .offset(x: -DesignTokens.Spacing.xs, y: DesignTokens.Spacing.xs)
                 }
             }
-            .overlay(Rectangle().stroke(Color("BorderColor").opacity(0.4), lineWidth: 0.5))
+            .overlay(Rectangle().stroke(Color.ftdBorder.opacity(0.4), lineWidth: 0.5))
         }
         .buttonStyle(.plain)
     }
@@ -272,9 +291,9 @@ struct FTDHomeView: View {
     // MARK: - Offers Section
 
     private var offersSection: some View {
-        VStack(alignment: .leading, spacing: 12) {
+        VStack(alignment: .leading, spacing: DesignTokens.Spacing.md) {
             offersHeader
-                .padding(.horizontal, 16)
+                .padding(.horizontal, DesignTokens.Spacing.lg)
             offerFilterTabs
             offerCards
         }
@@ -283,18 +302,17 @@ struct FTDHomeView: View {
     private var offersHeader: some View {
         HStack {
             Text("Offers")
-                .font(.headline)
-                .fontWeight(.bold)
-                .foregroundStyle(Color("TextPrimary"))
+                .font(.headline).fontWeight(.bold)
+                .foregroundStyle(Color.ftdTextPrimary)
             Spacer()
             Button { /* TODO: navigate to all offers */ } label: {
-                HStack(spacing: 2) {
+                HStack(spacing: DesignTokens.Spacing.xxs) {
                     Text("View All")
                         .font(.subheadline)
-                        .foregroundStyle(Color("AccentOrange"))
+                        .foregroundStyle(Color.ftdAccentOrange)
                     Image(systemName: "chevron.right.circle.fill")
                         .font(.subheadline)
-                        .foregroundStyle(Color("AccentOrange"))
+                        .foregroundStyle(Color.ftdAccentOrange)
                 }
             }
         }
@@ -302,12 +320,12 @@ struct FTDHomeView: View {
 
     private var offerFilterTabs: some View {
         ScrollView(.horizontal, showsIndicators: false) {
-            HStack(spacing: 8) {
+            HStack(spacing: DesignTokens.Spacing.sm) {
                 ForEach(OfferFilter.allCases) { filter in
                     offerFilterChip(filter)
                 }
             }
-            .padding(.horizontal, 16)
+            .padding(.horizontal, DesignTokens.Spacing.lg)
         }
     }
 
@@ -319,85 +337,79 @@ struct FTDHomeView: View {
             Text(filter.title)
                 .font(.subheadline)
                 .fontWeight(isSelected ? .semibold : .regular)
-                .padding(.horizontal, 16)
-                .padding(.vertical, 6)
-                .background(isSelected ? Color("AccentOrange") : Color("CardBackground"))
-                .foregroundStyle(isSelected ? Color.white : Color("TextSecondary"))
+                .padding(.horizontal, DesignTokens.Spacing.lg)
+                .padding(.vertical, DesignTokens.Spacing.sm - 2)
+                .background(isSelected ? Color.ftdAccentOrange : Color.ftdCardBackground)
+                .foregroundStyle(isSelected ? Color.white : Color.ftdTextSecondary)
                 .clipShape(Capsule())
                 .overlay {
                     if !isSelected {
-                        Capsule().stroke(Color("BorderColor"), lineWidth: 1)
+                        Capsule().stroke(Color.ftdBorder, lineWidth: 1)
                     }
                 }
         }
         .buttonStyle(.plain)
-        .animation(.easeInOut(duration: 0.15), value: viewModel.selectedOfferFilter)
+        .animation(.easeInOut(duration: DesignTokens.Animation.fast), value: viewModel.selectedOfferFilter)
     }
 
     private var offerCards: some View {
-        // Placeholder gradient cards — swap LinearGradient for AsyncImage once offer API is wired
-        let configs: [(label: String, tag: String, colors: [Color])] = [
-            ("Break Free\nTravel Sale", "FLIGHTS",  [Color("AccentOrange").opacity(0.8), .red.opacity(0.5)]),
-            ("Summer\nEscape Deals",   "HOTELS",   [.blue.opacity(0.6),                 .purple.opacity(0.5)]),
-            ("Holiday\nPackages",      "HOLIDAYS", [.green.opacity(0.55),               .teal.opacity(0.5)]),
-            ("Rail\nSaver Pass",       "RAILS",    [Color("AccentTeal").opacity(0.7),   .blue.opacity(0.4)]),
-        ]
-
-        return ScrollView(.horizontal, showsIndicators: false) {
-            HStack(spacing: 12) {
-                ForEach(configs.indices, id: \.self) { i in
-                    offerCard(headline: configs[i].label, tag: configs[i].tag, colors: configs[i].colors)
+        ScrollView(.horizontal, showsIndicators: false) {
+            HStack(spacing: DesignTokens.Spacing.md) {
+                ForEach(offerConfigs.indices, id: \.self) { i in
+                    offerCard(
+                        headline: offerConfigs[i].label,
+                        tag: offerConfigs[i].tag,
+                        colors: offerConfigs[i].colors
+                    )
                 }
             }
-            .padding(.horizontal, 16)
-            .padding(.bottom, 4)
+            .padding(.horizontal, DesignTokens.Spacing.lg)
+            .padding(.bottom, DesignTokens.Spacing.xs)
         }
     }
 
     private func offerCard(headline: String, tag: String, colors: [Color]) -> some View {
         ZStack(alignment: .bottomLeading) {
-            RoundedRectangle(cornerRadius: 12)
+            RoundedRectangle(cornerRadius: DesignTokens.Radius.card)
                 .fill(LinearGradient(colors: colors, startPoint: .topLeading, endPoint: .bottomTrailing))
                 .frame(width: 200, height: 120)
-            VStack(alignment: .leading, spacing: 6) {
+            VStack(alignment: .leading, spacing: DesignTokens.Spacing.sm - 2) {
                 Text(tag)
-                    .font(.system(size: 9, weight: .bold))
-                    .padding(.horizontal, 6)
-                    .padding(.vertical, 2)
+                    .font(.ftdBadgeSM)
+                    .padding(.horizontal, DesignTokens.Spacing.sm - 2)
+                    .padding(.vertical, DesignTokens.Spacing.xxs)
                     .background(.white.opacity(0.9))
-                    .foregroundStyle(Color("AccentOrange"))
+                    .foregroundStyle(Color.ftdAccentOrange)
                     .clipShape(Capsule())
                 Text(headline)
-                    .font(.subheadline)
-                    .fontWeight(.bold)
+                    .font(.subheadline).fontWeight(.bold)
                     .foregroundStyle(.white)
                     .lineLimit(2)
             }
-            .padding(12)
+            .padding(DesignTokens.Spacing.md)
         }
-        .clipShape(RoundedRectangle(cornerRadius: 12))
+        .clipShape(RoundedRectangle(cornerRadius: DesignTokens.Radius.card))
         .shadow(color: .black.opacity(0.12), radius: 8, y: 4)
     }
 
     // MARK: - Placeholder Screen
 
     private func placeholderScreen(title: String, icon: String) -> some View {
-        VStack(spacing: 12) {
+        VStack(spacing: DesignTokens.Spacing.md) {
             Spacer()
             Image(systemName: icon)
-                .font(.system(size: 48))
-                .foregroundStyle(Color("TextSecondary").opacity(0.4))
+                .font(.ftdHeroIcon)
+                .foregroundStyle(Color.ftdTextSecondary.opacity(0.4))
             Text(title)
-                .font(.title2)
-                .fontWeight(.semibold)
-                .foregroundStyle(Color("TextSecondary"))
+                .font(.title2).fontWeight(.semibold)
+                .foregroundStyle(Color.ftdTextSecondary)
             Text("Coming soon")
                 .font(.subheadline)
-                .foregroundStyle(Color("TextSecondary").opacity(0.6))
+                .foregroundStyle(Color.ftdTextSecondary.opacity(0.6))
             Spacer()
         }
         .frame(maxWidth: .infinity, maxHeight: .infinity)
-        .background(Color("InputBackground"))
+        .background(Color.ftdInputBackground)
     }
 
     // MARK: - Bottom Tab Bar
@@ -408,7 +420,7 @@ struct FTDHomeView: View {
                 tabBarItem(tab)
             }
         }
-        .background(Color("CardBackground"))
+        .background(Color.ftdCardBackground)
         .overlay(alignment: .top) { Divider() }
         .shadow(color: .black.opacity(0.06), radius: 6, y: -2)
     }
@@ -418,19 +430,30 @@ struct FTDHomeView: View {
         return Button {
             viewModel.selectedTab = tab
         } label: {
-            VStack(spacing: 4) {
+            VStack(spacing: DesignTokens.Spacing.xs) {
                 Image(systemName: isActive ? tab.selectedIcon : tab.icon)
-                    .font(.system(size: 22))
-                    .foregroundStyle(isActive ? Color("AccentOrange") : Color("TextSecondary"))
+                    .font(.system(size: DesignTokens.IconSize.lg))
+                    .foregroundStyle(isActive ? Color.ftdAccentOrange : Color.ftdTextSecondary)
                 Text(tab.title)
-                    .font(.system(size: 10, weight: isActive ? .semibold : .regular))
-                    .foregroundStyle(isActive ? Color("AccentOrange") : Color("TextSecondary"))
+                    .font(isActive ? .ftdTabLabelBold : .ftdTabLabel)
+                    .foregroundStyle(isActive ? Color.ftdAccentOrange : Color.ftdTextSecondary)
             }
             .frame(maxWidth: .infinity)
-            .padding(.vertical, 10)
+            .padding(.vertical, DesignTokens.Spacing.inputVertical)
             .contentShape(Rectangle())
         }
         .buttonStyle(.plain)
-        .animation(.easeInOut(duration: 0.15), value: viewModel.selectedTab)
+        .animation(.easeInOut(duration: DesignTokens.Animation.fast), value: viewModel.selectedTab)
     }
+}
+
+// MARK: - Offer card data (ViewModel-level constant)
+
+private extension FTDHomeView {
+    var offerConfigs: [(label: String, tag: String, colors: [Color])] {[
+        ("Break Free\nTravel Sale", "FLIGHTS",  [Color.ftdAccentOrange.opacity(0.8), .red.opacity(0.5)]),
+        ("Summer\nEscape Deals",   "HOTELS",   [.blue.opacity(0.6),                 .purple.opacity(0.5)]),
+        ("Holiday\nPackages",      "HOLIDAYS", [.green.opacity(0.55),               .teal.opacity(0.5)]),
+        ("Rail\nSaver Pass",       "RAILS",    [Color.ftdAccentTeal.opacity(0.7),   .blue.opacity(0.4)]),
+    ]}
 }

@@ -40,7 +40,7 @@ struct AgentLoginRequest: Codable, Sendable {
 // Failure: { "status": false, "message": "Unauthorized Access..." }
 struct AgentLoginData: Codable, Sendable {
     let agentNo: String
-    let email: String
+    let email: String?
     let otpExpiry: String?
 
     enum CodingKeys: String, CodingKey {
@@ -49,7 +49,7 @@ struct AgentLoginData: Codable, Sendable {
         case otpExpiry = "otp_expiry"
     }
 
-    nonisolated init(agentNo: String, email: String, otpExpiry: String?) {
+    nonisolated init(agentNo: String, email: String?, otpExpiry: String?) {
         self.agentNo = agentNo
         self.email = email
         self.otpExpiry = otpExpiry
@@ -58,14 +58,14 @@ struct AgentLoginData: Codable, Sendable {
     nonisolated init(from decoder: any Decoder) throws {
         let c = try decoder.container(keyedBy: CodingKeys.self)
         agentNo   = try c.decode(String.self, forKey: .agentNo)
-        email     = try c.decode(String.self, forKey: .email)
+        email     = try c.decodeIfPresent(String.self, forKey: .email)
         otpExpiry = try c.decodeIfPresent(String.self, forKey: .otpExpiry)
     }
 
     nonisolated func encode(to encoder: any Encoder) throws {
         var c = encoder.container(keyedBy: CodingKeys.self)
-        try c.encode(agentNo,           forKey: .agentNo)
-        try c.encode(email,             forKey: .email)
+        try c.encode(agentNo,            forKey: .agentNo)
+        try c.encodeIfPresent(email,     forKey: .email)
         try c.encodeIfPresent(otpExpiry, forKey: .otpExpiry)
     }
 }

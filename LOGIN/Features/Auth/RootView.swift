@@ -2,28 +2,51 @@ import SwiftUI
 
 struct RootView: View {
     @Environment(AuthManager.self) private var authManager
-    @State private var showAuth = false
+    @Environment(AppRouter.self)   private var router
 
     var body: some View {
-        if authManager.isLoggedIn {
-            // --- Route: toggle comment to switch home screen designs ---
-            // HomeView(authManager: authManager)          // Legacy home screen
-            FTDHomeView(authManager: authManager)          // New FTD redesign
-        } else if authManager.hasAppToken {
-            // App token already acquired on a prior launch — skip Splash and go straight to auth.
-            NavigationStack {
-                AuthContainerView()
-                    .navigationBarBackButtonHidden(true)
+        Group {
+            if authManager.isLoggedIn {
+                FTDHomeView(authManager: authManager)
+            } else {
+                authFlow
             }
+        }
+        .onChange(of: authManager.isLoggedIn) { _, isLoggedIn in
+            if !isLoggedIn { router.popToAuthRoot() }
+        }
+    }
+
+    // MARK: - Auth Flow
+
+    private var authFlow: some View {
+        NavigationStack(path: Bindable(router).authPath) {
+            authRoot
+                .navigationDestination(for: AppRouter.AuthDestination.self) { dest in
+                    switch dest {
+                    case .verifyOTP:
+                        VerifyOTPView(authManager: authManager)
+                    }
+                }
+        }
+        .sheet(item: Bindable(router).authSheet) { sheet in
+            switch sheet {
+            case .forgotPassword:
+                NavigationStack {
+                    ForgotPasswordView()
+                }
+            }
+        }
+    }
+
+    @ViewBuilder
+    private var authRoot: some View {
+        if authManager.hasAppToken {
+            AuthContainerView()
+                .navigationBarBackButtonHidden(true)
         } else {
-            NavigationStack {
-                SplashView {
-                    try await authManager.fetchAppToken()
-                    showAuth = true
-                }
-                .navigationDestination(isPresented: $showAuth) {
-                    AuthContainerView()
-                }
+            SplashView {
+                try await authManager.fetchAppToken()
             }
         }
     }
