@@ -49,4 +49,17 @@ enum DesignTokens {
         static let hero: CGFloat = 48
         static let eye:  CGFloat = 16
     }
+
+    // MARK: - Component Sizes
+    // design.md §2a: named sizes keep Views free of raw numbers
+    enum Size {
+        static let logoWidth:     CGFloat = 96
+        static let tabItemHeight: CGFloat = 38
+    }
+
+    // MARK: - Layout
+    // design.md §2a (iPad adaptive): shared max-width used by every full-screen form
+    enum Layout {
+        static let maxWidthRegular: CGFloat = 430
+    }
 }

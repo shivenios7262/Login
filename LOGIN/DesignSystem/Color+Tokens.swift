@@ -4,6 +4,8 @@ extension Color {
     // MARK: - Brand
     static let ftdAccentOrange       = Color("AccentOrange")
     static let ftdAccentTeal         = Color("AccentTeal")
+    static let ftdAccentOrangeAlpha       = Color("AccentOrangeAlpha")
+    
 
     // MARK: - Text
     static let ftdTextPrimary        = Color("TextPrimary")

@@ -6,24 +6,45 @@ struct FTDSecureField: View {
     @Binding var text: String
     @Binding var isVisible: Bool
     var errorMessage: String?
+    var placeholderColor: Color = Color.ftdTextSecondary
+    var placeholderFont: Font = Font.ftdPlaceholder
+
+    private func buildPrompt() -> Text {
+        let parts = placeholder.components(separatedBy: "*")
+        guard parts.count > 1 else {
+            return Text(placeholder).foregroundStyle(placeholderColor).font(placeholderFont)
+        }
+        var result = Text(parts[0]).foregroundStyle(placeholderColor)
+        for part in parts.dropFirst() {
+            result = result + Text("*").foregroundStyle(Color.ftdDestructiveRed)
+            if !part.isEmpty {
+                result = result + Text(part).foregroundStyle(placeholderColor)
+            }
+        }
+        return result.font(placeholderFont)
+    }
 
     var body: some View {
         VStack(alignment: .leading, spacing: DesignTokens.Spacing.xs) {
             VStack(alignment: .leading, spacing: DesignTokens.Spacing.inputLabelGap) {
                 if !label.isEmpty {
-                    Text(label)
+                    ftdRequiredLabel(label)
                         .font(.caption)
-                        .foregroundStyle(Color.ftdTextSecondary)
                 }
 
-                HStack(spacing: DesignTokens.Spacing.sm) {
+                HStack(spacing: DesignTokens.Spacing.xs) {
                     Group {
+                        let prompt = buildPrompt()
                         if isVisible {
-                            TextField(placeholder, text: $text)
-                                .textInputAutocapitalization(.never)
-                                .autocorrectionDisabled()
+                            TextField(text: $text, prompt: prompt) {
+                                Text(placeholder)
+                            }
+                            .textInputAutocapitalization(.never)
+                            .autocorrectionDisabled()
                         } else {
-                            SecureField(placeholder, text: $text)
+                            SecureField(text: $text, prompt: prompt) {
+                                Text(placeholder)
+                            }
                         }
                     }
                     .frame(maxWidth: .infinity)

@@ -5,24 +5,38 @@ import Foundation
 struct GenericAPIResponse: Codable, Sendable {
     let status: Bool
     let message: String?
+    let errorCode: Int?
+    let errorDesc: String?
 
-    enum CodingKeys: String, CodingKey { case status, message }
+    var serverMessage: String? { message ?? errorDesc }
 
-    nonisolated init(status: Bool, message: String?) {
-        self.status  = status
-        self.message = message
+    enum CodingKeys: String, CodingKey {
+        case status, message
+        case errorCode = "ErrorCode"
+        case errorDesc = "ErrorDesc"
+    }
+
+    nonisolated init(status: Bool, message: String?, errorCode: Int? = nil, errorDesc: String? = nil) {
+        self.status    = status
+        self.message   = message
+        self.errorCode = errorCode
+        self.errorDesc = errorDesc
     }
 
     nonisolated init(from decoder: any Decoder) throws {
         let c = try decoder.container(keyedBy: CodingKeys.self)
-        status  = try c.decode(Bool.self, forKey: .status)
-        message = try c.decodeIfPresent(String.self, forKey: .message)
+        status    = try c.decode(Bool.self, forKey: .status)
+        message   = try c.decodeIfPresent(String.self, forKey: .message)
+        errorCode = try c.decodeIfPresent(Int.self,    forKey: .errorCode)
+        errorDesc = try c.decodeIfPresent(String.self, forKey: .errorDesc)
     }
 
     nonisolated func encode(to encoder: any Encoder) throws {
         var c = encoder.container(keyedBy: CodingKeys.self)
         try c.encode(status, forKey: .status)
-        try c.encodeIfPresent(message, forKey: .message)
+        try c.encodeIfPresent(message,   forKey: .message)
+        try c.encodeIfPresent(errorCode, forKey: .errorCode)
+        try c.encodeIfPresent(errorDesc, forKey: .errorDesc)
     }
 }
 

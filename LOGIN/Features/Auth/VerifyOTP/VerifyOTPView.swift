@@ -3,6 +3,7 @@ import SwiftUI
 struct VerifyOTPView: View {
     @State private var viewModel: VerifyOTPViewModel
     @State private var digits: [String] = ["", "", "", ""]
+    @State private var maskedDigits: Set<Int> = []
     @FocusState private var focusedField: Int?
 
     init(authManager: AuthManager) {
@@ -41,14 +42,14 @@ struct VerifyOTPView: View {
                         .clipShape(RoundedRectangle(cornerRadius: DesignTokens.Radius.field))
                 }
 
+                resendSection
+
                 FTDPrimaryButton(
                     title: String(localized: "Verify & Continue"),
                     isLoading: viewModel.isLoading
                 ) {
                     Task { await viewModel.verify() }
                 }
-
-                resendSection
 
                 infoBanner
             }
@@ -127,8 +128,16 @@ struct VerifyOTPView: View {
                         digits[index] = clean
                         return
                     }
-                    if !clean.isEmpty, index < 3 {
-                        focusedField = index + 1
+                    if !clean.isEmpty {
+                        // Briefly reveal the digit, then mask after 0.6s
+                        maskedDigits.remove(index)
+                        Task {
+                            try? await Task.sleep(for: .seconds(0.6))
+                            maskedDigits.insert(index)
+                        }
+                        if index < 3 { focusedField = index + 1 }
+                    } else {
+                        maskedDigits.remove(index)
                     }
                     viewModel.otp = digits.joined()
                 }
@@ -137,11 +146,21 @@ struct VerifyOTPView: View {
                 Rectangle()
                     .fill(Color.ftdAccentOrange)
                     .frame(width: 2, height: 24)
-            } else if !digit.isEmpty {
+            } else if digit.isEmpty {
+                Text("*")
+                    .font(.title2)
+                    .fontWeight(.medium)
+                    .foregroundStyle(Color.ftdTextSecondary.opacity(0.4))
+            } else if maskedDigits.contains(index) {
                 Text("*")
                     .font(.title2)
                     .fontWeight(.medium)
                     .foregroundStyle(Color.ftdTextPrimary)
+            } else {
+                Text(digit)
+                    .font(.title2)
+                    .fontWeight(.semibold)
+                    .foregroundStyle(Color.ftdAccentOrange)
             }
         }
         .onTapGesture {
@@ -158,10 +177,14 @@ struct VerifyOTPView: View {
                 .foregroundStyle(Color.ftdTextSecondary)
 
             if viewModel.resendCooldown > 0 {
-                Text("Resend OTP in \(viewModel.timerDisplay)")
-                    .font(.subheadline)
-                    .fontWeight(.semibold)
-                    .foregroundStyle(Color.ftdAccentOrange)
+                (
+                    Text(String(localized: "Resend OTP in "))
+                        .foregroundStyle(Color.ftdAccentTeal) +
+                    Text(viewModel.timerDisplay)
+                        .foregroundStyle(Color.ftdAccentOrange)
+                )
+                .font(.subheadline)
+                .fontWeight(.semibold)
             } else {
                 Button {
                     Task { await viewModel.resend() }
@@ -208,25 +231,25 @@ struct VerifyOTPView: View {
     }
 }
 
-// MARK: - Preview
-
-#Preview {
-    let httpClient = URLSessionHTTPClient()
-    let keychain = KeychainService()
-    let apiClient = APIClient(
-        httpClient: httpClient,
-        baseURL: URL(string: "https://example.com")!,
-        keychain: keychain,
-        appCredentials: AppCredentials(
-            appType: 1,
-            appUser: "preview",
-            appPassword: "preview",
-            appVersion: "1.0",
-            persistAppToken: false
-        )
-    )
-    let authManager = AuthManager(apiClient: apiClient, keychain: keychain)
-    return NavigationStack {
-        VerifyOTPView(authManager: authManager)
-    }
-}
+//// MARK: - Preview
+//
+//#Preview {
+//    let httpClient = URLSessionHTTPClient()
+//    let keychain = KeychainService()
+//    let apiClient = APIClient(
+//        httpClient: httpClient,
+//        baseURL: URL(string: "https://example.com")!,
+//        keychain: keychain,
+//        appCredentials: AppCredentials(
+//            appType: 1,
+//            appUser: "preview",
+//            appPassword: "preview",
+//            appVersion: "1.0",
+//            persistAppToken: false
+//        )
+//    )
+//    let authManager = AuthManager(apiClient: apiClient, keychain: keychain)
+//    return NavigationStack {
+//        VerifyOTPView(authManager: authManager)
+//    }
+//}

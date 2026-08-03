@@ -45,8 +45,8 @@ struct ForgotPasswordView: View {
             }
 
             FTDTextField(
-                label: String(localized: "Email Address"),
-                placeholder: String(localized: "Enter your email"),
+                label: "",
+                placeholder: String(localized: "Email Address*"),
                 text: emailBinding,
                 errorMessage: viewModel.emailError,
                 keyboardType: .emailAddress,
@@ -78,16 +78,16 @@ struct ForgotPasswordView: View {
         HStack(alignment: .top, spacing: 12) {
             ZStack {
                 Circle()
-                    .fill(Color.ftdAccentOrange.opacity(0.12))
+                    .fill(Color.blue.opacity(0.14))
                     .frame(width: 36, height: 36)
                 Image(systemName: "info.circle.fill")
                     .font(.system(size: 18))
-                    .foregroundStyle(Color.ftdAccentOrange)
+                    .foregroundStyle(Color.blue)
             }
             VStack(alignment: .leading, spacing: 4) {
                 Text("What's Next?")
                     .font(.subheadline.weight(.semibold))
-                    .foregroundStyle(Color.ftdAccentOrange)
+                    .foregroundStyle(Color.blue)
                 Text("We'll send a password reset link to your registered email address.")
                     .font(.caption)
                     .foregroundStyle(Color.ftdTextSecondary)
@@ -95,7 +95,7 @@ struct ForgotPasswordView: View {
             Spacer(minLength: 0)
         }
         .padding(14)
-        .background(Color.ftdAccentOrange.opacity(0.06))
+        .background(Color.blue.opacity(0.07))
         .clipShape(RoundedRectangle(cornerRadius: 12))
     }
 
@@ -125,7 +125,7 @@ struct ForgotPasswordView: View {
                 Circle()
                     .fill(Color.ftdAccentOrange.opacity(0.12))
                     .frame(width: 100, height: 100)
-                Image(systemName: "envelope.badge.checkmark.fill")
+                Image("mail")
                     .font(.system(size: 48))
                     .foregroundStyle(Color.ftdAccentOrange)
             }
@@ -152,7 +152,7 @@ struct ForgotPasswordView: View {
                     .padding(.top, 4)
             }
 
-            FTDPrimaryButton(title: String(localized: "Open Email")) {
+            FTDPrimaryButton(title: String(localized: "Open Email"), leadingIcon: "envelope.fill") {
                 if let url = URL(string: "message://") {
                     openURL(url)
                 }

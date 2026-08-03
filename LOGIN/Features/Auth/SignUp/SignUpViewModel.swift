@@ -36,9 +36,6 @@ final class SignUpViewModel {
     var selectedState: String = ""   { didSet { stateError    = nil } }
     var selectedCountry: String = "" { didSet { countryError  = nil } }
 
-    // MARK: - Agreements
-    var isCaptchaChecked: Bool = false { didSet { if isCaptchaChecked { captchaError = nil } } }
-    var isTermsAccepted: Bool = false  { didSet { if isTermsAccepted  { termsError   = nil } } }
 
     // MARK: - Submission state
     private(set) var isSubmitting: Bool = false
@@ -59,8 +56,6 @@ final class SignUpViewModel {
     private(set) var cityError: String?
     private(set) var stateError: String?
     private(set) var countryError: String?
-    private(set) var captchaError: String?
-    private(set) var termsError: String?
 
     // MARK: - Option lists
 
@@ -158,8 +153,6 @@ final class SignUpViewModel {
 
         if selectedState.isEmpty   { stateError   = String(localized: "Please select a state");   valid = false }
         if selectedCountry.isEmpty { countryError = String(localized: "Please select a country"); valid = false }
-        if !isCaptchaChecked { captchaError = String(localized: "Please verify you are not a robot"); valid = false }
-        if !isTermsAccepted  { termsError   = String(localized: "Please accept the terms and conditions"); valid = false }
 
         return valid
     }
@@ -170,7 +163,6 @@ final class SignUpViewModel {
         panNumberError = nil;   panCardNameError = nil;   companyNameError = nil
         addressError = nil;     pinCodeError = nil;       cityError = nil
         stateError = nil;       countryError = nil
-        captchaError = nil;     termsError = nil
         apiError = nil
     }
 }
