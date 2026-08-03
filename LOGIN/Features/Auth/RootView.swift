@@ -22,19 +22,27 @@ struct RootView: View {
     private var authFlow: some View {
         NavigationStack(path: Bindable(router).authPath) {
             authRoot
-                .navigationDestination(for: AppRouter.AuthDestination.self) { dest in
-                    switch dest {
-                    case .verifyOTP:
-                        VerifyOTPView(authManager: authManager)
-                    }
-                }
+//                .navigationDestination(for: AppRouter.AuthDestination.self) { dest in
+//                    switch dest {
+//                    case .verifyOTP:
+//                        VerifyOTPView(authManager: authManager)
+//                    }
+//                }
         }
         .sheet(item: Bindable(router).authSheet) { sheet in
             switch sheet {
             case .forgotPassword:
-                NavigationStack {
-                    ForgotPasswordView()
-                }
+                ForgotPasswordView()
+                    .presentationDetents([.fraction(0.72), .large])
+                    .presentationDragIndicator(.visible)
+                    .presentationCornerRadius(24)
+                    .presentationBackground(Color.ftdCardBackground)
+            case .verifyOTP:
+                VerifyOTPView(authManager: authManager)
+                    .presentationDetents([.fraction(0.70)])
+                    .presentationDragIndicator(.visible)
+                    .presentationCornerRadius(24)
+                    .presentationBackground(Color.ftdCardBackground)
             }
         }
     }

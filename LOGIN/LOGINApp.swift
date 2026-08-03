@@ -8,8 +8,10 @@ struct LOGINApp: App {
         // Uncomment to wipe stored tokens and test the full first-launch flow:
         // KeychainService().delete(key: .appToken)
         // KeychainService().delete(key: .accessToken)
-        let keychain   = KeychainService()
-//         keychain.delete(key: .appToken)
+          let keychain   = KeychainService()
+//        keychain.delete(key: .userData)
+//       keychain.delete(key: .deviceId)
+//        keychain.delete(key: .appToken)
 //         print("appToken cleared:", keychain.read(key: .appToken) ?? "nil")
         let apiClient  = APIClient(
             httpClient:     URLSessionHTTPClient(),

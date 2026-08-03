@@ -42,11 +42,12 @@ struct SignInView: View {
     private var userTypeSection: some View {
         @Bindable var vm = viewModel
         return FTDDropdownField(
-            label: String(localized: "Select User Type"),
-            placeholder: String(localized: "Select User Type"),
+            label: String(localized: "Choose User Type"),
+            placeholder: String(localized: "Choose User Type"),
             selection: $vm.selectedUserType,
             options: UserType.allCases,
-            optionLabel: { $0.displayName }
+            optionLabel: { $0.displayName },
+            optionIcon: { $0.systemImage }
         )
     }
 

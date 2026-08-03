@@ -31,9 +31,9 @@ struct SignUpView: View {
                 complianceSection
                 businessSection
                 addressSection
-                agreementsSection
                 apiErrorBanner
                 submitButton
+                termsDisclosure
             }
             .padding(.horizontal, DesignTokens.Spacing.screenHorizontal)
             .padding(.top, Layout.fieldSpacing)
@@ -52,7 +52,8 @@ struct SignUpView: View {
                 placeholder: String(localized: "User Type"),
                 selection: $vm.selectedUserType,
                 options: UserType.allCases,
-                optionLabel: { $0.displayName }
+                optionLabel: { $0.displayName },
+                optionIcon: { $0.systemImage }
             )
             FTDDropdownField(
                 label: String(localized: "Title *"),
@@ -71,14 +72,14 @@ struct SignUpView: View {
         @Bindable var vm = viewModel
         return HStack(alignment: .top, spacing: Layout.pairedSpacing) {
             FTDTextField(
-                label: String(localized: "First Name *"),
-                placeholder: String(localized: "First Name"),
+                label: "",
+                placeholder: String(localized: "First Name *"),
                 text: $vm.firstName,
                 errorMessage: vm.firstNameError
             )
             FTDTextField(
-                label: String(localized: "Last Name *"),
-                placeholder: String(localized: "Last Name"),
+                label: "",
+                placeholder: String(localized: "Last Name *"),
                 text: $vm.lastName,
                 errorMessage: vm.lastNameError
             )
@@ -92,36 +93,36 @@ struct SignUpView: View {
         return VStack(spacing: Layout.fieldSpacing) {
             HStack(alignment: .top, spacing: Layout.pairedSpacing) {
                 FTDTextField(
-                    label: String(localized: "Mobile No *"),
-                    placeholder: String(localized: "Mobile No"),
+                    label: "",
+                    placeholder: String(localized: "Mobile No *"),
                     text: $vm.mobile,
                     errorMessage: vm.mobileError,
                     keyboardType: .phonePad
                 )
                 FTDTextField(
-                    label: String(localized: "Landline No"),
+                    label: "",
                     placeholder: String(localized: "Landline No"),
                     text: $vm.landline,
                     keyboardType: .phonePad
                 )
             }
             FTDTextField(
-                label: String(localized: "Email *"),
-                placeholder: String(localized: "Email"),
+                label: "",
+                placeholder: String(localized: "Email *"),
                 text: $vm.email,
                 errorMessage: vm.emailError,
                 keyboardType: .emailAddress,
                 autocapitalization: .never
             )
             FTDTextField(
-                label: String(localized: "Website"),
+                label: "",
                 placeholder: String(localized: "Website"),
                 text: $vm.website,
                 keyboardType: .URL,
                 autocapitalization: .never
             )
             FTDTextField(
-                label: String(localized: "Designation"),
+                label: "",
                 placeholder: String(localized: "Designation"),
                 text: $vm.designation
             )
@@ -135,14 +136,14 @@ struct SignUpView: View {
         return HStack(alignment: .top, spacing: Layout.pairedSpacing) {
             FTDSecureField(
                 label: String(localized: "Password *"),
-                placeholder: String(localized: "Password"),
+                placeholder: "••••••••",
                 text: $vm.password,
                 isVisible: $vm.showPassword,
                 errorMessage: vm.passwordError
             )
             FTDSecureField(
                 label: String(localized: "Confirm Password *"),
-                placeholder: String(localized: "Confirm Password"),
+                placeholder: "••••••••",
                 text: $vm.confirmPassword,
                 isVisible: $vm.showConfirmPassword,
                 errorMessage: vm.confirmPasswordError
@@ -156,20 +157,20 @@ struct SignUpView: View {
         @Bindable var vm = viewModel
         return VStack(spacing: Layout.fieldSpacing) {
             FTDTextField(
-                label: String(localized: "PAN No *"),
-                placeholder: String(localized: "PAN No"),
+                label: "",
+                placeholder: String(localized: "PAN No *"),
                 text: $vm.panNumber,
                 errorMessage: vm.panNumberError,
                 autocapitalization: .characters
             )
             FTDTextField(
-                label: String(localized: "Name on PAN Card *"),
-                placeholder: String(localized: "Name on PAN Card"),
+                label: "",
+                placeholder: String(localized: "Name on PAN Card *"),
                 text: $vm.panCardName,
                 errorMessage: vm.panCardNameError
             )
             FTDTextField(
-                label: String(localized: "ID Card Number"),
+                label: "",
                 placeholder: String(localized: "ID Card Number"),
                 text: $vm.idCardNumber
             )
@@ -182,13 +183,13 @@ struct SignUpView: View {
         @Bindable var vm = viewModel
         return VStack(spacing: Layout.fieldSpacing) {
             FTDTextField(
-                label: String(localized: "Company Name *"),
-                placeholder: String(localized: "Company Name"),
+                label: "",
+                placeholder: String(localized: "Company Name *"),
                 text: $vm.companyName,
                 errorMessage: vm.companyNameError
             )
             FTDTextField(
-                label: String(localized: "GST No"),
+                label: "",
                 placeholder: String(localized: "GST No"),
                 text: $vm.gstNumber,
                 autocapitalization: .characters
@@ -202,22 +203,22 @@ struct SignUpView: View {
         @Bindable var vm = viewModel
         return VStack(spacing: Layout.fieldSpacing) {
             FTDTextField(
-                label: String(localized: "Address *"),
-                placeholder: String(localized: "Address"),
+                label: "",
+                placeholder: String(localized: "Address *"),
                 text: $vm.address,
                 errorMessage: vm.addressError
             )
             HStack(alignment: .top, spacing: Layout.pairedSpacing) {
                 FTDTextField(
-                    label: String(localized: "Pin Code *"),
-                    placeholder: String(localized: "Pin Code"),
+                    label: "",
+                    placeholder: String(localized: "Pin Code *"),
                     text: $vm.pinCode,
                     errorMessage: vm.pinCodeError,
                     keyboardType: .numberPad
                 )
                 FTDTextField(
-                    label: String(localized: "City *"),
-                    placeholder: String(localized: "City"),
+                    label: "",
+                    placeholder: String(localized: "City *"),
                     text: $vm.city,
                     errorMessage: vm.cityError
                 )
@@ -243,53 +244,18 @@ struct SignUpView: View {
         }
     }
 
-    // MARK: - Agreements
+    // MARK: - Terms Disclosure
 
-    private var agreementsSection: some View {
-        VStack(alignment: .leading, spacing: Layout.fieldSpacing) {
-            captchaRow
-            termsRow
-        }
-    }
-
-    private var captchaRow: some View {
-        @Bindable var vm = viewModel
-        return VStack(alignment: .leading, spacing: DesignTokens.Spacing.xs) {
-            Toggle(isOn: $vm.isCaptchaChecked) {
-                HStack(spacing: DesignTokens.Spacing.sm - 2) {
-                    Image(systemName: "checkmark.shield")
-                        .foregroundStyle(Color.ftdTextSecondary)
-                    Text(String(localized: "I'm not a robot"))
-                        .foregroundStyle(Color.ftdTextPrimary)
-                }
-            }
-            .toggleStyle(.checkboxStyle)
-            if let err = viewModel.captchaError {
-                Text(err).font(.caption).foregroundStyle(Color.ftdDestructiveRed)
-            }
-        }
-    }
-
-    private var termsRow: some View {
-        @Bindable var vm = viewModel
-        return VStack(alignment: .leading, spacing: DesignTokens.Spacing.xs) {
-            HStack(alignment: .top, spacing: DesignTokens.Spacing.inputVertical) {
-                Toggle(isOn: $vm.isTermsAccepted) { EmptyView() }
-                    .toggleStyle(.checkboxStyle)
-                    .frame(width: 24)
-                (
-                    Text("By clicking the Sign Up button, I agree to the ")
-                        .foregroundStyle(Color.ftdTextSecondary)
-                    + Text("Terms & Conditions")
-                        .foregroundStyle(Color.ftdAccentOrange)
-                )
+    private var termsDisclosure: some View {
+        VStack(spacing: DesignTokens.Spacing.xxs) {
+            Text(String(localized: "By clicking on the Sign Up button, I agree to the"))
                 .font(.caption)
-                .multilineTextAlignment(.leading)
-            }
-            if let err = viewModel.termsError {
-                Text(err).font(.caption).foregroundStyle(Color.ftdDestructiveRed)
-            }
+                .foregroundStyle(Color.ftdTextSecondary)
+            Text(String(localized: "Terms & Condition"))
+                .font(.caption)
+                .foregroundStyle(Color.ftdAccentTeal)
         }
+        .multilineTextAlignment(.center)
     }
 
     // MARK: - API Error + Submit
@@ -319,26 +285,3 @@ struct SignUpView: View {
     }
 }
 
-// MARK: - Checkbox Toggle Style
-
-private struct CheckboxToggleStyle: ToggleStyle {
-    func makeBody(configuration: Configuration) -> some View {
-        Button {
-            configuration.isOn.toggle()
-        } label: {
-            HStack(alignment: .firstTextBaseline, spacing: DesignTokens.Spacing.sm) {
-                Image(systemName: configuration.isOn ? "checkmark.square.fill" : "square")
-                    .foregroundStyle(
-                        configuration.isOn ? Color.ftdAccentOrange : Color.ftdBorder
-                    )
-                    .font(.system(size: 20))
-                configuration.label
-            }
-        }
-        .buttonStyle(.plain)
-    }
-}
-
-extension ToggleStyle where Self == CheckboxToggleStyle {
-    static var checkboxStyle: CheckboxToggleStyle { CheckboxToggleStyle() }
-}

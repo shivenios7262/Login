@@ -35,7 +35,7 @@ final class SignInViewModel {
                 email: email.trimmingCharacters(in: .whitespaces),
                 password: password
             )
-            router.push(.verifyOTP)
+            router.presentAuth(.verifyOTP)
         } catch let error as NetworkError {
             apiError = error.errorDescription
         } catch {

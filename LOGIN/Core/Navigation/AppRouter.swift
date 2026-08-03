@@ -19,11 +19,12 @@ final class AppRouter {
     // MARK: - Destination types
 
     enum AuthDestination: Hashable {
-        case verifyOTP
+        // reserved for future push destinations in the auth flow
     }
 
     enum AuthSheet: Identifiable {
         case forgotPassword
+        case verifyOTP
         var id: Self { self }
     }
 
@@ -37,9 +38,9 @@ final class AppRouter {
 
     // MARK: - Navigation actions
 
-    func push(_ destination: AuthDestination) {
-        authPath.append(destination)
-    }
+//    func push(_ destination: AuthDestination) {
+//        authPath.append(destination)
+//    }
 
     func presentAuth(_ sheet: AuthSheet) {
         authSheet = sheet

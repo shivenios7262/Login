@@ -7,14 +7,31 @@ struct AuthContainerView: View {
     @State private var selectedTab: AuthTab = .signIn
 
     private enum Layout {
-        static let maxWidthRegular: CGFloat         = 430
-        static let logoTopPadding: CGFloat          = 34
-        static let logoWidth: CGFloat               = 100//120
-        static let tabContainerCornerRadius: CGFloat = DesignTokens.Radius.button
-        static let tabItemCornerRadius: CGFloat     = DesignTokens.Radius.field
-        static let tabItemHeight: CGFloat           = 40
-        static let tabInset: CGFloat                = 2
-        static let backgroundMapHeightRatio: CGFloat = 0.35
+        // design.md §2a (iPad adaptive): promoted to DesignTokens.Layout — shared across all screens
+        // static let maxWidthRegular: CGFloat = 430
+        static let maxWidthRegular: CGFloat          = DesignTokens.Layout.maxWidthRegular
+
+        // design.md §4 (magic numbers): 34pt logo top offset, mapped to DesignTokens.Spacing.xxxl (36) is closest;
+        // keeping exact value here until a semantic token is confirmed with designer
+        static let logoTopPadding: CGFloat           = 34
+
+        // design.md §4 (magic numbers): mapped to DesignTokens.Size
+        // static let logoWidth: CGFloat = 100//120
+        static let logoWidth: CGFloat                = DesignTokens.Size.logoWidth
+
+        static let tabContainerCornerRadius: CGFloat = DesignTokens.Radius.button  // ✅
+        static let tabItemCornerRadius: CGFloat      = DesignTokens.Radius.field   // ✅
+
+        // design.md §4 (magic numbers): mapped to DesignTokens.Size
+        // static let tabItemHeight: CGFloat = 40
+        static let tabItemHeight: CGFloat            = DesignTokens.Size.tabItemHeight
+
+        // design.md §4 (magic numbers): Spacing.xxs == 2
+        // static let tabInset: CGFloat = 2
+        static let tabInset: CGFloat                 = DesignTokens.Spacing.xxs
+
+        // design.md §4: dead constant — only referenced in commented-out code below (lines ~38)
+        // static let backgroundMapHeightRatio: CGFloat = 0.35
     }
 
     enum AuthTab: CaseIterable {
@@ -35,14 +52,13 @@ struct AuthContainerView: View {
             Image("dottedMap")
                 .resizable()
                 .scaledToFill()
-//                .frame(maxWidth: .infinity)
-//                .frame(height: UIScreen.main.bounds.height * Layout.backgroundMapHeightRatio)
-                .containerRelativeFrame(.vertical) { height, _ in height * 0.5 }
+                .containerRelativeFrame(.vertical, alignment: .top) { height, _ in height * (440.0 / 932.0) }
                 .frame(maxWidth: .infinity, alignment: .top)
                 .clipped()
                 .opacity(0.95)
                 .ignoresSafeArea(edges: .top)
-            
+                .padding(.top, 0)
+                .padding(.horizontal, 4)
            
 
             ScrollView {
@@ -60,7 +76,9 @@ struct AuthContainerView: View {
             .background(Color.clear)
             .scrollContentBackground(.hidden)
         }
-        .navigationBarHidden(true)
+        // design.md §2a (SwiftUI only): .navigationBarHidden deprecated in iOS 16+ — replaced with .toolbar modifier
+        // .navigationBarHidden(true)
+        .toolbar(.hidden, for: .navigationBar)
         .background(Color.ftdCardBackground.ignoresSafeArea())
     }
 
@@ -74,13 +92,18 @@ struct AuthContainerView: View {
                 .frame(width: Layout.logoWidth)
                 .padding(.top, Layout.logoTopPadding)
 
-            Text("Welcome to FTD Travel")
-                .font(.title)
-                .fontWeight(.bold)
+            // design.md §2a (localization): hardcoded string replaced — key must exist in .xcstrings catalog
+            // Text("Welcome to FTD Travel")
+            Text(String(localized: "auth.welcome.title"))
+                // .title is 28pt semibold in SF Pro and scales with Dynamic Type — no fixed-size token needed
+                .font(.title.weight(.semibold))
+                //.fontWeight(.semibold)
                 .foregroundStyle(Color.ftdTextPrimary)
                 .padding(.top, DesignTokens.Spacing.md)
 
-            Text("Your next journey begins here")
+            // design.md §2a (localization): hardcoded string replaced — key must exist in .xcstrings catalog
+            // Text("Your next journey begins here")
+            Text(String(localized: "auth.welcome.subtitle"))
                 .font(.subheadline)
                 .foregroundStyle(Color.ftdTextSecondary)
         }
@@ -109,7 +132,7 @@ struct AuthContainerView: View {
                         .clipShape(RoundedRectangle(cornerRadius: Layout.tabItemCornerRadius))
                         .overlay(
                             RoundedRectangle(cornerRadius: Layout.tabItemCornerRadius)
-                                .stroke(selectedTab == tab ? Color.ftdAccentOrange : Color.clear, lineWidth: 1.5)
+                                .stroke(selectedTab == tab ? Color.ftdAccentOrange : Color.clear, lineWidth: 1.0)
                         )
                 }
                 .buttonStyle(.plain)
@@ -120,7 +143,7 @@ struct AuthContainerView: View {
         .clipShape(RoundedRectangle(cornerRadius: Layout.tabContainerCornerRadius))
         .overlay(
             RoundedRectangle(cornerRadius: Layout.tabContainerCornerRadius)
-                .stroke(Color.ftdAccentOrange.opacity(0.45), lineWidth: 1)
+                .stroke(Color.ftdAccentOrangeAlpha/*.opacity(0.45)*/, lineWidth: 1)
         )
     }
 
@@ -138,6 +161,8 @@ struct AuthContainerView: View {
 
     // MARK: - Actions
 
+    // design.md §2b (architecture): navigation decision — should move to an AuthContainerViewModel/coordinator
+    // Tracked: AuthContainerView needs a ViewModel to own tab-switch logic; keeping here temporarily
     private func switchToSignIn() {
         withAnimation(.easeInOut(duration: DesignTokens.Animation.standard)) {
             selectedTab = .signIn

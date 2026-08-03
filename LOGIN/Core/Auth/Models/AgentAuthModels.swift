@@ -73,28 +73,43 @@ struct AgentLoginData: Codable, Sendable {
 struct AgentLoginResponse: Codable, Sendable {
     let status: Bool
     let message: String?
+    let errorCode: Int?
+    let errorDesc: String?
     let data: AgentLoginData?
 
-    enum CodingKeys: String, CodingKey { case status, message, data }
+    // API sends "message" on success, "ErrorDesc"/"ErrorCode" on failure.
+    var serverMessage: String? { message ?? errorDesc }
 
-    nonisolated init(status: Bool, message: String?, data: AgentLoginData?) {
-        self.status = status
-        self.message = message
-        self.data = data
+    enum CodingKeys: String, CodingKey {
+        case status, message, data
+        case errorCode = "ErrorCode"
+        case errorDesc = "ErrorDesc"
+    }
+
+    nonisolated init(status: Bool, message: String?, errorCode: Int?, errorDesc: String?, data: AgentLoginData?) {
+        self.status    = status
+        self.message   = message
+        self.errorCode = errorCode
+        self.errorDesc = errorDesc
+        self.data      = data
     }
 
     nonisolated init(from decoder: any Decoder) throws {
         let c = try decoder.container(keyedBy: CodingKeys.self)
-        status  = try c.decode(Bool.self, forKey: .status)
-        message = try c.decodeIfPresent(String.self,        forKey: .message)
-        data    = try c.decodeIfPresent(AgentLoginData.self, forKey: .data)
+        status    = try c.decode(Bool.self, forKey: .status)
+        message   = try c.decodeIfPresent(String.self,        forKey: .message)
+        errorCode = try c.decodeIfPresent(Int.self,           forKey: .errorCode)
+        errorDesc = try c.decodeIfPresent(String.self,        forKey: .errorDesc)
+        data      = try c.decodeIfPresent(AgentLoginData.self, forKey: .data)
     }
 
     nonisolated func encode(to encoder: any Encoder) throws {
         var c = encoder.container(keyedBy: CodingKeys.self)
         try c.encode(status, forKey: .status)
-        try c.encodeIfPresent(message, forKey: .message)
-        try c.encodeIfPresent(data,    forKey: .data)
+        try c.encodeIfPresent(message,   forKey: .message)
+        try c.encodeIfPresent(errorCode, forKey: .errorCode)
+        try c.encodeIfPresent(errorDesc, forKey: .errorDesc)
+        try c.encodeIfPresent(data,      forKey: .data)
     }
 }
 
@@ -266,28 +281,42 @@ struct VerifyOTPRequest: Codable, Sendable {
 struct VerifyOTPResponse: Codable, Sendable {
     let status: Bool
     let message: String?
+    let errorCode: Int?
+    let errorDesc: String?
     let data: VerifyOTPData?
 
-    enum CodingKeys: String, CodingKey { case status, message, data }
+    var serverMessage: String? { message ?? errorDesc }
 
-    nonisolated init(status: Bool, message: String?, data: VerifyOTPData?) {
-        self.status = status
-        self.message = message
-        self.data = data
+    enum CodingKeys: String, CodingKey {
+        case status, message, data
+        case errorCode = "ErrorCode"
+        case errorDesc = "ErrorDesc"
+    }
+
+    nonisolated init(status: Bool, message: String?, errorCode: Int?, errorDesc: String?, data: VerifyOTPData?) {
+        self.status    = status
+        self.message   = message
+        self.errorCode = errorCode
+        self.errorDesc = errorDesc
+        self.data      = data
     }
 
     nonisolated init(from decoder: any Decoder) throws {
         let c = try decoder.container(keyedBy: CodingKeys.self)
-        status  = try c.decode(Bool.self, forKey: .status)
-        message = try c.decodeIfPresent(String.self,        forKey: .message)
-        data    = try c.decodeIfPresent(VerifyOTPData.self, forKey: .data)
+        status    = try c.decode(Bool.self, forKey: .status)
+        message   = try c.decodeIfPresent(String.self,       forKey: .message)
+        errorCode = try c.decodeIfPresent(Int.self,          forKey: .errorCode)
+        errorDesc = try c.decodeIfPresent(String.self,       forKey: .errorDesc)
+        data      = try c.decodeIfPresent(VerifyOTPData.self, forKey: .data)
     }
 
     nonisolated func encode(to encoder: any Encoder) throws {
         var c = encoder.container(keyedBy: CodingKeys.self)
         try c.encode(status, forKey: .status)
-        try c.encodeIfPresent(message, forKey: .message)
-        try c.encodeIfPresent(data,    forKey: .data)
+        try c.encodeIfPresent(message,   forKey: .message)
+        try c.encodeIfPresent(errorCode, forKey: .errorCode)
+        try c.encodeIfPresent(errorDesc, forKey: .errorDesc)
+        try c.encodeIfPresent(data,      forKey: .data)
     }
 }
 
@@ -318,28 +347,42 @@ struct ResendOTPRequest: Codable, Sendable {
 struct ResendOTPResponse: Codable, Sendable {
     let status: Bool
     let message: String?
+    let errorCode: Int?
+    let errorDesc: String?
     let data: AgentLoginData?
 
-    enum CodingKeys: String, CodingKey { case status, message, data }
+    var serverMessage: String? { message ?? errorDesc }
 
-    nonisolated init(status: Bool, message: String?, data: AgentLoginData?) {
-        self.status = status
-        self.message = message
-        self.data = data
+    enum CodingKeys: String, CodingKey {
+        case status, message, data
+        case errorCode = "ErrorCode"
+        case errorDesc = "ErrorDesc"
+    }
+
+    nonisolated init(status: Bool, message: String?, errorCode: Int?, errorDesc: String?, data: AgentLoginData?) {
+        self.status    = status
+        self.message   = message
+        self.errorCode = errorCode
+        self.errorDesc = errorDesc
+        self.data      = data
     }
 
     nonisolated init(from decoder: any Decoder) throws {
         let c = try decoder.container(keyedBy: CodingKeys.self)
-        status  = try c.decode(Bool.self, forKey: .status)
-        message = try c.decodeIfPresent(String.self,        forKey: .message)
-        data    = try c.decodeIfPresent(AgentLoginData.self, forKey: .data)
+        status    = try c.decode(Bool.self, forKey: .status)
+        message   = try c.decodeIfPresent(String.self,        forKey: .message)
+        errorCode = try c.decodeIfPresent(Int.self,           forKey: .errorCode)
+        errorDesc = try c.decodeIfPresent(String.self,        forKey: .errorDesc)
+        data      = try c.decodeIfPresent(AgentLoginData.self, forKey: .data)
     }
 
     nonisolated func encode(to encoder: any Encoder) throws {
         var c = encoder.container(keyedBy: CodingKeys.self)
         try c.encode(status, forKey: .status)
-        try c.encodeIfPresent(message, forKey: .message)
-        try c.encodeIfPresent(data,    forKey: .data)
+        try c.encodeIfPresent(message,   forKey: .message)
+        try c.encodeIfPresent(errorCode, forKey: .errorCode)
+        try c.encodeIfPresent(errorDesc, forKey: .errorDesc)
+        try c.encodeIfPresent(data,      forKey: .data)
     }
 }
 
@@ -398,27 +441,41 @@ struct RefreshTokenData: Codable, Sendable {
 struct RefreshTokenResponse: Codable, Sendable {
     let status: Bool
     let message: String?
+    let errorCode: Int?
+    let errorDesc: String?
     let data: RefreshTokenData?
 
-    enum CodingKeys: String, CodingKey { case status, message, data }
+    var serverMessage: String? { message ?? errorDesc }
 
-    nonisolated init(status: Bool, message: String?, data: RefreshTokenData?) {
-        self.status = status
-        self.message = message
-        self.data = data
+    enum CodingKeys: String, CodingKey {
+        case status, message, data
+        case errorCode = "ErrorCode"
+        case errorDesc = "ErrorDesc"
+    }
+
+    nonisolated init(status: Bool, message: String?, errorCode: Int?, errorDesc: String?, data: RefreshTokenData?) {
+        self.status    = status
+        self.message   = message
+        self.errorCode = errorCode
+        self.errorDesc = errorDesc
+        self.data      = data
     }
 
     nonisolated init(from decoder: any Decoder) throws {
         let c = try decoder.container(keyedBy: CodingKeys.self)
-        status  = try c.decode(Bool.self, forKey: .status)
-        message = try c.decodeIfPresent(String.self,         forKey: .message)
-        data    = try c.decodeIfPresent(RefreshTokenData.self, forKey: .data)
+        status    = try c.decode(Bool.self, forKey: .status)
+        message   = try c.decodeIfPresent(String.self,           forKey: .message)
+        errorCode = try c.decodeIfPresent(Int.self,              forKey: .errorCode)
+        errorDesc = try c.decodeIfPresent(String.self,           forKey: .errorDesc)
+        data      = try c.decodeIfPresent(RefreshTokenData.self, forKey: .data)
     }
 
     nonisolated func encode(to encoder: any Encoder) throws {
         var c = encoder.container(keyedBy: CodingKeys.self)
         try c.encode(status, forKey: .status)
-        try c.encodeIfPresent(message, forKey: .message)
-        try c.encodeIfPresent(data,    forKey: .data)
+        try c.encodeIfPresent(message,   forKey: .message)
+        try c.encodeIfPresent(errorCode, forKey: .errorCode)
+        try c.encodeIfPresent(errorDesc, forKey: .errorDesc)
+        try c.encodeIfPresent(data,      forKey: .data)
     }
 }

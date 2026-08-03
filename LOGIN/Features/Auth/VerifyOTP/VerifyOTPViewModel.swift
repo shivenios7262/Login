@@ -84,7 +84,7 @@ final class VerifyOTPViewModel {
     // MARK: - Private
 
     private func startResendTimer() {
-        resendCooldown = 60
+        resendCooldown = 180
         timerTask?.cancel()
         timerTask = Task { [weak self] in
             while let self, self.resendCooldown > 0 {

@@ -17,10 +17,10 @@ enum UserType: String, CaseIterable, Hashable {
 
     var systemImage: String {
         switch self {
-        case .travelAgent:  return "airplane"
-        case .customer:     return "person"
-        case .distributor:  return "building.2"
-        case .sales:        return "chart.bar"
+        case .travelAgent:  return "agent"
+        case .customer:     return "customer"
+        case .distributor:  return "distributor"
+        case .sales:        return "sales"
         }
     }
 

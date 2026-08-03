@@ -36,12 +36,12 @@ final class AuthManager {
 
         guard response.status, let data = response.data else {
             throw NetworkError.serverError(
-                response.message ?? String(localized: "Login failed. Please check your credentials.")
+                response.serverMessage ?? String(localized: "Login failed. Please check your credentials.")
             )
         }
 
         pendingAgentNo = data.agentNo
-        pendingOTPEmail = data.email
+        pendingOTPEmail = data.email ?? email
     }
 
     func verifyOTP(otp: String) async throws {
@@ -62,7 +62,7 @@ final class AuthManager {
 
         guard response.status, let data = response.data else {
             throw NetworkError.serverError(
-                response.message ?? String(localized: "OTP verification failed.")
+                response.serverMessage ?? String(localized: "OTP verification failed.")
             )
         }
 
@@ -94,10 +94,10 @@ final class AuthManager {
         let response: ResendOTPResponse = try await apiClient.send(.resendOTP(request))
         if !response.status {
             throw NetworkError.serverError(
-                response.message ?? String(localized: "Failed to resend OTP.")
+                response.serverMessage ?? String(localized: "Failed to resend OTP.")
             )
         }
-        return response.message
+        return response.serverMessage
     }
 
     func fetchBookings(request: AgentBookingsRequest) async throws -> AgentBookingsResponse {
@@ -120,7 +120,7 @@ final class AuthManager {
         let response: GenericAPIResponse = try await apiClient.send(.agentRegister(request))
         guard response.status else {
             throw NetworkError.serverError(
-                response.message ?? String(localized: "Registration failed. Please try again.")
+                response.serverMessage ?? String(localized: "Registration failed. Please try again.")
             )
         }
     }
@@ -168,11 +168,11 @@ final class AuthManager {
 
     private func resolveDeviceId() -> String {
         // Prefer the hardware-stable vendor ID; fall back to a stored UUID if unavailable.
-        if let vendorId = UIDevice.current.identifierForVendor?.uuidString {
-            keychain.save(key: .deviceId, value: vendorId)
-            return vendorId
-        }
-        if let existing = keychain.read(key: .deviceId) { return existing }
+//        if let vendorId = UIDevice.current.identifierForVendor?.uuidString {
+//            keychain.save(key: .deviceId, value: vendorId)
+//            return vendorId
+//        }
+//        if let existing = keychain.read(key: .deviceId) { return existing }
         let newId = UUID().uuidString
         keychain.save(key: .deviceId, value: newId)
         return newId

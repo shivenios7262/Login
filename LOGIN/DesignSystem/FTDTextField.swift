@@ -7,21 +7,39 @@ struct FTDTextField: View {
     var errorMessage: String?
     var keyboardType: UIKeyboardType = .default
     var autocapitalization: TextInputAutocapitalization = .sentences
+    var placeholderColor: Color = Color.ftdTextSecondary
+    var placeholderFont: Font = Font.ftdPlaceholder
+
+    private func buildPrompt() -> Text {
+        let parts = placeholder.components(separatedBy: "*")
+        guard parts.count > 1 else {
+            return Text(placeholder).foregroundStyle(placeholderColor).font(placeholderFont)
+        }
+        var result = Text(parts[0]).foregroundStyle(placeholderColor)
+        for part in parts.dropFirst() {
+            result = result + Text("*").foregroundStyle(Color.ftdDestructiveRed)
+            if !part.isEmpty {
+                result = result + Text(part).foregroundStyle(placeholderColor)
+            }
+        }
+        return result.font(placeholderFont)
+    }
 
     var body: some View {
         VStack(alignment: .leading, spacing: DesignTokens.Spacing.xs) {
             VStack(alignment: .leading, spacing: DesignTokens.Spacing.inputLabelGap) {
                 if !label.isEmpty {
-                    Text(label)
+                    ftdRequiredLabel(label)
                         .font(.caption)
-                        .foregroundStyle(Color.ftdTextSecondary)
                 }
 
-                TextField(placeholder, text: $text)
-                    .keyboardType(keyboardType)
-                    .textInputAutocapitalization(autocapitalization)
-                    .autocorrectionDisabled()
-                    .frame(maxWidth: .infinity)
+                TextField(text: $text, prompt: buildPrompt()) {
+                    Text(placeholder)
+                }
+                .keyboardType(keyboardType)
+                .textInputAutocapitalization(autocapitalization)
+                .autocorrectionDisabled()
+                .frame(maxWidth: .infinity)
             }
             .ftdInputContainer(hasError: errorMessage != nil)
 
