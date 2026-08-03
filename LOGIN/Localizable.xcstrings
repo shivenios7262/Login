@@ -1,0 +1,30 @@
+{
+  "sourceLanguage" : "en",
+  "strings" : {
+    "auth.welcome.title" : {
+      "comment" : "Auth screen header — design.md §2a (localization)",
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Welcome to FTD Travel"
+          }
+        }
+      }
+    },
+    "auth.welcome.subtitle" : {
+      "comment" : "Auth screen subheader — design.md §2a (localization)",
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Your next journey begins here"
+          }
+        }
+      }
+    }
+  },
+  "version" : "1.0"
+}

@@ -8,15 +8,15 @@ final class ForgotPasswordViewModel {
 
     private(set) var emailError: String? = nil
     private(set) var isLoading: Bool = false
-    var showCheckEmail: Bool = false
+    private(set) var showSuccess: Bool = false
 
-    func sendOTP() async {
+    func sendResetLink() async {
         guard validate() else { return }
         isLoading = true
         defer { isLoading = false }
-        // TODO: wire to forgot-password OTP endpoint once available
+        // TODO: wire to forgot-password endpoint once available
         try? await Task.sleep(for: .milliseconds(800))
-        showCheckEmail = true
+        showSuccess = true
     }
 
     private func validate() -> Bool {

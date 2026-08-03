@@ -6,6 +6,7 @@ struct FTDDropdownField<T: Hashable>: View {
     @Binding var selection: T
     let options: [T]
     let optionLabel: (T) -> String
+    var optionIcon: ((T) -> String)?
     var errorMessage: String?
 
     @State private var isPresented = false
@@ -31,6 +32,8 @@ struct FTDDropdownField<T: Hashable>: View {
                         Image(systemName: "chevron.down")
                             .font(.caption)
                             .foregroundStyle(Color.ftdTextSecondary)
+                            .padding(.trailing, DesignTokens.Spacing.inputHorizontal)
+                            .padding(.bottom)
                     }
                 }
                 .ftdInputContainer(hasError: errorMessage != nil)
@@ -48,36 +51,83 @@ struct FTDDropdownField<T: Hashable>: View {
             }
         }
         .sheet(isPresented: $isPresented) {
-            NavigationStack {
-                List(options, id: \.self) { option in
+            VStack(spacing: 0) {
+                HStack(alignment: .center) {
+                    Text(label)
+                        .font(.title2)
+                        .fontWeight(.bold)
+                        .foregroundStyle(Color.ftdTextPrimary)
+
+                    Spacer()
+
                     Button {
-                        selection = option
                         isPresented = false
                     } label: {
-                        HStack {
-                            Text(optionLabel(option))
-                                .foregroundStyle(Color.ftdTextPrimary)
-                            Spacer()
-                            Image(
-                                systemName: selection == option
-                                    ? "checkmark.circle.fill"
-                                    : "circle"
+                        Image(systemName: "checkmark")
+                            .font(.body.weight(.semibold))
+                            .foregroundStyle(Color.ftdTextPrimary)
+                            .padding(10)
+                            .overlay(
+                                RoundedRectangle(cornerRadius: 10)
+                                    .stroke(Color.ftdBorder, lineWidth: 1.5)
                             )
-                            .foregroundStyle(
-                                selection == option ? Color.ftdAccentOrange : Color.ftdBorder
-                            )
-                        }
                     }
+                    .buttonStyle(.plain)
                 }
-                .listStyle(.plain)
-                .navigationTitle(Text(label))
-                .navigationBarTitleDisplayMode(.inline)
-                .toolbar {
-                    ToolbarItem(placement: .cancellationAction) {
-                        Button(String(localized: "Cancel")) {
-                            isPresented = false
+                .padding(.horizontal, 20)
+                .padding(.top, 20)
+                .padding(.bottom, 16)
+
+                Divider()
+
+                ScrollView {
+                    LazyVStack(spacing: 0) {
+                        ForEach(options, id: \.self) { option in
+                            Button {
+                                selection = option
+                            } label: {
+                                HStack(spacing: 14) {
+                                    if let iconName = optionIcon?(option) {
+                                        Image(systemName: iconName)
+                                            .font(.system(size: 20))
+                                            .foregroundStyle(
+                                                selection == option ? Color.ftdAccentOrange : Color.ftdTextSecondary
+                                            )
+                                            .frame(width: 28, height: 28)
+                                    }
+
+                                    Text(optionLabel(option))
+                                        .font(.body)
+                                        .foregroundStyle(Color.ftdTextPrimary)
+                                        .frame(maxWidth: .infinity, alignment: .leading)
+
+                                    ZStack {
+                                        Circle()
+                                            .stroke(
+                                                selection == option ? Color.ftdAccentOrange : Color.ftdBorder,
+                                                lineWidth: 1.5
+                                            )
+                                            .frame(width: 22, height: 22)
+                                        if selection == option {
+                                            Circle()
+                                                .fill(Color.ftdAccentOrange)
+                                                .frame(width: 12, height: 12)
+                                        }
+                                    }
+                                }
+                                .padding(.horizontal, 20)
+                                .padding(.vertical, 16)
+                                .background(
+                                    selection == option
+                                        ? Color.ftdAccentOrange.opacity(0.08)
+                                        : Color.clear
+                                )
+                            }
+                            .buttonStyle(.plain)
+
+                            Divider()
+                                .padding(.leading, optionIcon != nil ? 62 : 20)
                         }
-                        .foregroundStyle(Color.ftdAccentOrange)
                     }
                 }
             }
