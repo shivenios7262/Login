@@ -1,0 +1,1668 @@
+{
+  "info": {
+    "_postman_id": "53b59aa6-edda-44be-88b9-edc87a200f67",
+    "name": "FTD Mobile APP",
+    "schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json",
+    "_exporter_id": "6271541"
+  },
+  "item": [
+    {
+      "name": "Agent Auth",
+      "item": [
+        {
+          "name": "App Sign in",
+          "request": {
+            "method": "POST",
+            "header": [],
+            "body": {
+              "mode": "raw",
+              "raw": "// {\r\n//     \"appType\": 2,\r\n//     \"appUser\": \"ftdtest\",\r\n//     \"appPassword\": \"123456\",\r\n//     \"appVersion\": \"1.0\"\r\n// }\r\n{\r\n    \"appType\": 1,\r\n    \"appUser\": \"ftdiostest\",\r\n    \"appPassword\": \"123456\",\r\n    \"appVersion\": \"1.0\",\r\n    \"deviceID\"  : \"ios_12345\"\r\n}\r\n\r\n// {\r\n//     \"appType\": 1,\r\n//     \"appUser\": \"test_user_ios\",\r\n//     \"appPassword\": \"123456\",\r\n//     \"appVersion\": \"1.1.1\",\r\n//     \"deviceID\" : \"ios_5432\"\r\n// }",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            },
+            "url": {
+              "raw": "http://13.200.42.214/book/mapp/auth/app_sigin",
+              "protocol": "http",
+              "host": [
+                "13",
+                "200",
+                "42",
+                "214"
+              ],
+              "path": [
+                "book",
+                "mapp",
+                "auth",
+                "app_sigin"
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "Agent Login",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "App-Token",
+                "value": "eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJpZCI6IjIiLCJhcHBUeXBlIjoiMSIsImFwcFVzZXIiOiJmdGRpb3N0ZXN0IiwiYXBwVmVyc2lvbiI6IjEuMCJ9.mJWgUwIU-doZyr_N1vpqqYJ3fM-H9mheOzKvRDLe8aI",
+                "type": "text"
+              },
+              {
+                "key": "Content-Type",
+                "value": "application/json",
+                "type": "text"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\r\n    \"email\": \"support@ftd.travel\",\r\n    \"password\": \"Praveen01\",\r\n    \"device_id\": \"ios_12345\"\r\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            },
+            "url": {
+              "raw": "http://13.200.42.214/book/mapp/mapp_b2b/agent_login",
+              "protocol": "http",
+              "host": [
+                "13",
+                "200",
+                "42",
+                "214"
+              ],
+              "path": [
+                "book",
+                "mapp",
+                "mapp_b2b",
+                "agent_login"
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "Agent Verify OTP",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "App-Token",
+                "value": "{{json_web_token_05bq}}",
+                "type": "text"
+              },
+              {
+                "key": "Content-Type",
+                "value": "application/json",
+                "type": "text"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\r\n    \"agent_no\": \"SMSA18012166\",\r\n    \"otp\": \"1234\",\r\n    \"device_id\": \"ios_12345\",\r\n    \"screen_size\": \"1080x2400\",\r\n    \"device_model\": \"Samsung Galaxy S24 Ultra\",\r\n    \"os_version\": \"Android 15\"\r\n}"
+            },
+            "url": {
+              "raw": "http://13.200.42.214/book/mapp/mapp_b2b/verify_otp",
+              "protocol": "http",
+              "host": [
+                "13",
+                "200",
+                "42",
+                "214"
+              ],
+              "path": [
+                "book",
+                "mapp",
+                "mapp_b2b",
+                "verify_otp"
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "Agent Resend OTP",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "App-Token",
+                "value": "{{json_web_token_05bq}}",
+                "type": "text"
+              },
+              {
+                "key": "Content-Type",
+                "value": "application/json",
+                "type": "text"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\r\n    \"agent_no\": \"SMSA18012166\"\r\n}"
+            },
+            "url": {
+              "raw": "http://13.200.42.214/book/mapp/mapp_b2b/resend_otp",
+              "protocol": "http",
+              "host": [
+                "13",
+                "200",
+                "42",
+                "214"
+              ],
+              "path": [
+                "book",
+                "mapp",
+                "mapp_b2b",
+                "resend_otp"
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "Agent Get OTP",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "App-Token",
+                "value": "{{json_web_token_05bq}}",
+                "type": "text"
+              },
+              {
+                "key": "Content-Type",
+                "value": "application/json",
+                "type": "text"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\r\n    \"agent_no\": \"SMSA18012166\"\r\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            },
+            "url": {
+              "raw": "http://13.200.42.214/book/mapp/mapp_b2b/get_otp",
+              "protocol": "http",
+              "host": [
+                "13",
+                "200",
+                "42",
+                "214"
+              ],
+              "path": [
+                "book",
+                "mapp",
+                "mapp_b2b",
+                "get_otp"
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "Agent Refresh Token",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "App-Token",
+                "value": "{{json_web_token_05bq}}",
+                "type": "text"
+              },
+              {
+                "key": "Content-Type",
+                "value": "application/json",
+                "type": "text"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\r\n    \"refresh_token\": \"b5227fa7af780cc728717735d2171fe9deb51d6b5e6888946ce3d03729ac1344869a13b2612227f7e47cae48d8678f0966ff56c27b1f84a447d318b17c23da7e\"\r\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            },
+            "url": {
+              "raw": "http://13.200.42.214/book/mapp/mapp_b2b/refresh_token",
+              "protocol": "http",
+              "host": [
+                "13",
+                "200",
+                "42",
+                "214"
+              ],
+              "path": [
+                "book",
+                "mapp",
+                "mapp_b2b",
+                "refresh_token"
+              ]
+            }
+          },
+          "response": []
+        }
+      ]
+    },
+    {
+      "name": "Agent B2B",
+      "item": [
+        {
+          "name": "Agent Bookings",
+          "request": {
+            "auth": {
+              "type": "bearer",
+              "bearer": [
+                {
+                  "key": "token",
+                  "value": "{{auth_secret_0n7w}}",
+                  "type": "string"
+                }
+              ]
+            },
+            "method": "POST",
+            "header": [
+              {
+                "key": "App-Token",
+                "value": "{{json_web_token_05bq}}",
+                "type": "text"
+              },
+              {
+                "key": "Content-Type",
+                "value": "application/json",
+                "type": "text"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\r\n    \"search_type\": 1,\r\n    // Flight Search\r\n    \"first_name\": \"TJA XII\",\r\n    \"pnr\": \"GH6TUR\",\r\n    \"status\": \"confirmed\",\r\n    \"bookingdate\": \"2026-07-07\",\r\n    \"uniquerefno\": \"FTD521QJV9S44PS\",\r\n    \"depart_date\": \"2026-07-29\",\r\n    \"from_date\": \"2026-07-01\",\r\n    \"to_date\": \"2026-07-31\",\r\n    \"airline\": \"SG\",\r\n    //Bus Search\r\n    \"b_Booking_Status\": \"Success\",\r\n    \"b_from_date\": \"2026-04-01\",\r\n    \"b_to_date\": \"2026-07-31\",\r\n    \"b_booking_date\": \"2026-05-20 06:21:51\",\r\n    \"b_uniqueRefNo\": \"SMSY2605207JKUT062031\",\r\n    \"b_booking_reference_no1\": \"6BD6Y4EM\",\r\n    \"b_pass_name\": \"ADANI VIJA KUMAR\",\r\n    \"b_depart_date\": \"2026-05-31\",\r\n    // Cab Search\r\n    \"c_pnr\": \"\",\r\n    \"c_uniquerefno\": \"SR2605077DZEI095355\",\r\n    \"c_from_date\": \"2026-02-01\",\r\n    \"c_to_date\": \"2026-07-31\",\r\n    \"c_depart_date\": \"2026-05-27\",\r\n    \"c_status\": \"booked\",\r\n    \"c_first_name\": \"B L\",\r\n    \"c_bookingdate\": \"2026-05-07 15:33:00\",\r\n    \"car_type\": \"suv\",\r\n    //Hotel Search\r\n    \"pnr_hotel\": \"7358301290652\",\r\n    \"uniquerefno_hotel\": \"SQ2601287WFSB094709\",\r\n    \"check_in_date\": \"2026-03-24\",\r\n    \"check_out_date\": \"2026-03-25\",\r\n    \"hotel_status\": \"Confirmed\",\r\n    //Insurance Search\r\n    \"reference_insurance\": \"SZ2607037A14410553730\",\r\n    \"onward_date\": \"2026-07-19\",\r\n    \"return_date\": \"2026-07-20\",\r\n    \"country_name\": \"\",\r\n    \"insurance_status\": \"Charged\",\r\n    \"insurance_type\": \"\",\r\n    //Visa Search\r\n    \"reference_visa\": \"SMSX2507048261730\",\r\n    \"onward_date_visa\": \"2025-07-13\",\r\n    \"return_date_visa\": \"2025-07-14\",\r\n    \"country_name_visa\": \"Vietnam\",\r\n    //Esim Search\r\n    \"reference_esim\": \"SMSW2509267GJCY102903\",\r\n    \"esim_from_date\": \"2025-09-26\",\r\n    \"esim_to_date\": \"2025-09-26\",\r\n    \"esim_destination\": \"\",\r\n    \"esim_status\": \"KYC Pending\",\r\n    \"esim_pax\": \"\"\r\n}"
+            },
+            "url": {
+              "raw": "http://13.200.42.214/book/mapp/mapp_b2b/agent_bookings",
+              "protocol": "http",
+              "host": [
+                "13",
+                "200",
+                "42",
+                "214"
+              ],
+              "path": [
+                "book",
+                "mapp",
+                "mapp_b2b",
+                "agent_bookings"
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "Agent Refunds",
+          "request": {
+            "auth": {
+              "type": "bearer",
+              "bearer": [
+                {
+                  "key": "token",
+                  "value": "{{auth_secret_0hbn}}",
+                  "type": "string"
+                }
+              ]
+            },
+            "method": "POST",
+            "header": [
+              {
+                "key": "App-Token",
+                "value": "{{json_web_token_05bq}}",
+                "type": "text"
+              },
+              {
+                "key": "Content-Type",
+                "value": "application/json",
+                "type": "text"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\r\n  \"search_type\": 1,\r\n\r\n  \"fromdate\": \"2026-07-01\",\r\n  \"todate\": \"2026-07-31\",\r\n  \"bookingid\": \"SZ2607017W05293862438\",\r\n\r\n  \"h_fromdate\": \"2026-03-01\",\r\n  \"h_todate\": \"2026-07-31\",\r\n  \"h_bookingid\": \"\",\r\n\r\n  \"b_fromdate\": \"2026-03-01\",\r\n  \"b_todate\": \"2026-07-31\",\r\n  \"b_bookingid\": \"SMSY2604097GZMB112816\",\r\n\r\n  \"c_fromdate\": \"2026-03-01\",\r\n  \"c_todate\": \"2026-07-31\",\r\n  \"c_bookingid\": \"SR2605017UQLL061921\",\r\n\r\n  \"i_fromdate\": \"2026-03-01\",\r\n  \"i_todate\": \"2026-07-31\",\r\n  \"i_bookingid\": \"SMSW2601307OWOG093416\",\r\n\r\n  \"v_fromdate\": \"2026-03-01\",\r\n  \"v_todate\": \"2026-07-31\",\r\n  \"v_bookingid\": \"SMSX2505059163757\",\r\n\r\n  \"e_fromdate\": \"2026-03-01\",\r\n  \"e_todate\": \"2026-07-31\",\r\n  \"e_bookingid\": \"SU2605297IIDP112950\"\r\n}"
+            },
+            "url": {
+              "raw": "http://13.200.42.214/book/mapp/mapp_b2b/agent_refunds",
+              "protocol": "http",
+              "host": [
+                "13",
+                "200",
+                "42",
+                "214"
+              ],
+              "path": [
+                "book",
+                "mapp",
+                "mapp_b2b",
+                "agent_refunds"
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "Agent Statement",
+          "request": {
+            "auth": {
+              "type": "bearer",
+              "bearer": [
+                {
+                  "key": "token",
+                  "value": "{{auth_secret_037v}}",
+                  "type": "string"
+                }
+              ]
+            },
+            "method": "POST",
+            "header": [
+              {
+                "key": "App-Token",
+                "value": "{{json_web_token_05bq}}",
+                "type": "text"
+              },
+              {
+                "key": "Content-Type",
+                "value": "application/json",
+                "type": "text"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\r\n  \"fromdate\": \"2026-07-17\", // Optional\r\n  \"todate\": \"\", // Optional\r\n  \"trasactiontype\": \"\" // Optional\r\n}"
+            },
+            "url": {
+              "raw": "http://13.200.42.214/book/mapp/mapp_b2b/agency_statement",
+              "protocol": "http",
+              "host": [
+                "13",
+                "200",
+                "42",
+                "214"
+              ],
+              "path": [
+                "book",
+                "mapp",
+                "mapp_b2b",
+                "agency_statement"
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "Agent Profile",
+          "request": {
+            "auth": {
+              "type": "bearer",
+              "bearer": [
+                {
+                  "key": "token",
+                  "value": "{{auth_secret_11qm}}",
+                  "type": "string"
+                }
+              ]
+            },
+            "method": "GET",
+            "header": [
+              {
+                "key": "App-Token",
+                "value": "{{json_web_token_05bq}}",
+                "type": "text"
+              },
+              {
+                "key": "Content-Type",
+                "value": "application/json",
+                "type": "text"
+              }
+            ],
+            "url": {
+              "raw": "http://13.200.42.214/book/mapp/mapp_b2b/agent_profile",
+              "protocol": "http",
+              "host": [
+                "13",
+                "200",
+                "42",
+                "214"
+              ],
+              "path": [
+                "book",
+                "mapp",
+                "mapp_b2b",
+                "agent_profile"
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "Agent Markups",
+          "protocolProfileBehavior": {
+            "disableBodyPruning": true
+          },
+          "request": {
+            "auth": {
+              "type": "bearer",
+              "bearer": [
+                {
+                  "key": "token",
+                  "value": "{{auth_secret_11qm}}",
+                  "type": "string"
+                }
+              ]
+            },
+            "method": "GET",
+            "header": [
+              {
+                "key": "App-Token",
+                "value": "{{json_web_token_05bq}}",
+                "type": "text"
+              },
+              {
+                "key": "Content-Type",
+                "value": "application/json",
+                "type": "text"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": ""
+            },
+            "url": {
+              "raw": "http://13.200.42.214/book/mapp/mapp_b2b/agent_markups",
+              "protocol": "http",
+              "host": [
+                "13",
+                "200",
+                "42",
+                "214"
+              ],
+              "path": [
+                "book",
+                "mapp",
+                "mapp_b2b",
+                "agent_markups"
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "Agent Calendar",
+          "protocolProfileBehavior": {
+            "disableBodyPruning": true
+          },
+          "request": {
+            "auth": {
+              "type": "bearer",
+              "bearer": [
+                {
+                  "key": "token",
+                  "value": "{{auth_secret_11qm}}",
+                  "type": "string"
+                }
+              ]
+            },
+            "method": "GET",
+            "header": [
+              {
+                "key": "App-Token",
+                "value": "{{json_web_token_05bq}}",
+                "type": "text"
+              },
+              {
+                "key": "Content-Type",
+                "value": "application/json",
+                "type": "text"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": ""
+            },
+            "url": {
+              "raw": "http://13.200.42.214/book/mapp/mapp_b2b/agent_calendar",
+              "protocol": "http",
+              "host": [
+                "13",
+                "200",
+                "42",
+                "214"
+              ],
+              "path": [
+                "book",
+                "mapp",
+                "mapp_b2b",
+                "agent_calendar"
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "Group Fares",
+          "protocolProfileBehavior": {
+            "disableBodyPruning": true
+          },
+          "request": {
+            "auth": {
+              "type": "bearer",
+              "bearer": [
+                {
+                  "key": "token",
+                  "value": "{{auth_secret_11qm}}",
+                  "type": "string"
+                }
+              ]
+            },
+            "method": "GET",
+            "header": [
+              {
+                "key": "App-Token",
+                "value": "{{json_web_token_05bq}}",
+                "type": "text"
+              },
+              {
+                "key": "Content-Type",
+                "value": "application/json",
+                "type": "text"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": ""
+            },
+            "url": {
+              "raw": "http://13.200.42.214/book/mapp/mapp_b2b/group_fares",
+              "protocol": "http",
+              "host": [
+                "13",
+                "200",
+                "42",
+                "214"
+              ],
+              "path": [
+                "book",
+                "mapp",
+                "mapp_b2b",
+                "group_fares"
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "Group Fares Request",
+          "request": {
+            "auth": {
+              "type": "bearer",
+              "bearer": [
+                {
+                  "key": "token",
+                  "value": "{{auth_secret_11qm}}",
+                  "type": "string"
+                }
+              ]
+            },
+            "method": "POST",
+            "header": [
+              {
+                "key": "App-Token",
+                "value": "{{json_web_token_05bq}}",
+                "type": "text"
+              },
+              {
+                "key": "Content-Type",
+                "value": "application/json",
+                "type": "text"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\r\n  \"trip_type\": \"Round Trip\",\r\n  \"mobile_no\": \"9876543210\",\r\n  \"fromCity\": \"BLR\",\r\n  \"toCity\": \"DXB\",\r\n  \"departureDate\": \"2026-08-15\",\r\n  \"returnDate\": \"2026-08-20\",\r\n  \"numAdults\": 20,\r\n  \"numChild\": 2,\r\n  \"numInfant\": 1,\r\n  \"trip_purpose\": \"Corporate Travel\",\r\n  \"expFare\": \"18000\",\r\n  \"airlineDetailso\": \"IndiGo, Emirates\",\r\n  \"airlineDetailsr\": \"Emirates\",\r\n  \"remarks\": \"Need refundable fares with baggage included.\"\r\n}"
+            },
+            "url": {
+              "raw": "http://13.200.42.214/book/mapp/mapp_b2b/group_fares_request",
+              "protocol": "http",
+              "host": [
+                "13",
+                "200",
+                "42",
+                "214"
+              ],
+              "path": [
+                "book",
+                "mapp",
+                "mapp_b2b",
+                "group_fares_request"
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "Upload Money",
+          "protocolProfileBehavior": {
+            "disableBodyPruning": true
+          },
+          "request": {
+            "auth": {
+              "type": "bearer",
+              "bearer": [
+                {
+                  "key": "token",
+                  "value": "{{auth_secret_08dp}}",
+                  "type": "string"
+                }
+              ]
+            },
+            "method": "GET",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json",
+                "type": "text"
+              },
+              {
+                "key": "App-Token",
+                "value": "{{json_web_token_05bq}}",
+                "type": "text"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": ""
+            },
+            "url": {
+              "raw": "http://13.200.42.214/book/mapp/mapp_b2b/upload_money",
+              "protocol": "http",
+              "host": [
+                "13",
+                "200",
+                "42",
+                "214"
+              ],
+              "path": [
+                "book",
+                "mapp",
+                "mapp_b2b",
+                "upload_money"
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "Upload Money Request",
+          "request": {
+            "auth": {
+              "type": "bearer",
+              "bearer": [
+                {
+                  "key": "token",
+                  "value": "{{auth_secret_08dp}}",
+                  "type": "string"
+                }
+              ]
+            },
+            "method": "POST",
+            "header": [
+              {
+                "key": "App-Token",
+                "value": "{{json_web_token_05bq}}",
+                "type": "text"
+              },
+              {
+                "key": "Content-Type",
+                "value": "application/json",
+                "type": "text"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "//Bank to Bank Transfer\r\n// {\r\n//     \"deposit_type\": \"Online Transfer\",\r\n//     \"pay_method\": \"OR-BTB-SBI\",\r\n//     \"transfer_amount\": \"5000\",\r\n//     \"transfer_date\": \"2026-07-27\",\r\n//     \"transaction_id\": \"UTR123456789\",\r\n//     \"remarks\": \"Bank transfer for wallet top-up\"\r\n// }\r\n//Cash Deposit\r\n// {\r\n//     \"deposit_type\": \"Cash\",\r\n//     \"pay_method\": \"OR-Cash-HDFC\",\r\n//     \"transfer_amount\": \"10000\",\r\n//     \"transfer_date\": \"2026-07-27\",\r\n//     \"transaction_id\": \"\",\r\n//     \"remarks\": \"Cash deposited at HDFC branch\"\r\n// }\r\n//Cheque Deposit\r\n{\r\n    \"deposit_type\": \"Cheque\",\r\n    \"pay_method\": \"OR-Cheque-ICICI\",\r\n    \"transfer_amount\": \"15000\",\r\n    \"transfer_date\": \"2026-07-27\",\r\n    \"cheque_drawn_bank\": \"State Bank of India\",\r\n    \"cheque_no\": \"123456\",\r\n    \"remarks\": \"Cheque deposit\"\r\n}"
+            },
+            "url": {
+              "raw": "http://13.200.42.214/book/mapp/mapp_b2b/upload_money_request",
+              "protocol": "http",
+              "host": [
+                "13",
+                "200",
+                "42",
+                "214"
+              ],
+              "path": [
+                "book",
+                "mapp",
+                "mapp_b2b",
+                "upload_money_request"
+              ]
+            }
+          },
+          "response": []
+        }
+      ]
+    },
+    {
+      "name": "Flights",
+      "item": [
+        {
+          "name": "Flight Booking Details",
+          "request": {
+            "auth": {
+              "type": "bearer",
+              "bearer": [
+                {
+                  "key": "token",
+                  "value": "{{auth_secret_15t9}}",
+                  "type": "string"
+                }
+              ]
+            },
+            "method": "POST",
+            "header": [
+              {
+                "key": "App-Token",
+                "value": "{{json_web_token_05bq}}",
+                "type": "text"
+              },
+              {
+                "key": "Content-Type",
+                "value": "application/json",
+                "type": "text"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\r\n    \"uniquerefno\" : \"SZ2607297B14143109087\"\r\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            },
+            "url": {
+              "raw": "http://13.200.42.214/book/mapp/mapp_flights/flight_details",
+              "protocol": "http",
+              "host": [
+                "13",
+                "200",
+                "42",
+                "214"
+              ],
+              "path": [
+                "book",
+                "mapp",
+                "mapp_flights",
+                "flight_details"
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "Flight Modify Eticket",
+          "request": {
+            "auth": {
+              "type": "bearer",
+              "bearer": [
+                {
+                  "key": "token",
+                  "value": "{{auth_secret_0c5d}}",
+                  "type": "string"
+                }
+              ]
+            },
+            "method": "POST",
+            "header": [
+              {
+                "key": "App-Token",
+                "value": "{{json_web_token_05bq}}",
+                "type": "text"
+              },
+              {
+                "key": "Content-Type",
+                "value": "application/json",
+                "type": "text"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\r\n    \"uniquerefno\" : \"SZ2607287K05333541352\",\r\n    \"amount\"      : 100\r\n}"
+            },
+            "url": {
+              "raw": "http://13.200.42.214/book/mapp/mapp_flights/modify_eticket",
+              "protocol": "http",
+              "host": [
+                "13",
+                "200",
+                "42",
+                "214"
+              ],
+              "path": [
+                "book",
+                "mapp",
+                "mapp_flights",
+                "modify_eticket"
+              ]
+            }
+          },
+          "response": []
+        }
+      ]
+    },
+    {
+      "name": "Bus",
+      "item": [
+        {
+          "name": "Bus Booking Details",
+          "request": {
+            "auth": {
+              "type": "bearer",
+              "bearer": [
+                {
+                  "key": "token",
+                  "value": "{{auth_secret_0c5d}}",
+                  "type": "string"
+                }
+              ]
+            },
+            "method": "POST",
+            "header": [
+              {
+                "key": "App-Token",
+                "value": "{{json_web_token_05bq}}",
+                "type": "text"
+              },
+              {
+                "key": "Content-Type",
+                "value": "application/json",
+                "type": "text"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\r\n    \"uniquerefno\" : \"SMSY2607177YFNU125656\"\r\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            },
+            "url": {
+              "raw": "http://13.200.42.214/book/mapp/mapp_bus/bus_details",
+              "protocol": "http",
+              "host": [
+                "13",
+                "200",
+                "42",
+                "214"
+              ],
+              "path": [
+                "book",
+                "mapp",
+                "mapp_bus",
+                "bus_details"
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "Bus Modify Eticket",
+          "request": {
+            "auth": {
+              "type": "bearer",
+              "bearer": [
+                {
+                  "key": "token",
+                  "value": "{{auth_secret_0c5d}}",
+                  "type": "string"
+                }
+              ]
+            },
+            "method": "POST",
+            "header": [
+              {
+                "key": "App-Token",
+                "value": "{{json_web_token_05bq}}",
+                "type": "text"
+              },
+              {
+                "key": "Content-Type",
+                "value": "application/json",
+                "type": "text"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\r\n    \"uniquerefno\": \"SMSY2607177YFNU125656\",\r\n    \"busrefno\"   : \"\",\r\n    \"amount\"     : 10\r\n}"
+            },
+            "url": {
+              "raw": "http://13.200.42.214/book/mapp/mapp_bus/modify_eticket",
+              "protocol": "http",
+              "host": [
+                "13",
+                "200",
+                "42",
+                "214"
+              ],
+              "path": [
+                "book",
+                "mapp",
+                "mapp_bus",
+                "modify_eticket"
+              ]
+            }
+          },
+          "response": []
+        }
+      ]
+    },
+    {
+      "name": "Cab",
+      "item": [
+        {
+          "name": "Cab Booking Details",
+          "request": {
+            "auth": {
+              "type": "bearer",
+              "bearer": [
+                {
+                  "key": "token",
+                  "value": "{{auth_secret_0c5d}}",
+                  "type": "string"
+                }
+              ]
+            },
+            "method": "POST",
+            "header": [
+              {
+                "key": "App-Token",
+                "value": "{{json_web_token_05bq}}",
+                "type": "text"
+              },
+              {
+                "key": "Content-Type",
+                "value": "application/json",
+                "type": "text"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\r\n    \"uniquerefno\" : \"SR2604277BYTG134838\"\r\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            },
+            "url": {
+              "raw": "http://13.200.42.214/book/mapp/mapp_cab/cab_details",
+              "protocol": "http",
+              "host": [
+                "13",
+                "200",
+                "42",
+                "214"
+              ],
+              "path": [
+                "book",
+                "mapp",
+                "mapp_cab",
+                "cab_details"
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "Cab Modify Eticket",
+          "request": {
+            "auth": {
+              "type": "bearer",
+              "bearer": [
+                {
+                  "key": "token",
+                  "value": "{{auth_secret_0c5d}}",
+                  "type": "string"
+                }
+              ]
+            },
+            "method": "POST",
+            "header": [
+              {
+                "key": "App-Token",
+                "value": "{{json_web_token_05bq}}",
+                "type": "text"
+              },
+              {
+                "key": "Content-Type",
+                "value": "application/json",
+                "type": "text"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\r\n    \"uniquerefno\": \"SR2604277BYTG134838\",\r\n    \"busrefno\"   : \"\",\r\n    \"amount\"     : 10\r\n}"
+            },
+            "url": {
+              "raw": "http://13.200.42.214/book/mapp/mapp_cab/modify_eticket",
+              "protocol": "http",
+              "host": [
+                "13",
+                "200",
+                "42",
+                "214"
+              ],
+              "path": [
+                "book",
+                "mapp",
+                "mapp_cab",
+                "modify_eticket"
+              ]
+            }
+          },
+          "response": []
+        }
+      ]
+    },
+    {
+      "name": "Hotel",
+      "item": [
+        {
+          "name": "Hotel Booking Detils",
+          "request": {
+            "auth": {
+              "type": "bearer",
+              "bearer": [
+                {
+                  "key": "token",
+                  "value": "{{auth_secret_0c5d}}",
+                  "type": "string"
+                }
+              ]
+            },
+            "method": "POST",
+            "header": [
+              {
+                "key": "App-Token",
+                "value": "{{json_web_token_05bq}}",
+                "type": "text"
+              },
+              {
+                "key": "Content-Type",
+                "value": "application/json",
+                "type": "text"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\r\n    \"uniquerefno\" : \"SQ2601287WFSB094709\"\r\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            },
+            "url": {
+              "raw": "http://13.200.42.214/book/mapp/mapp_hotel/hotel_details",
+              "protocol": "http",
+              "host": [
+                "13",
+                "200",
+                "42",
+                "214"
+              ],
+              "path": [
+                "book",
+                "mapp",
+                "mapp_hotel",
+                "hotel_details"
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "Hotel Modify Eticket",
+          "request": {
+            "auth": {
+              "type": "bearer",
+              "bearer": [
+                {
+                  "key": "token",
+                  "value": "{{auth_secret_0umr}}",
+                  "type": "string"
+                }
+              ]
+            },
+            "method": "POST",
+            "header": [
+              {
+                "key": "App-Token",
+                "value": "{{json_web_token_05bq}}",
+                "type": "text"
+              },
+              {
+                "key": "Content-Type",
+                "value": "application/json",
+                "type": "text"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\r\n    \"uniquerefno\": \"SQ2601287WFSB094709\",\r\n    \"amount\"     : 100\r\n}"
+            },
+            "url": {
+              "raw": "http://13.200.42.214/book/mapp/mapp_hotel/modify_eticket",
+              "protocol": "http",
+              "host": [
+                "13",
+                "200",
+                "42",
+                "214"
+              ],
+              "path": [
+                "book",
+                "mapp",
+                "mapp_hotel",
+                "modify_eticket"
+              ]
+            }
+          },
+          "response": []
+        }
+      ]
+    },
+    {
+      "name": "Insurance",
+      "item": [
+        {
+          "name": "Insurance Booking Details",
+          "request": {
+            "auth": {
+              "type": "bearer",
+              "bearer": [
+                {
+                  "key": "token",
+                  "value": "{{auth_secret_0c5d}}",
+                  "type": "string"
+                }
+              ]
+            },
+            "method": "POST",
+            "header": [
+              {
+                "key": "App-Token",
+                "value": "{{json_web_token_05bq}}",
+                "type": "text"
+              },
+              {
+                "key": "Content-Type",
+                "value": "application/json",
+                "type": "text"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\r\n    \"uniquerefno\" : \"SZ2607037A14410553730\"\r\n}"
+            },
+            "url": {
+              "raw": "http://13.200.42.214/book/mapp/mapp_insurance/insurance_details",
+              "protocol": "http",
+              "host": [
+                "13",
+                "200",
+                "42",
+                "214"
+              ],
+              "path": [
+                "book",
+                "mapp",
+                "mapp_insurance",
+                "insurance_details"
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "Insurance Modify Eticket",
+          "request": {
+            "auth": {
+              "type": "bearer",
+              "bearer": [
+                {
+                  "key": "token",
+                  "value": "{{auth_secret_0umr}}",
+                  "type": "string"
+                }
+              ]
+            },
+            "method": "POST",
+            "header": [
+              {
+                "key": "App-Token",
+                "value": "{{json_web_token_05bq}}",
+                "type": "text"
+              },
+              {
+                "key": "Content-Type",
+                "value": "application/json",
+                "type": "text"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\r\n    \"uniquerefno\": \"SZ2607037A14410553730\",\r\n    \"amount\"     : 100\r\n}"
+            },
+            "url": {
+              "raw": "http://13.200.42.214/book/mapp/mapp_insurance/modify_eticket",
+              "protocol": "http",
+              "host": [
+                "13",
+                "200",
+                "42",
+                "214"
+              ],
+              "path": [
+                "book",
+                "mapp",
+                "mapp_insurance",
+                "modify_eticket"
+              ]
+            }
+          },
+          "response": []
+        }
+      ]
+    },
+    {
+      "name": "Visa",
+      "item": [
+        {
+          "name": "Visa Booking Details",
+          "request": {
+            "auth": {
+              "type": "bearer",
+              "bearer": [
+                {
+                  "key": "token",
+                  "value": "{{auth_secret_0c5d}}",
+                  "type": "string"
+                }
+              ]
+            },
+            "method": "POST",
+            "header": [
+              {
+                "key": "App-Token",
+                "value": "{{json_web_token_05bq}}",
+                "type": "text"
+              },
+              {
+                "key": "Content-Type",
+                "value": "application/json",
+                "type": "text"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\r\n    \"uniquerefno\" : \"SMSX2507048261730\"\r\n}"
+            },
+            "url": {
+              "raw": "http://13.200.42.214/book/mapp/mapp_visa/visa_details",
+              "protocol": "http",
+              "host": [
+                "13",
+                "200",
+                "42",
+                "214"
+              ],
+              "path": [
+                "book",
+                "mapp",
+                "mapp_visa",
+                "visa_details"
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "Visa Modify Eticket",
+          "request": {
+            "auth": {
+              "type": "bearer",
+              "bearer": [
+                {
+                  "key": "token",
+                  "value": "{{auth_secret_0umr}}",
+                  "type": "string"
+                }
+              ]
+            },
+            "method": "POST",
+            "header": [
+              {
+                "key": "App-Token",
+                "value": "{{json_web_token_05bq}}",
+                "type": "text"
+              },
+              {
+                "key": "Content-Type",
+                "value": "application/json",
+                "type": "text"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\r\n    \"uniquerefno\": \"SMSX2507048261730\",\r\n    \"amount\"     : 100\r\n}"
+            },
+            "url": {
+              "raw": "http://13.200.42.214/book/mapp/mapp_visa/modify_eticket",
+              "protocol": "http",
+              "host": [
+                "13",
+                "200",
+                "42",
+                "214"
+              ],
+              "path": [
+                "book",
+                "mapp",
+                "mapp_visa",
+                "modify_eticket"
+              ]
+            }
+          },
+          "response": []
+        }
+      ]
+    },
+    {
+      "name": "eSIM",
+      "item": [
+        {
+          "name": "eSIM Booking Details",
+          "request": {
+            "auth": {
+              "type": "bearer",
+              "bearer": [
+                {
+                  "key": "token",
+                  "value": "{{auth_secret_0c5d}}",
+                  "type": "string"
+                }
+              ]
+            },
+            "method": "POST",
+            "header": [
+              {
+                "key": "App-Token",
+                "value": "{{json_web_token_05bq}}",
+                "type": "text"
+              },
+              {
+                "key": "Content-Type",
+                "value": "application/json",
+                "type": "text"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\r\n    \"uniquerefno\" : \"SU2605207NMIZ073026\"\r\n}"
+            },
+            "url": {
+              "raw": "http://13.200.42.214/book/mapp/mapp_esim/esim_details",
+              "protocol": "http",
+              "host": [
+                "13",
+                "200",
+                "42",
+                "214"
+              ],
+              "path": [
+                "book",
+                "mapp",
+                "mapp_esim",
+                "esim_details"
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "eSIM Modify Eticket",
+          "request": {
+            "auth": {
+              "type": "bearer",
+              "bearer": [
+                {
+                  "key": "token",
+                  "value": "{{auth_secret_0c5d}}",
+                  "type": "string"
+                }
+              ]
+            },
+            "method": "POST",
+            "header": [
+              {
+                "key": "App-Token",
+                "value": "{{json_web_token_05bq}}",
+                "type": "text"
+              },
+              {
+                "key": "Content-Type",
+                "value": "application/json",
+                "type": "text"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\r\n    \"uniquerefno\": \"SU2605207NMIZ073026\",\r\n    \"amount\"     : 100\r\n}"
+            },
+            "url": {
+              "raw": "http://13.200.42.214/book/mapp/mapp_esim/modify_eticket",
+              "protocol": "http",
+              "host": [
+                "13",
+                "200",
+                "42",
+                "214"
+              ],
+              "path": [
+                "book",
+                "mapp",
+                "mapp_esim",
+                "modify_eticket"
+              ]
+            }
+          },
+          "response": []
+        }
+      ]
+    },
+    {
+      "name": "Agent Signup",
+      "request": {
+        "method": "POST",
+        "header": [
+          {
+            "key": "App-Token",
+            "value": "{{json_web_token_05bq}}",
+            "type": "text"
+          },
+          {
+            "key": "Content-Type",
+            "value": "application/json",
+            "type": "text"
+          }
+        ],
+        "body": {
+          "mode": "raw",
+          "raw": "{\r\n    \"agent_type\": \"1\",\r\n    \"title\": \"Mr\",\r\n    \"first_name\": \"Praveen\",\r\n    \"last_name\": \"B L\",\r\n    \"mobile_no\": \"9834323210\",\r\n    \"office_phone_no\": \"08041234567\",\r\n    \"agent_email\": \"praveen413@gmail.com\",\r\n    \"website\": \"https://www.praveentravels.com\",\r\n    \"designation\": \"Owner\",\r\n    \"agent_password\": \"Password@123\",\r\n    \"confirm_pswd\": \"Password@123\",\r\n    \"pan_no\": \"ABCDE1234F\",\r\n    \"name_pan_card\": \"Praveen B L\",\r\n    \"aadhar_no\": \"123412341234\",\r\n    \"agency_name\": \"Praveen Travels\",\r\n    \"service_tax_no\": \"29ABCDE1234F1Z5\",\r\n    \"address\": \"123 MG Road\",\r\n    \"pin_code\": \"560001\",\r\n    \"city\": \"Bengaluru\",\r\n    \"state\": \"Karnataka\",\r\n    \"country\": \"India\",\r\n    \"referral_code\": \"\",\r\n    \"sale_id\": \"\",\r\n    \"ad_campaign\": \"Mobile App\"\r\n}"
+        },
+        "url": {
+          "raw": "http://13.200.42.214/book/mapp/mapp_b2b/agent_register",
+          "protocol": "http",
+          "host": [
+            "13",
+            "200",
+            "42",
+            "214"
+          ],
+          "path": [
+            "book",
+            "mapp",
+            "mapp_b2b",
+            "agent_register"
+          ]
+        }
+      },
+      "response": []
+    },
+    {
+      "name": "Countries",
+      "protocolProfileBehavior": {
+        "disableBodyPruning": true
+      },
+      "request": {
+        "method": "GET",
+        "header": [
+          {
+            "key": "App-Token",
+            "value": "{{json_web_token_05bq}}",
+            "type": "text"
+          },
+          {
+            "key": "Content-Type",
+            "value": "application/json",
+            "type": "text"
+          }
+        ],
+        "body": {
+          "mode": "raw",
+          "raw": "{\r\n    \"agent_no\": \"SMSA18012166\",\r\n    \"otp\": \"1234\",\r\n    \"device_id\": \"ios_12345\",\r\n    \"screen_size\": \"1080x2400\",\r\n    \"device_model\": \"Samsung Galaxy S24 Ultra\",\r\n    \"os_version\": \"Android 15\"\r\n}"
+        },
+        "url": {
+          "raw": "http://13.200.42.214/book/mapp/mapp_general/countries",
+          "protocol": "http",
+          "host": [
+            "13",
+            "200",
+            "42",
+            "214"
+          ],
+          "path": [
+            "book",
+            "mapp",
+            "mapp_general",
+            "countries"
+          ]
+        }
+      },
+      "response": []
+    },
+    {
+      "name": "Forgot Password",
+      "request": {
+        "method": "POST",
+        "header": [
+          {
+            "key": "App-Token",
+            "value": "{{json_web_token_05bq}}",
+            "type": "text"
+          },
+          {
+            "key": "Content-Type",
+            "value": "application/json",
+            "type": "text"
+          }
+        ],
+        "body": {
+          "mode": "raw",
+          "raw": "{\r\n    \"email\": \"support@ftd.travel\",\r\n    \"agent_no\": \"SMSA18012166\",\r\n    \"password\" : \"Praveen01\",\r\n    \"passconf\" : \"Praveen01\"\r\n}"
+        },
+        "url": {
+          "raw": "http://13.200.42.214/book/mapp/mapp_general/forgot_password",
+          "protocol": "http",
+          "host": [
+            "13",
+            "200",
+            "42",
+            "214"
+          ],
+          "path": [
+            "book",
+            "mapp",
+            "mapp_general",
+            "forgot_password"
+          ]
+        }
+      },
+      "response": []
+    }
+  ],
+  "event": [
+    {
+      "listen": "prerequest",
+      "script": {
+        "type": "text/javascript",
+        "packages": {},
+        "requests": {},
+        "exec": [
+          ""
+        ]
+      }
+    },
+    {
+      "listen": "test",
+      "script": {
+        "type": "text/javascript",
+        "packages": {},
+        "requests": {},
+        "exec": [
+          ""
+        ]
+      }
+    }
+  ],
+  "variable": [
+    {
+      "key": "json_web_token_05bq",
+      "secret": true
+    },
+    {
+      "key": "auth_secret_0umr",
+      "secret": true
+    },
+    {
+      "key": "auth_secret_0c5d",
+      "secret": true
+    },
+    {
+      "key": "auth_secret_15t9",
+      "secret": true
+    },
+    {
+      "key": "auth_secret_037v",
+      "secret": true
+    }
+  ]
+}
