@@ -1,32 +1,44 @@
 import SwiftUI
 
 struct ForgotPasswordView: View {
+    let authManager: AuthManager
     @State private var viewModel = ForgotPasswordViewModel()
+    @State private var showResetPassword = false
     @Environment(\.dismiss) private var dismiss
     @Environment(\.openURL) private var openURL
 
     var body: some View {
-        VStack(spacing: 0) {
-            if viewModel.showSuccess {
-                successContent
-                    .transition(.asymmetric(
-                        insertion: .move(edge: .trailing).combined(with: .opacity),
-                        removal: .move(edge: .leading).combined(with: .opacity)
-                    ))
-            } else {
-                formContent
-                    .transition(.asymmetric(
-                        insertion: .move(edge: .leading).combined(with: .opacity),
-                        removal: .move(edge: .trailing).combined(with: .opacity)
-                    ))
+        NavigationStack {
+            VStack(spacing: 0) {
+                if viewModel.showSuccess {
+                    successContent
+                        .transition(.asymmetric(
+                            insertion: .move(edge: .trailing).combined(with: .opacity),
+                            removal: .move(edge: .leading).combined(with: .opacity)
+                        ))
+                } else {
+                    formContent
+                        .transition(.asymmetric(
+                            insertion: .move(edge: .leading).combined(with: .opacity),
+                            removal: .move(edge: .trailing).combined(with: .opacity)
+                        ))
+                }
+            }
+            .animation(.easeInOut(duration: 0.35), value: viewModel.showSuccess)
+            .padding(.horizontal, 24)
+            .padding(.top, 32)
+            .padding(.bottom, 28)
+            .frame(maxWidth: .infinity, maxHeight: .infinity, alignment: .top)
+            .background(Color.ftdCardBackground)
+            .toolbar(.hidden, for: .navigationBar)
+            .navigationDestination(isPresented: $showResetPassword) {
+                ResetPasswordView(
+                    email: viewModel.email,
+                    authManager: authManager,
+                    dismissSheet: dismiss
+                )
             }
         }
-        .animation(.easeInOut(duration: 0.35), value: viewModel.showSuccess)
-        .padding(.horizontal, 24)
-        .padding(.top, 32)
-        .padding(.bottom, 28)
-        .frame(maxWidth: .infinity, maxHeight: .infinity, alignment: .top)
-        .background(Color.ftdCardBackground)
     }
 
     // MARK: - Form
@@ -157,6 +169,13 @@ struct ForgotPasswordView: View {
                     openURL(url)
                 }
             }
+
+            Button(String(localized: "Reset Password")) {
+                showResetPassword = true
+            }
+            .font(.subheadline.weight(.semibold))
+            .foregroundStyle(Color.ftdAccentOrange)
+            .buttonStyle(.plain)
 
             Spacer(minLength: 0)
         }

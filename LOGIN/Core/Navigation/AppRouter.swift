@@ -33,6 +33,11 @@ final class AppRouter {
         case profile
         case statement
         case markups
+        case uploadMoney
+        case aboutUs
+        case contactSupport
+        case privacyPolicy
+        case termsCondition
         var id: Self { self }
     }
 

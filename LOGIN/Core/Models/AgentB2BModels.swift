@@ -561,65 +561,145 @@ struct AgentProfileResponse: Codable, Sendable {
 
 // MARK: - Agency Statement Response
 
+// Each row in deposit_statement. All string fields are nullable in the API.
 struct StatementItem: Codable, Sendable, Identifiable {
-    var id: String { referenceNo ?? bookingId ?? UUID().uuidString }
-    let date: String?
-    let description: String?
-    let debit: String?
-    let credit: String?
-    let balance: String?
-    let referenceNo: String?
-    let bookingId: String?
-    let transactionType: String?
-    let serviceType: String?
+    // Stable identity from content — same booking/mode combination is unique.
+    var id: String {
+        "\(valueDate ?? "")-\(transactionId ?? UUID().uuidString)-\(mode ?? "nil")-\(transactionAmount ?? "0")"
+    }
+
+    let valueDate: String?           // "valuedate"
+    let trasactionType: String?      // "trasactiontype" — API typo preserved
+    let transactionId: String?       // "transactionid"
+    let transactionAmount: String?   // "transactionamount" — gross
+    let withdrawAmount: String?      // "withdraw_amount"  — debit
+    let commission: String?          // "commision"        — API typo preserved
+    let txnFees: String?             // "txnfees"
+    let tds: String?                 // "tds"
+    let markup: String?              // "markup"
+    let paymentCharge: String?       // "payment_charge"   — PG fees
+    let insuranceCharge: String?     // "insurance_charge"
+    let creditBalance: String?       // "creditbalance"
+    let bookingBalance: String?      // "bookingbalance"   — running balance
+    let remarks: String?             // "remarks"
+    let referenceNo: String?         // "reference_no"
+    let addBookingBalance: String?   // "addbooking_balace" — credit amount (API typo)
+    let addRemarks: String?          // "adremarks"
+    let refundChargeReason: String?  // "refund_charge_reason"
+    let mode: String?                // "mode" — ONWARD / RETURN / nil
 
     enum CodingKeys: String, CodingKey {
-        case date, description, debit, credit, balance
-        case referenceNo     = "reference_no"
-        case bookingId       = "booking_id"
-        case transactionType = "transaction_type"
-        case serviceType     = "service_type"
+        case valueDate          = "valuedate"
+        case trasactionType     = "trasactiontype"
+        case transactionId      = "transactionid"
+        case transactionAmount  = "transactionamount"
+        case withdrawAmount     = "withdraw_amount"
+        case commission         = "commision"
+        case txnFees            = "txnfees"
+        case tds
+        case markup
+        case paymentCharge      = "payment_charge"
+        case insuranceCharge    = "insurance_charge"
+        case creditBalance      = "creditbalance"
+        case bookingBalance     = "bookingbalance"
+        case remarks
+        case referenceNo        = "reference_no"
+        case addBookingBalance  = "addbooking_balace"
+        case addRemarks         = "adremarks"
+        case refundChargeReason = "refund_charge_reason"
+        case mode
     }
 
     nonisolated init(from decoder: any Decoder) throws {
         let c = try decoder.container(keyedBy: CodingKeys.self)
-        date            = try c.decodeIfPresent(String.self, forKey: .date)
-        description     = try c.decodeIfPresent(String.self, forKey: .description)
-        debit           = try c.decodeIfPresent(String.self, forKey: .debit)
-        credit          = try c.decodeIfPresent(String.self, forKey: .credit)
-        balance         = try c.decodeIfPresent(String.self, forKey: .balance)
-        referenceNo     = try c.decodeIfPresent(String.self, forKey: .referenceNo)
-        bookingId       = try c.decodeIfPresent(String.self, forKey: .bookingId)
-        transactionType = try c.decodeIfPresent(String.self, forKey: .transactionType)
-        serviceType     = try c.decodeIfPresent(String.self, forKey: .serviceType)
+        valueDate         = try c.decodeIfPresent(String.self, forKey: .valueDate)
+        trasactionType    = try c.decodeIfPresent(String.self, forKey: .trasactionType)
+        transactionId     = try c.decodeIfPresent(String.self, forKey: .transactionId)
+        transactionAmount = try c.decodeIfPresent(String.self, forKey: .transactionAmount)
+        withdrawAmount    = try c.decodeIfPresent(String.self, forKey: .withdrawAmount)
+        commission        = try c.decodeIfPresent(String.self, forKey: .commission)
+        txnFees           = try c.decodeIfPresent(String.self, forKey: .txnFees)
+        tds               = try c.decodeIfPresent(String.self, forKey: .tds)
+        markup            = try c.decodeIfPresent(String.self, forKey: .markup)
+        paymentCharge     = try c.decodeIfPresent(String.self, forKey: .paymentCharge)
+        insuranceCharge   = try c.decodeIfPresent(String.self, forKey: .insuranceCharge)
+        creditBalance     = try c.decodeIfPresent(String.self, forKey: .creditBalance)
+        bookingBalance    = try c.decodeIfPresent(String.self, forKey: .bookingBalance)
+        remarks           = try c.decodeIfPresent(String.self, forKey: .remarks)
+        referenceNo       = try c.decodeIfPresent(String.self, forKey: .referenceNo)
+        addBookingBalance = try c.decodeIfPresent(String.self, forKey: .addBookingBalance)
+        addRemarks        = try c.decodeIfPresent(String.self, forKey: .addRemarks)
+        refundChargeReason = try c.decodeIfPresent(String.self, forKey: .refundChargeReason)
+        mode              = try c.decodeIfPresent(String.self, forKey: .mode)
     }
 
     nonisolated func encode(to encoder: any Encoder) throws {
         var c = encoder.container(keyedBy: CodingKeys.self)
-        try c.encodeIfPresent(date,            forKey: .date)
-        try c.encodeIfPresent(description,     forKey: .description)
-        try c.encodeIfPresent(debit,           forKey: .debit)
-        try c.encodeIfPresent(credit,          forKey: .credit)
-        try c.encodeIfPresent(balance,         forKey: .balance)
-        try c.encodeIfPresent(referenceNo,     forKey: .referenceNo)
-        try c.encodeIfPresent(bookingId,       forKey: .bookingId)
-        try c.encodeIfPresent(transactionType, forKey: .transactionType)
-        try c.encodeIfPresent(serviceType,     forKey: .serviceType)
+        try c.encodeIfPresent(valueDate,          forKey: .valueDate)
+        try c.encodeIfPresent(trasactionType,     forKey: .trasactionType)
+        try c.encodeIfPresent(transactionId,      forKey: .transactionId)
+        try c.encodeIfPresent(transactionAmount,  forKey: .transactionAmount)
+        try c.encodeIfPresent(withdrawAmount,     forKey: .withdrawAmount)
+        try c.encodeIfPresent(commission,         forKey: .commission)
+        try c.encodeIfPresent(txnFees,            forKey: .txnFees)
+        try c.encodeIfPresent(tds,                forKey: .tds)
+        try c.encodeIfPresent(markup,             forKey: .markup)
+        try c.encodeIfPresent(paymentCharge,      forKey: .paymentCharge)
+        try c.encodeIfPresent(insuranceCharge,    forKey: .insuranceCharge)
+        try c.encodeIfPresent(creditBalance,      forKey: .creditBalance)
+        try c.encodeIfPresent(bookingBalance,     forKey: .bookingBalance)
+        try c.encodeIfPresent(remarks,            forKey: .remarks)
+        try c.encodeIfPresent(referenceNo,        forKey: .referenceNo)
+        try c.encodeIfPresent(addBookingBalance,  forKey: .addBookingBalance)
+        try c.encodeIfPresent(addRemarks,         forKey: .addRemarks)
+        try c.encodeIfPresent(refundChargeReason, forKey: .refundChargeReason)
+        try c.encodeIfPresent(mode,               forKey: .mode)
+    }
+}
+
+// Wrapper for the nested data object the API returns.
+struct AgencyStatementData: Codable, Sendable {
+    let fromDate: String?
+    let toDate: String?
+    let transactionType: String?
+    let depositStatement: [StatementItem]?
+
+    enum CodingKeys: String, CodingKey {
+        case fromDate         = "fromdate"
+        case toDate           = "todate"
+        case transactionType  = "trasactiontype"
+        case depositStatement = "deposit_statement"
+    }
+
+    nonisolated init(from decoder: any Decoder) throws {
+        let c = try decoder.container(keyedBy: CodingKeys.self)
+        fromDate         = try c.decodeIfPresent(String.self,        forKey: .fromDate)
+        toDate           = try c.decodeIfPresent(String.self,        forKey: .toDate)
+        transactionType  = try c.decodeIfPresent(String.self,        forKey: .transactionType)
+        depositStatement = try c.decodeIfPresent([StatementItem].self, forKey: .depositStatement)
+    }
+
+    nonisolated func encode(to encoder: any Encoder) throws {
+        var c = encoder.container(keyedBy: CodingKeys.self)
+        try c.encodeIfPresent(fromDate,         forKey: .fromDate)
+        try c.encodeIfPresent(toDate,           forKey: .toDate)
+        try c.encodeIfPresent(transactionType,  forKey: .transactionType)
+        try c.encodeIfPresent(depositStatement, forKey: .depositStatement)
     }
 }
 
 struct AgencyStatementResponse: Codable, Sendable {
     let status: Bool
     let message: String?
-    let data: [StatementItem]?
+    let data: AgencyStatementData?
 
     enum CodingKeys: String, CodingKey { case status, message, data }
 
     nonisolated init(from decoder: any Decoder) throws {
         let c = try decoder.container(keyedBy: CodingKeys.self)
         status  = try c.decode(Bool.self, forKey: .status)
-        message = try c.decodeIfPresent(String.self,        forKey: .message)
-        data    = try c.decodeIfPresent([StatementItem].self, forKey: .data)
+        message = try c.decodeIfPresent(String.self,              forKey: .message)
+        data    = try c.decodeIfPresent(AgencyStatementData.self, forKey: .data)
     }
 
     nonisolated func encode(to encoder: any Encoder) throws {
@@ -1020,6 +1100,713 @@ struct UploadMoneyRequest: Codable, Sendable {
         try c.encodeIfPresent(chequeDrawnBank, forKey: .chequeDrawnBank)
         try c.encodeIfPresent(chequeNo,        forKey: .chequeNo)
         try c.encodeIfPresent(remarks,         forKey: .remarks)
+    }
+}
+
+// MARK: - Update Agent Profile
+
+struct UpdateAgentProfileRequest: Codable, Sendable {
+    let title: String?
+    let firstName: String?
+    let middleName: String?
+    let lastName: String?
+    let designation: String?
+    let website: String?
+    let officePhoneNo: String?
+    let fax: String?
+    let address: String?
+    let city: String?
+    let state: String?
+    let country: String?
+    let pinCode: String?
+    let gstNumber: String?
+
+    enum CodingKeys: String, CodingKey {
+        case title, designation, website, address, city, state, country, fax
+        case firstName     = "first_name"
+        case middleName    = "middle_name"
+        case lastName      = "last_name"
+        case officePhoneNo = "office_phone_no"
+        case pinCode       = "pin_code"
+        case gstNumber     = "gst_number"
+    }
+
+    nonisolated init(
+        title: String? = nil, firstName: String? = nil, middleName: String? = nil,
+        lastName: String? = nil, designation: String? = nil, website: String? = nil,
+        officePhoneNo: String? = nil, fax: String? = nil,
+        address: String? = nil, city: String? = nil, state: String? = nil,
+        country: String? = nil, pinCode: String? = nil, gstNumber: String? = nil
+    ) {
+        self.title         = title
+        self.firstName     = firstName
+        self.middleName    = middleName
+        self.lastName      = lastName
+        self.designation   = designation
+        self.website       = website
+        self.officePhoneNo = officePhoneNo
+        self.fax           = fax
+        self.address       = address
+        self.city          = city
+        self.state         = state
+        self.country       = country
+        self.pinCode       = pinCode
+        self.gstNumber     = gstNumber
+    }
+
+    nonisolated init(from decoder: any Decoder) throws {
+        let c          = try decoder.container(keyedBy: CodingKeys.self)
+        title          = try c.decodeIfPresent(String.self, forKey: .title)
+        firstName      = try c.decodeIfPresent(String.self, forKey: .firstName)
+        middleName     = try c.decodeIfPresent(String.self, forKey: .middleName)
+        lastName       = try c.decodeIfPresent(String.self, forKey: .lastName)
+        designation    = try c.decodeIfPresent(String.self, forKey: .designation)
+        website        = try c.decodeIfPresent(String.self, forKey: .website)
+        officePhoneNo  = try c.decodeIfPresent(String.self, forKey: .officePhoneNo)
+        fax            = try c.decodeIfPresent(String.self, forKey: .fax)
+        address        = try c.decodeIfPresent(String.self, forKey: .address)
+        city           = try c.decodeIfPresent(String.self, forKey: .city)
+        state          = try c.decodeIfPresent(String.self, forKey: .state)
+        country        = try c.decodeIfPresent(String.self, forKey: .country)
+        pinCode        = try c.decodeIfPresent(String.self, forKey: .pinCode)
+        gstNumber      = try c.decodeIfPresent(String.self, forKey: .gstNumber)
+    }
+
+    nonisolated func encode(to encoder: any Encoder) throws {
+        var c = encoder.container(keyedBy: CodingKeys.self)
+        try c.encodeIfPresent(title,         forKey: .title)
+        try c.encodeIfPresent(firstName,     forKey: .firstName)
+        try c.encodeIfPresent(middleName,    forKey: .middleName)
+        try c.encodeIfPresent(lastName,      forKey: .lastName)
+        try c.encodeIfPresent(designation,   forKey: .designation)
+        try c.encodeIfPresent(website,       forKey: .website)
+        try c.encodeIfPresent(officePhoneNo, forKey: .officePhoneNo)
+        try c.encodeIfPresent(fax,           forKey: .fax)
+        try c.encodeIfPresent(address,       forKey: .address)
+        try c.encodeIfPresent(city,          forKey: .city)
+        try c.encodeIfPresent(state,         forKey: .state)
+        try c.encodeIfPresent(country,       forKey: .country)
+        try c.encodeIfPresent(pinCode,       forKey: .pinCode)
+        try c.encodeIfPresent(gstNumber,     forKey: .gstNumber)
+    }
+}
+
+// MARK: - Change Agent Password
+
+struct ChangeAgentPasswordRequest: Codable, Sendable {
+    let currentPassword: String
+    let password: String
+    let passconf: String
+
+    enum CodingKeys: String, CodingKey {
+        case password, passconf
+        case currentPassword = "current_password"
+    }
+
+    nonisolated init(currentPassword: String, password: String, passconf: String) {
+        self.currentPassword = currentPassword
+        self.password        = password
+        self.passconf        = passconf
+    }
+
+    nonisolated init(from decoder: any Decoder) throws {
+        let c           = try decoder.container(keyedBy: CodingKeys.self)
+        currentPassword = try c.decode(String.self, forKey: .currentPassword)
+        password        = try c.decode(String.self, forKey: .password)
+        passconf        = try c.decode(String.self, forKey: .passconf)
+    }
+
+    nonisolated func encode(to encoder: any Encoder) throws {
+        var c = encoder.container(keyedBy: CodingKeys.self)
+        try c.encode(currentPassword, forKey: .currentPassword)
+        try c.encode(password,        forKey: .password)
+        try c.encode(passconf,        forKey: .passconf)
+    }
+}
+
+// MARK: - Agent Travellers
+
+struct AgentAddTravellerRequest: Codable, Sendable {
+    let paxType: String
+    let title: String
+    let firstName: String
+    let lastName: String
+    let dob: String
+    let nationality: String
+    let number: String
+    let issueCountry: String
+    let expiryDate: String
+    let age: String
+    let gender: String
+
+    enum CodingKeys: String, CodingKey {
+        case title, nationality, number, age, gender
+        case paxType      = "pax_type"
+        case firstName    = "first_name"
+        case lastName     = "last_name"
+        case dob          = "DOB"
+        case issueCountry = "issue_country"
+        case expiryDate   = "expiry_date"
+    }
+
+    nonisolated init(
+        paxType: String, title: String, firstName: String, lastName: String,
+        dob: String, nationality: String, number: String,
+        issueCountry: String, expiryDate: String, age: String, gender: String
+    ) {
+        self.paxType      = paxType
+        self.title        = title
+        self.firstName    = firstName
+        self.lastName     = lastName
+        self.dob          = dob
+        self.nationality  = nationality
+        self.number       = number
+        self.issueCountry = issueCountry
+        self.expiryDate   = expiryDate
+        self.age          = age
+        self.gender       = gender
+    }
+
+    nonisolated init(from decoder: any Decoder) throws {
+        let c         = try decoder.container(keyedBy: CodingKeys.self)
+        paxType       = try c.decode(String.self, forKey: .paxType)
+        title         = try c.decode(String.self, forKey: .title)
+        firstName     = try c.decode(String.self, forKey: .firstName)
+        lastName      = try c.decode(String.self, forKey: .lastName)
+        dob           = try c.decode(String.self, forKey: .dob)
+        nationality   = try c.decode(String.self, forKey: .nationality)
+        number        = try c.decode(String.self, forKey: .number)
+        issueCountry  = try c.decode(String.self, forKey: .issueCountry)
+        expiryDate    = try c.decode(String.self, forKey: .expiryDate)
+        age           = try c.decode(String.self, forKey: .age)
+        gender        = try c.decode(String.self, forKey: .gender)
+    }
+
+    nonisolated func encode(to encoder: any Encoder) throws {
+        var c = encoder.container(keyedBy: CodingKeys.self)
+        try c.encode(paxType,      forKey: .paxType)
+        try c.encode(title,        forKey: .title)
+        try c.encode(firstName,    forKey: .firstName)
+        try c.encode(lastName,     forKey: .lastName)
+        try c.encode(dob,          forKey: .dob)
+        try c.encode(nationality,  forKey: .nationality)
+        try c.encode(number,       forKey: .number)
+        try c.encode(issueCountry, forKey: .issueCountry)
+        try c.encode(expiryDate,   forKey: .expiryDate)
+        try c.encode(age,          forKey: .age)
+        try c.encode(gender,       forKey: .gender)
+    }
+}
+
+struct AgentEditTravellerRequest: Codable, Sendable {
+    let travelId: Int
+
+    enum CodingKeys: String, CodingKey {
+        case travelId = "travel_id"
+    }
+
+    nonisolated init(travelId: Int) { self.travelId = travelId }
+
+    nonisolated init(from decoder: any Decoder) throws {
+        let c    = try decoder.container(keyedBy: CodingKeys.self)
+        travelId = try c.decode(Int.self, forKey: .travelId)
+    }
+
+    nonisolated func encode(to encoder: any Encoder) throws {
+        var c = encoder.container(keyedBy: CodingKeys.self)
+        try c.encode(travelId, forKey: .travelId)
+    }
+}
+
+struct AgentUpdateTravellerRequest: Codable, Sendable {
+    let travelId: String
+    let paxType: String
+    let title: String
+    let firstName: String
+    let lastName: String
+    let dob: String
+    let nationality: String
+    let number: String
+    let issueCountry: String
+    let expiryDate: String
+    let age: String
+    let gender: String
+
+    enum CodingKeys: String, CodingKey {
+        case title, nationality, number, age, gender
+        case travelId     = "travel_id"
+        case paxType      = "pax_type"
+        case firstName    = "first_name"
+        case lastName     = "last_name"
+        case dob          = "DOB"
+        case issueCountry = "issue_country"
+        case expiryDate   = "expiry_date"
+    }
+
+    nonisolated init(
+        travelId: String, paxType: String, title: String, firstName: String, lastName: String,
+        dob: String, nationality: String, number: String,
+        issueCountry: String, expiryDate: String, age: String, gender: String
+    ) {
+        self.travelId     = travelId
+        self.paxType      = paxType
+        self.title        = title
+        self.firstName    = firstName
+        self.lastName     = lastName
+        self.dob          = dob
+        self.nationality  = nationality
+        self.number       = number
+        self.issueCountry = issueCountry
+        self.expiryDate   = expiryDate
+        self.age          = age
+        self.gender       = gender
+    }
+
+    nonisolated init(from decoder: any Decoder) throws {
+        let c         = try decoder.container(keyedBy: CodingKeys.self)
+        travelId      = try c.decode(String.self, forKey: .travelId)
+        paxType       = try c.decode(String.self, forKey: .paxType)
+        title         = try c.decode(String.self, forKey: .title)
+        firstName     = try c.decode(String.self, forKey: .firstName)
+        lastName      = try c.decode(String.self, forKey: .lastName)
+        dob           = try c.decode(String.self, forKey: .dob)
+        nationality   = try c.decode(String.self, forKey: .nationality)
+        number        = try c.decode(String.self, forKey: .number)
+        issueCountry  = try c.decode(String.self, forKey: .issueCountry)
+        expiryDate    = try c.decode(String.self, forKey: .expiryDate)
+        age           = try c.decode(String.self, forKey: .age)
+        gender        = try c.decode(String.self, forKey: .gender)
+    }
+
+    nonisolated func encode(to encoder: any Encoder) throws {
+        var c = encoder.container(keyedBy: CodingKeys.self)
+        try c.encode(travelId,     forKey: .travelId)
+        try c.encode(paxType,      forKey: .paxType)
+        try c.encode(title,        forKey: .title)
+        try c.encode(firstName,    forKey: .firstName)
+        try c.encode(lastName,     forKey: .lastName)
+        try c.encode(dob,          forKey: .dob)
+        try c.encode(nationality,  forKey: .nationality)
+        try c.encode(number,       forKey: .number)
+        try c.encode(issueCountry, forKey: .issueCountry)
+        try c.encode(expiryDate,   forKey: .expiryDate)
+        try c.encode(age,          forKey: .age)
+        try c.encode(gender,       forKey: .gender)
+    }
+}
+
+struct AgentDeleteTravellerRequest: Codable, Sendable {
+    let travelId: String
+
+    enum CodingKeys: String, CodingKey {
+        case travelId = "travel_id"
+    }
+
+    nonisolated init(travelId: String) { self.travelId = travelId }
+
+    nonisolated init(from decoder: any Decoder) throws {
+        let c    = try decoder.container(keyedBy: CodingKeys.self)
+        travelId = try c.decode(String.self, forKey: .travelId)
+    }
+
+    nonisolated func encode(to encoder: any Encoder) throws {
+        var c = encoder.container(keyedBy: CodingKeys.self)
+        try c.encode(travelId, forKey: .travelId)
+    }
+}
+
+// MARK: - Agent GST
+
+struct AgentAddGSTRequest: Codable, Sendable {
+    let gstNumber: String
+    let gstCompany: String
+    let gstMobileNo: String
+    let gstEmail: String
+    let gstAddress: String
+
+    enum CodingKeys: String, CodingKey {
+        case gstNumber   = "gst_number"
+        case gstCompany  = "gst_company"
+        case gstMobileNo = "gst_mobile_no"
+        case gstEmail    = "gst_email"
+        case gstAddress  = "gst_address"
+    }
+
+    nonisolated init(gstNumber: String, gstCompany: String, gstMobileNo: String, gstEmail: String, gstAddress: String) {
+        self.gstNumber   = gstNumber
+        self.gstCompany  = gstCompany
+        self.gstMobileNo = gstMobileNo
+        self.gstEmail    = gstEmail
+        self.gstAddress  = gstAddress
+    }
+
+    nonisolated init(from decoder: any Decoder) throws {
+        let c       = try decoder.container(keyedBy: CodingKeys.self)
+        gstNumber   = try c.decode(String.self, forKey: .gstNumber)
+        gstCompany  = try c.decode(String.self, forKey: .gstCompany)
+        gstMobileNo = try c.decode(String.self, forKey: .gstMobileNo)
+        gstEmail    = try c.decode(String.self, forKey: .gstEmail)
+        gstAddress  = try c.decode(String.self, forKey: .gstAddress)
+    }
+
+    nonisolated func encode(to encoder: any Encoder) throws {
+        var c = encoder.container(keyedBy: CodingKeys.self)
+        try c.encode(gstNumber,   forKey: .gstNumber)
+        try c.encode(gstCompany,  forKey: .gstCompany)
+        try c.encode(gstMobileNo, forKey: .gstMobileNo)
+        try c.encode(gstEmail,    forKey: .gstEmail)
+        try c.encode(gstAddress,  forKey: .gstAddress)
+    }
+}
+
+struct AgentEditGSTRequest: Codable, Sendable {
+    let gstId: Int
+
+    enum CodingKeys: String, CodingKey {
+        case gstId = "gst_id"
+    }
+
+    nonisolated init(gstId: Int) { self.gstId = gstId }
+
+    nonisolated init(from decoder: any Decoder) throws {
+        let c = try decoder.container(keyedBy: CodingKeys.self)
+        gstId = try c.decode(Int.self, forKey: .gstId)
+    }
+
+    nonisolated func encode(to encoder: any Encoder) throws {
+        var c = encoder.container(keyedBy: CodingKeys.self)
+        try c.encode(gstId, forKey: .gstId)
+    }
+}
+
+struct AgentUpdateGSTRequest: Codable, Sendable {
+    let gstId: String
+    let gstNumber: String
+    let gstCompany: String
+    let gstMobileNo: String
+    let gstEmail: String
+    let gstAddress: String
+
+    enum CodingKeys: String, CodingKey {
+        case gstId       = "gst_id"
+        case gstNumber   = "gst_number"
+        case gstCompany  = "gst_company"
+        case gstMobileNo = "gst_mobile_no"
+        case gstEmail    = "gst_email"
+        case gstAddress  = "gst_address"
+    }
+
+    nonisolated init(gstId: String, gstNumber: String, gstCompany: String, gstMobileNo: String, gstEmail: String, gstAddress: String) {
+        self.gstId       = gstId
+        self.gstNumber   = gstNumber
+        self.gstCompany  = gstCompany
+        self.gstMobileNo = gstMobileNo
+        self.gstEmail    = gstEmail
+        self.gstAddress  = gstAddress
+    }
+
+    nonisolated init(from decoder: any Decoder) throws {
+        let c       = try decoder.container(keyedBy: CodingKeys.self)
+        gstId       = try c.decode(String.self, forKey: .gstId)
+        gstNumber   = try c.decode(String.self, forKey: .gstNumber)
+        gstCompany  = try c.decode(String.self, forKey: .gstCompany)
+        gstMobileNo = try c.decode(String.self, forKey: .gstMobileNo)
+        gstEmail    = try c.decode(String.self, forKey: .gstEmail)
+        gstAddress  = try c.decode(String.self, forKey: .gstAddress)
+    }
+
+    nonisolated func encode(to encoder: any Encoder) throws {
+        var c = encoder.container(keyedBy: CodingKeys.self)
+        try c.encode(gstId,       forKey: .gstId)
+        try c.encode(gstNumber,   forKey: .gstNumber)
+        try c.encode(gstCompany,  forKey: .gstCompany)
+        try c.encode(gstMobileNo, forKey: .gstMobileNo)
+        try c.encode(gstEmail,    forKey: .gstEmail)
+        try c.encode(gstAddress,  forKey: .gstAddress)
+    }
+}
+
+struct AgentDeleteGSTRequest: Codable, Sendable {
+    let gstId: String
+
+    enum CodingKeys: String, CodingKey {
+        case gstId = "gst_id"
+    }
+
+    nonisolated init(gstId: String) { self.gstId = gstId }
+
+    nonisolated init(from decoder: any Decoder) throws {
+        let c = try decoder.container(keyedBy: CodingKeys.self)
+        gstId = try c.decode(String.self, forKey: .gstId)
+    }
+
+    nonisolated func encode(to encoder: any Encoder) throws {
+        var c = encoder.container(keyedBy: CodingKeys.self)
+        try c.encode(gstId, forKey: .gstId)
+    }
+}
+
+// MARK: - Agent Save Markups
+
+struct MarkupEntry: Codable, Sendable {
+    let domId: String?
+    let airline: String?
+    let airlineCode: String?
+    let markupType: String?
+    let markupValue1: Double?
+
+    enum CodingKeys: String, CodingKey {
+        case airline
+        case domId        = "dom_id"
+        case airlineCode  = "airline_code"
+        case markupType   = "markup_type"
+        case markupValue1 = "markup_value1"
+    }
+
+    nonisolated init(
+        domId: String? = nil, airline: String? = nil, airlineCode: String? = nil,
+        markupType: String? = nil, markupValue1: Double? = nil
+    ) {
+        self.domId        = domId
+        self.airline      = airline
+        self.airlineCode  = airlineCode
+        self.markupType   = markupType
+        self.markupValue1 = markupValue1
+    }
+
+    nonisolated init(from decoder: any Decoder) throws {
+        let c        = try decoder.container(keyedBy: CodingKeys.self)
+        domId        = try c.decodeIfPresent(String.self, forKey: .domId)
+        airline      = try c.decodeIfPresent(String.self, forKey: .airline)
+        airlineCode  = try c.decodeIfPresent(String.self, forKey: .airlineCode)
+        markupType   = try c.decodeIfPresent(String.self, forKey: .markupType)
+        markupValue1 = try c.decodeIfPresent(Double.self, forKey: .markupValue1)
+    }
+
+    nonisolated func encode(to encoder: any Encoder) throws {
+        var c = encoder.container(keyedBy: CodingKeys.self)
+        try c.encodeIfPresent(domId,        forKey: .domId)
+        try c.encodeIfPresent(airline,      forKey: .airline)
+        try c.encodeIfPresent(airlineCode,  forKey: .airlineCode)
+        try c.encodeIfPresent(markupType,   forKey: .markupType)
+        try c.encodeIfPresent(markupValue1, forKey: .markupValue1)
+    }
+}
+
+struct AgentSaveMarkupsRequest: Codable, Sendable {
+    let module: String
+    let displayNet: Int?
+    let markups: [MarkupEntry]
+
+    enum CodingKeys: String, CodingKey {
+        case module, markups
+        case displayNet = "display_net"
+    }
+
+    nonisolated init(module: String, displayNet: Int? = nil, markups: [MarkupEntry]) {
+        self.module     = module
+        self.displayNet = displayNet
+        self.markups    = markups
+    }
+
+    nonisolated init(from decoder: any Decoder) throws {
+        let c      = try decoder.container(keyedBy: CodingKeys.self)
+        module     = try c.decode(String.self,        forKey: .module)
+        displayNet = try c.decodeIfPresent(Int.self,  forKey: .displayNet)
+        markups    = try c.decode([MarkupEntry].self, forKey: .markups)
+    }
+
+    nonisolated func encode(to encoder: any Encoder) throws {
+        var c = encoder.container(keyedBy: CodingKeys.self)
+        try c.encode(module,  forKey: .module)
+        try c.encodeIfPresent(displayNet, forKey: .displayNet)
+        try c.encode(markups, forKey: .markups)
+    }
+}
+
+// MARK: - Payment
+
+struct CreatePaymentOrderRequest: Codable, Sendable {
+    let transferAmount: Int
+
+    enum CodingKeys: String, CodingKey {
+        case transferAmount = "transfer_amount"
+    }
+
+    nonisolated init(transferAmount: Int) { self.transferAmount = transferAmount }
+
+    nonisolated init(from decoder: any Decoder) throws {
+        let c          = try decoder.container(keyedBy: CodingKeys.self)
+        transferAmount = try c.decode(Int.self, forKey: .transferAmount)
+    }
+
+    nonisolated func encode(to encoder: any Encoder) throws {
+        var c = encoder.container(keyedBy: CodingKeys.self)
+        try c.encode(transferAmount, forKey: .transferAmount)
+    }
+}
+
+struct PaymentCheckoutPayload: Codable, Sendable {
+    let status: String?
+    let message: String?
+    let nimbblOrderId: String?
+    let nimbblTransactionId: String?
+    let isCallback: Bool?
+    let version: String?
+    let orderId: String?
+    let transactionId: String?
+    let nimbblSignature: String?
+    let signature: String?
+
+    enum CodingKeys: String, CodingKey {
+        case status, message, version, signature
+        case nimbblOrderId       = "nimbbl_order_id"
+        case nimbblTransactionId = "nimbbl_transaction_id"
+        case isCallback          = "is_callback"
+        case orderId             = "order_id"
+        case transactionId       = "transaction_id"
+        case nimbblSignature     = "nimbbl_signature"
+    }
+
+    nonisolated init(
+        status: String? = nil, message: String? = nil,
+        nimbblOrderId: String? = nil, nimbblTransactionId: String? = nil,
+        isCallback: Bool? = nil, version: String? = nil,
+        orderId: String? = nil, transactionId: String? = nil,
+        nimbblSignature: String? = nil, signature: String? = nil
+    ) {
+        self.status              = status
+        self.message             = message
+        self.nimbblOrderId       = nimbblOrderId
+        self.nimbblTransactionId = nimbblTransactionId
+        self.isCallback          = isCallback
+        self.version             = version
+        self.orderId             = orderId
+        self.transactionId       = transactionId
+        self.nimbblSignature     = nimbblSignature
+        self.signature           = signature
+    }
+
+    nonisolated init(from decoder: any Decoder) throws {
+        let c                = try decoder.container(keyedBy: CodingKeys.self)
+        status               = try c.decodeIfPresent(String.self, forKey: .status)
+        message              = try c.decodeIfPresent(String.self, forKey: .message)
+        nimbblOrderId        = try c.decodeIfPresent(String.self, forKey: .nimbblOrderId)
+        nimbblTransactionId  = try c.decodeIfPresent(String.self, forKey: .nimbblTransactionId)
+        isCallback           = try c.decodeIfPresent(Bool.self,   forKey: .isCallback)
+        version              = try c.decodeIfPresent(String.self, forKey: .version)
+        orderId              = try c.decodeIfPresent(String.self, forKey: .orderId)
+        transactionId        = try c.decodeIfPresent(String.self, forKey: .transactionId)
+        nimbblSignature      = try c.decodeIfPresent(String.self, forKey: .nimbblSignature)
+        signature            = try c.decodeIfPresent(String.self, forKey: .signature)
+    }
+
+    nonisolated func encode(to encoder: any Encoder) throws {
+        var c = encoder.container(keyedBy: CodingKeys.self)
+        try c.encodeIfPresent(status,              forKey: .status)
+        try c.encodeIfPresent(message,             forKey: .message)
+        try c.encodeIfPresent(nimbblOrderId,       forKey: .nimbblOrderId)
+        try c.encodeIfPresent(nimbblTransactionId, forKey: .nimbblTransactionId)
+        try c.encodeIfPresent(isCallback,          forKey: .isCallback)
+        try c.encodeIfPresent(version,             forKey: .version)
+        try c.encodeIfPresent(orderId,             forKey: .orderId)
+        try c.encodeIfPresent(transactionId,       forKey: .transactionId)
+        try c.encodeIfPresent(nimbblSignature,     forKey: .nimbblSignature)
+        try c.encodeIfPresent(signature,           forKey: .signature)
+    }
+}
+
+struct PaymentCheckoutRequest: Codable, Sendable {
+    let eventType: String
+    let payload: PaymentCheckoutPayload
+
+    enum CodingKeys: String, CodingKey {
+        case eventType = "event_type"
+        case payload
+    }
+
+    nonisolated init(eventType: String, payload: PaymentCheckoutPayload) {
+        self.eventType = eventType
+        self.payload   = payload
+    }
+
+    nonisolated init(from decoder: any Decoder) throws {
+        let c     = try decoder.container(keyedBy: CodingKeys.self)
+        eventType = try c.decode(String.self,                 forKey: .eventType)
+        payload   = try c.decode(PaymentCheckoutPayload.self, forKey: .payload)
+    }
+
+    nonisolated func encode(to encoder: any Encoder) throws {
+        var c = encoder.container(keyedBy: CodingKeys.self)
+        try c.encode(eventType, forKey: .eventType)
+        try c.encode(payload,   forKey: .payload)
+    }
+}
+
+// MARK: - Create Payment Order Response
+
+struct CreatePaymentOrderData: Codable, Sendable {
+    let transferAmount: Int?
+    let paymentToken: String?
+    let referenceId: String?
+    let invoiceId: String?
+
+    enum CodingKeys: String, CodingKey {
+        case transferAmount = "transfer_amount"
+        case paymentToken   = "payment_token"
+        case referenceId    = "reference_id"
+        case invoiceId      = "invoice_id"
+    }
+
+    nonisolated init(transferAmount: Int?, paymentToken: String?, referenceId: String?, invoiceId: String?) {
+        self.transferAmount = transferAmount
+        self.paymentToken   = paymentToken
+        self.referenceId    = referenceId
+        self.invoiceId      = invoiceId
+    }
+
+    nonisolated init(from decoder: any Decoder) throws {
+        let c          = try decoder.container(keyedBy: CodingKeys.self)
+        transferAmount = try c.decodeIfPresent(Int.self,    forKey: .transferAmount)
+        paymentToken   = try c.decodeIfPresent(String.self, forKey: .paymentToken)
+        referenceId    = try c.decodeIfPresent(String.self, forKey: .referenceId)
+        invoiceId      = try c.decodeIfPresent(String.self, forKey: .invoiceId)
+    }
+
+    nonisolated func encode(to encoder: any Encoder) throws {
+        var c = encoder.container(keyedBy: CodingKeys.self)
+        try c.encodeIfPresent(transferAmount, forKey: .transferAmount)
+        try c.encodeIfPresent(paymentToken,   forKey: .paymentToken)
+        try c.encodeIfPresent(referenceId,    forKey: .referenceId)
+        try c.encodeIfPresent(invoiceId,      forKey: .invoiceId)
+    }
+}
+
+struct CreatePaymentOrderResponse: Codable, Sendable {
+    let status: Bool
+    let message: String?
+    let data: CreatePaymentOrderData?
+
+    enum CodingKeys: String, CodingKey { case status, message, data }
+
+    nonisolated init(status: Bool, message: String?, data: CreatePaymentOrderData?) {
+        self.status  = status
+        self.message = message
+        self.data    = data
+    }
+
+    nonisolated init(from decoder: any Decoder) throws {
+        let c   = try decoder.container(keyedBy: CodingKeys.self)
+        status  = try c.decode(Bool.self,                           forKey: .status)
+        message = try c.decodeIfPresent(String.self,                forKey: .message)
+        data    = try c.decodeIfPresent(CreatePaymentOrderData.self, forKey: .data)
+    }
+
+    nonisolated func encode(to encoder: any Encoder) throws {
+        var c = encoder.container(keyedBy: CodingKeys.self)
+        try c.encode(status, forKey: .status)
+        try c.encodeIfPresent(message, forKey: .message)
+        try c.encodeIfPresent(data,    forKey: .data)
     }
 }
 

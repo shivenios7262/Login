@@ -2,6 +2,7 @@ import SwiftUI
 
 struct CheckEmailView: View {
     let email: String
+    let authManager: AuthManager
     let dismissSheet: DismissAction
 
     @State private var showResetPassword = false
@@ -13,11 +14,11 @@ struct CheckEmailView: View {
 
                 ZStack {
                     Circle()
-                        .fill(Color("AccentOrange").opacity(0.12))
+                        .fill(Color.ftdAccentOrange.opacity(0.12))
                         .frame(width: 96, height: 96)
                     Image(systemName: "envelope.badge.checkmark.fill")
                         .font(.system(size: 44))
-                        .foregroundStyle(Color("AccentOrange"))
+                        .foregroundStyle(Color.ftdAccentOrange)
                 }
                 .padding(.top, 8)
 
@@ -25,10 +26,10 @@ struct CheckEmailView: View {
                     Text("Check Your Email")
                         .font(.title2)
                         .fontWeight(.bold)
-                        .foregroundStyle(Color("TextPrimary"))
+                        .foregroundStyle(Color.ftdTextPrimary)
                     Text("We have sent password recovery instructions to **\(email)**.")
                         .font(.subheadline)
-                        .foregroundStyle(Color("TextSecondary"))
+                        .foregroundStyle(Color.ftdTextSecondary)
                         .multilineTextAlignment(.center)
                 }
 
@@ -40,11 +41,11 @@ struct CheckEmailView: View {
                     showResetPassword = true
                 }
                 .font(.subheadline)
-                .foregroundStyle(Color("AccentOrange"))
+                .foregroundStyle(Color.ftdAccentOrange)
 
                 Text("Did not receive the email? Check your spam folder or try another address.")
                     .font(.caption)
-                    .foregroundStyle(Color("TextSecondary"))
+                    .foregroundStyle(Color.ftdTextSecondary)
                     .multilineTextAlignment(.center)
                     .padding(.horizontal, 8)
             }
@@ -52,11 +53,11 @@ struct CheckEmailView: View {
             .padding(.top, 32)
             .padding(.bottom, 32)
         }
-        .background(Color("CardBackground").ignoresSafeArea())
+        .background(Color.ftdCardBackground.ignoresSafeArea())
         .navigationTitle("")
         .navigationBarTitleDisplayMode(.inline)
         .navigationDestination(isPresented: $showResetPassword) {
-            ResetPasswordView(dismissSheet: dismissSheet)
+            ResetPasswordView(email: email, authManager: authManager, dismissSheet: dismissSheet)
         }
     }
 }

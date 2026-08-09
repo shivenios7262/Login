@@ -258,6 +258,662 @@
       "name": "Agent B2B",
       "item": [
         {
+          "name": "Agent Profile",
+          "item": [
+            {
+              "name": "Agent Profile",
+              "request": {
+                "auth": {
+                  "type": "bearer",
+                  "bearer": [
+                    {
+                      "key": "token",
+                      "value": "{{auth_secret_11qm}}",
+                      "type": "string"
+                    }
+                  ]
+                },
+                "method": "GET",
+                "header": [
+                  {
+                    "key": "App-Token",
+                    "value": "{{json_web_token_05bq}}",
+                    "type": "text"
+                  },
+                  {
+                    "key": "Content-Type",
+                    "value": "application/json",
+                    "type": "text"
+                  }
+                ],
+                "url": {
+                  "raw": "http://13.200.42.214/book/mapp/mapp_b2b/agent_profile",
+                  "protocol": "http",
+                  "host": [
+                    "13",
+                    "200",
+                    "42",
+                    "214"
+                  ],
+                  "path": [
+                    "book",
+                    "mapp",
+                    "mapp_b2b",
+                    "agent_profile"
+                  ]
+                }
+              },
+              "response": []
+            },
+            {
+              "name": "Agent Profile Update",
+              "request": {
+                "auth": {
+                  "type": "bearer",
+                  "bearer": [
+                    {
+                      "key": "token",
+                      "value": "{{auth_secret_0qyu}}",
+                      "type": "string"
+                    }
+                  ]
+                },
+                "method": "POST",
+                "header": [
+                  {
+                    "key": "App-Token",
+                    "value": "{{json_web_token_05bq}}",
+                    "type": "text"
+                  },
+                  {
+                    "key": "Content-Type",
+                    "value": "application/json",
+                    "type": "text"
+                  }
+                ],
+                "body": {
+                  "mode": "raw",
+                  "raw": "{\r\n    \"title\": \"Mr\",\r\n    \"first_name\": \"Rajiv\",\r\n    \"middle_name\": \"\",\r\n    \"last_name\": \"Jain\",\r\n    \"designation\": \"Senior PHP Backend Engineer\",\r\n    \"website\": \"https://www.ftd.travel\",\r\n    \"office_phone_no\": \"08041234567\",\r\n    \"fax\": \"\",\r\n    \"address\": \"Tank Bund Road, Magadi Road\",\r\n    \"city\": \"Bangalore\",\r\n    \"state\": \"Karnataka\",\r\n    \"country\": \"India\",\r\n    \"pin_code\": \"560021\",\r\n    \"gst_number\": \"29ABCDE1234F1Z5\"\r\n}",
+                  "options": {
+                    "raw": {
+                      "language": "json"
+                    }
+                  }
+                },
+                "url": {
+                  "raw": "http://13.200.42.214/book/mapp/mapp_b2b/update_agent_profile",
+                  "protocol": "http",
+                  "host": [
+                    "13",
+                    "200",
+                    "42",
+                    "214"
+                  ],
+                  "path": [
+                    "book",
+                    "mapp",
+                    "mapp_b2b",
+                    "update_agent_profile"
+                  ]
+                }
+              },
+              "response": []
+            },
+            {
+              "name": "Agent Change Password",
+              "request": {
+                "auth": {
+                  "type": "bearer",
+                  "bearer": [
+                    {
+                      "key": "token",
+                      "value": "{{auth_secret_0qyu}}",
+                      "type": "string"
+                    }
+                  ]
+                },
+                "method": "POST",
+                "header": [
+                  {
+                    "key": "App-Token",
+                    "value": "{{json_web_token_05bq}}",
+                    "type": "text"
+                  },
+                  {
+                    "key": "Content-Type",
+                    "value": "application/json",
+                    "type": "text"
+                  }
+                ],
+                "body": {
+                  "mode": "raw",
+                  "raw": "{\r\n    \"current_password\": \"Praveen01\",\r\n    \"password\": \"Praveen\",\r\n    \"passconf\": \"Praveen\"\r\n}"
+                },
+                "url": {
+                  "raw": "http://13.200.42.214/book/mapp/mapp_b2b/change_agent_password",
+                  "protocol": "http",
+                  "host": [
+                    "13",
+                    "200",
+                    "42",
+                    "214"
+                  ],
+                  "path": [
+                    "book",
+                    "mapp",
+                    "mapp_b2b",
+                    "change_agent_password"
+                  ]
+                }
+              },
+              "response": []
+            },
+            {
+              "name": "Agent Add Travellers",
+              "request": {
+                "auth": {
+                  "type": "bearer",
+                  "bearer": [
+                    {
+                      "key": "token",
+                      "value": "{{auth_secret_0qyu}}",
+                      "type": "string"
+                    }
+                  ]
+                },
+                "method": "POST",
+                "header": [
+                  {
+                    "key": "App-Token",
+                    "value": "{{json_web_token_05bq}}",
+                    "type": "text"
+                  },
+                  {
+                    "key": "Content-Type",
+                    "value": "application/json",
+                    "type": "text"
+                  }
+                ],
+                "body": {
+                  "mode": "raw",
+                  "raw": "{\r\n    \"pax_type\": \"Adult\",\r\n    \"title\": \"Mr\",\r\n    \"first_name\": \"John\",\r\n    \"last_name\": \"Doe\",\r\n    \"DOB\": \"1990-05-10\",\r\n    \"nationality\": \"Indian\",\r\n    \"number\": \"P1234567\",\r\n    \"issue_country\": \"India\",\r\n    \"expiry_date\": \"2035-05-10\",\r\n    \"age\": \"35\",\r\n    \"gender\": \"Male\"\r\n}"
+                },
+                "url": {
+                  "raw": "http://13.200.42.214/book/mapp/mapp_b2b/agent_add_travellers",
+                  "protocol": "http",
+                  "host": [
+                    "13",
+                    "200",
+                    "42",
+                    "214"
+                  ],
+                  "path": [
+                    "book",
+                    "mapp",
+                    "mapp_b2b",
+                    "agent_add_travellers"
+                  ]
+                }
+              },
+              "response": []
+            },
+            {
+              "name": "Agent Edit Travellers",
+              "request": {
+                "auth": {
+                  "type": "bearer",
+                  "bearer": [
+                    {
+                      "key": "token",
+                      "value": "{{auth_secret_0qyu}}",
+                      "type": "string"
+                    }
+                  ]
+                },
+                "method": "POST",
+                "header": [
+                  {
+                    "key": "App-Token",
+                    "value": "{{json_web_token_05bq}}",
+                    "type": "text"
+                  },
+                  {
+                    "key": "Content-Type",
+                    "value": "application/json",
+                    "type": "text"
+                  }
+                ],
+                "body": {
+                  "mode": "raw",
+                  "raw": "{\r\n    \"travel_id\" : 329875\r\n}",
+                  "options": {
+                    "raw": {
+                      "language": "json"
+                    }
+                  }
+                },
+                "url": {
+                  "raw": "http://13.200.42.214/book/mapp/mapp_b2b/agent_edit_travellers",
+                  "protocol": "http",
+                  "host": [
+                    "13",
+                    "200",
+                    "42",
+                    "214"
+                  ],
+                  "path": [
+                    "book",
+                    "mapp",
+                    "mapp_b2b",
+                    "agent_edit_travellers"
+                  ]
+                }
+              },
+              "response": []
+            },
+            {
+              "name": "Agent Update Travellers",
+              "request": {
+                "auth": {
+                  "type": "bearer",
+                  "bearer": [
+                    {
+                      "key": "token",
+                      "value": "{{auth_secret_0qyu}}",
+                      "type": "string"
+                    }
+                  ]
+                },
+                "method": "POST",
+                "header": [
+                  {
+                    "key": "App-Token",
+                    "value": "{{json_web_token_05bq}}",
+                    "type": "text"
+                  },
+                  {
+                    "key": "Content-Type",
+                    "value": "application/json",
+                    "type": "text"
+                  }
+                ],
+                "body": {
+                  "mode": "raw",
+                  "raw": "{\r\n    \"travel_id\": \"329875\",\r\n    \"pax_type\": \"Adult\",\r\n    \"title\": \"Mr\",\r\n    \"first_name\": \"Praveen\",\r\n    \"last_name\": \"Doe\",\r\n    \"DOB\": \"1990-05-10\",\r\n    \"nationality\": \"Indian\",\r\n    \"number\": \"P123456789\",\r\n    \"issue_country\": \"India\",\r\n    \"expiry_date\": \"2035-05-10\",\r\n    \"age\": \"35\",\r\n    \"gender\": \"Male\"\r\n}"
+                },
+                "url": {
+                  "raw": "http://13.200.42.214/book/mapp/mapp_b2b/agent_update_travellers",
+                  "protocol": "http",
+                  "host": [
+                    "13",
+                    "200",
+                    "42",
+                    "214"
+                  ],
+                  "path": [
+                    "book",
+                    "mapp",
+                    "mapp_b2b",
+                    "agent_update_travellers"
+                  ]
+                }
+              },
+              "response": []
+            },
+            {
+              "name": "Agent Delete Travellers",
+              "request": {
+                "auth": {
+                  "type": "bearer",
+                  "bearer": [
+                    {
+                      "key": "token",
+                      "value": "{{auth_secret_0qyu}}",
+                      "type": "string"
+                    }
+                  ]
+                },
+                "method": "POST",
+                "header": [
+                  {
+                    "key": "App-Token",
+                    "value": "{{json_web_token_05bq}}",
+                    "type": "text"
+                  },
+                  {
+                    "key": "Content-Type",
+                    "value": "application/json",
+                    "type": "text"
+                  }
+                ],
+                "body": {
+                  "mode": "raw",
+                  "raw": "{\r\n    \"travel_id\": \"330088,330089\"\r\n}"
+                },
+                "url": {
+                  "raw": "http://13.200.42.214/book/mapp/mapp_b2b/agent_delete_travellers",
+                  "protocol": "http",
+                  "host": [
+                    "13",
+                    "200",
+                    "42",
+                    "214"
+                  ],
+                  "path": [
+                    "book",
+                    "mapp",
+                    "mapp_b2b",
+                    "agent_delete_travellers"
+                  ]
+                }
+              },
+              "response": []
+            },
+            {
+              "name": "Agent Add GST",
+              "request": {
+                "auth": {
+                  "type": "bearer",
+                  "bearer": [
+                    {
+                      "key": "token",
+                      "value": "{{auth_secret_0qyu}}",
+                      "type": "string"
+                    }
+                  ]
+                },
+                "method": "POST",
+                "header": [
+                  {
+                    "key": "App-Token",
+                    "value": "{{json_web_token_05bq}}",
+                    "type": "text"
+                  },
+                  {
+                    "key": "Content-Type",
+                    "value": "application/json",
+                    "type": "text"
+                  }
+                ],
+                "body": {
+                  "mode": "raw",
+                  "raw": "{\r\n    \"gst_number\": \"29ABCDE1234F1555\",\r\n    \"gst_company\": \"Test Travels Pvt Ltd\",\r\n    \"gst_mobile_no\": \"9876543212\",\r\n    \"gst_email\": \"accounts@abctravels.com\",\r\n    \"gst_address\": \"MG Road, Bangalore, Karnataka - 560001\"\r\n}"
+                },
+                "url": {
+                  "raw": "http://13.200.42.214/book/mapp/mapp_b2b/agent_add_gst",
+                  "protocol": "http",
+                  "host": [
+                    "13",
+                    "200",
+                    "42",
+                    "214"
+                  ],
+                  "path": [
+                    "book",
+                    "mapp",
+                    "mapp_b2b",
+                    "agent_add_gst"
+                  ]
+                }
+              },
+              "response": []
+            },
+            {
+              "name": "Agent Edit GST",
+              "request": {
+                "auth": {
+                  "type": "bearer",
+                  "bearer": [
+                    {
+                      "key": "token",
+                      "value": "{{auth_secret_0qyu}}",
+                      "type": "string"
+                    }
+                  ]
+                },
+                "method": "POST",
+                "header": [
+                  {
+                    "key": "App-Token",
+                    "value": "{{json_web_token_05bq}}",
+                    "type": "text"
+                  },
+                  {
+                    "key": "Content-Type",
+                    "value": "application/json",
+                    "type": "text"
+                  }
+                ],
+                "body": {
+                  "mode": "raw",
+                  "raw": "{\r\n    \"gst_id\": 1769\r\n}"
+                },
+                "url": {
+                  "raw": "http://13.200.42.214/book/mapp/mapp_b2b/agent_edit_gst",
+                  "protocol": "http",
+                  "host": [
+                    "13",
+                    "200",
+                    "42",
+                    "214"
+                  ],
+                  "path": [
+                    "book",
+                    "mapp",
+                    "mapp_b2b",
+                    "agent_edit_gst"
+                  ]
+                }
+              },
+              "response": []
+            },
+            {
+              "name": "Agent Update GST",
+              "request": {
+                "auth": {
+                  "type": "bearer",
+                  "bearer": [
+                    {
+                      "key": "token",
+                      "value": "{{auth_secret_0qyu}}",
+                      "type": "string"
+                    }
+                  ]
+                },
+                "method": "POST",
+                "header": [
+                  {
+                    "key": "App-Token",
+                    "value": "{{json_web_token_05bq}}",
+                    "type": "text"
+                  },
+                  {
+                    "key": "Content-Type",
+                    "value": "application/json",
+                    "type": "text"
+                  }
+                ],
+                "body": {
+                  "mode": "raw",
+                  "raw": "{\r\n    \"gst_id\": \"1769\",\r\n    \"gst_number\": \"29ABCDE1234F1Z5\",\r\n    \"gst_company\": \"XVB Travels Pvt Ltd\",\r\n    \"gst_mobile_no\": \"9876543210\",\r\n    \"gst_email\": \"accounts@abctravels.com\",\r\n    \"gst_address\": \"MG Road, Bangalore, Karnataka - 560001\"\r\n}"
+                },
+                "url": {
+                  "raw": "http://13.200.42.214/book/mapp/mapp_b2b/agent_update_gst",
+                  "protocol": "http",
+                  "host": [
+                    "13",
+                    "200",
+                    "42",
+                    "214"
+                  ],
+                  "path": [
+                    "book",
+                    "mapp",
+                    "mapp_b2b",
+                    "agent_update_gst"
+                  ]
+                }
+              },
+              "response": []
+            },
+            {
+              "name": "Agent Delete GST",
+              "request": {
+                "auth": {
+                  "type": "bearer",
+                  "bearer": [
+                    {
+                      "key": "token",
+                      "value": "{{auth_secret_0qyu}}",
+                      "type": "string"
+                    }
+                  ]
+                },
+                "method": "POST",
+                "header": [
+                  {
+                    "key": "App-Token",
+                    "value": "{{json_web_token_05bq}}",
+                    "type": "text"
+                  },
+                  {
+                    "key": "Content-Type",
+                    "value": "application/json",
+                    "type": "text"
+                  }
+                ],
+                "body": {
+                  "mode": "raw",
+                  "raw": "{\r\n    \"gst_id\": \"1768\"\r\n}"
+                },
+                "url": {
+                  "raw": "http://13.200.42.214/book/mapp/mapp_b2b/agent_delete_gst",
+                  "protocol": "http",
+                  "host": [
+                    "13",
+                    "200",
+                    "42",
+                    "214"
+                  ],
+                  "path": [
+                    "book",
+                    "mapp",
+                    "mapp_b2b",
+                    "agent_delete_gst"
+                  ]
+                }
+              },
+              "response": []
+            }
+          ]
+        },
+        {
+          "name": "Agent Markup",
+          "item": [
+            {
+              "name": "Agent Markups",
+              "protocolProfileBehavior": {
+                "disableBodyPruning": true
+              },
+              "request": {
+                "auth": {
+                  "type": "bearer",
+                  "bearer": [
+                    {
+                      "key": "token",
+                      "value": "{{auth_secret_11qm}}",
+                      "type": "string"
+                    }
+                  ]
+                },
+                "method": "GET",
+                "header": [
+                  {
+                    "key": "App-Token",
+                    "value": "{{json_web_token_05bq}}",
+                    "type": "text"
+                  },
+                  {
+                    "key": "Content-Type",
+                    "value": "application/json",
+                    "type": "text"
+                  }
+                ],
+                "body": {
+                  "mode": "raw",
+                  "raw": ""
+                },
+                "url": {
+                  "raw": "http://13.200.42.214/book/mapp/mapp_b2b/agent_markups",
+                  "protocol": "http",
+                  "host": [
+                    "13",
+                    "200",
+                    "42",
+                    "214"
+                  ],
+                  "path": [
+                    "book",
+                    "mapp",
+                    "mapp_b2b",
+                    "agent_markups"
+                  ]
+                }
+              },
+              "response": []
+            },
+            {
+              "name": "Agent Markup Save",
+              "request": {
+                "auth": {
+                  "type": "bearer",
+                  "bearer": [
+                    {
+                      "key": "token",
+                      "value": "{{auth_secret_0qyu}}",
+                      "type": "string"
+                    }
+                  ]
+                },
+                "method": "POST",
+                "header": [
+                  {
+                    "key": "App-Token",
+                    "value": "{{json_web_token_05bq}}",
+                    "type": "text"
+                  },
+                  {
+                    "key": "Content-Type",
+                    "value": "application/json",
+                    "type": "text"
+                  }
+                ],
+                "body": {
+                  "mode": "raw",
+                  "raw": "{\r\n    \"module\": \"flight\",\r\n    \"display_net\": 1,\r\n    \"markups\": [\r\n        {\r\n            \"dom_id\": \"111225\",\r\n            \"airline_code\": \"INT\",\r\n            \"markup_type\": \"Fixed\",\r\n            \"markup_value1\": 100\r\n        },\r\n        {\r\n            \"dom_id\": \"111234\",\r\n            \"airline\": \"IndiGo\",\r\n            \"airline_code\": \"6E\",\r\n            \"markup_type\": \"Fixed\",\r\n            \"markup_value1\": 100\r\n        },\r\n        {\r\n            \"dom_id\": \"111229\",\r\n            \"airline\": \"Air India\",\r\n            \"airline_code\": \"AI\",\r\n            \"markup_type\": \"Fixed\",\r\n            \"markup_value1\": 200\r\n        }\r\n    ]\r\n}\r\n//bus\r\n// {\r\n//     \"module\": \"bus\",\r\n//     \"dom_id\": \"1\",\r\n//     \"markup_process\": \"2\", //Fixed - 2, Percentage - 1\r\n//     \"markup\": 50\r\n// }\r\n//  Cab\r\n// {\r\n//     \"module\": \"cab\",\r\n//     \"dom_id\": \"2\",\r\n//     \"markup_process\": \"1\", //Fixed - 2, Percentage - 1\r\n//     \"markup\": 5\r\n// }\r\n//Hotel\r\n// {\r\n//     \"module\": \"hotel\",\r\n//     \"dom_id\": \"3\",\r\n//     \"markup_process\": \"2\", //Fixed - 2, Percentage - 1\r\n//     \"markup\": 250,\r\n//     \"intl_markup_process\": \"1\", //Fixed - 2, Percentage - 1\r\n//     \"intl_markup\": 8\r\n// }\r\n//eSIM\r\n// {\r\n//     \"module\": \"esim\",\r\n//     \"dom_id\": \"2\",\r\n//     \"markup_process\": \"2\", //Fixed - 2, Percentage - 1\r\n//     \"markup\": 10\r\n// }"
+                },
+                "url": {
+                  "raw": "http://13.200.42.214/book/mapp/mapp_b2b/agent_save_markups",
+                  "protocol": "http",
+                  "host": [
+                    "13",
+                    "200",
+                    "42",
+                    "214"
+                  ],
+                  "path": [
+                    "book",
+                    "mapp",
+                    "mapp_b2b",
+                    "agent_save_markups"
+                  ]
+                }
+              },
+              "response": []
+            }
+          ]
+        },
+        {
           "name": "Agent Bookings",
           "request": {
             "auth": {
@@ -405,103 +1061,6 @@
           "response": []
         },
         {
-          "name": "Agent Profile",
-          "request": {
-            "auth": {
-              "type": "bearer",
-              "bearer": [
-                {
-                  "key": "token",
-                  "value": "{{auth_secret_11qm}}",
-                  "type": "string"
-                }
-              ]
-            },
-            "method": "GET",
-            "header": [
-              {
-                "key": "App-Token",
-                "value": "{{json_web_token_05bq}}",
-                "type": "text"
-              },
-              {
-                "key": "Content-Type",
-                "value": "application/json",
-                "type": "text"
-              }
-            ],
-            "url": {
-              "raw": "http://13.200.42.214/book/mapp/mapp_b2b/agent_profile",
-              "protocol": "http",
-              "host": [
-                "13",
-                "200",
-                "42",
-                "214"
-              ],
-              "path": [
-                "book",
-                "mapp",
-                "mapp_b2b",
-                "agent_profile"
-              ]
-            }
-          },
-          "response": []
-        },
-        {
-          "name": "Agent Markups",
-          "protocolProfileBehavior": {
-            "disableBodyPruning": true
-          },
-          "request": {
-            "auth": {
-              "type": "bearer",
-              "bearer": [
-                {
-                  "key": "token",
-                  "value": "{{auth_secret_11qm}}",
-                  "type": "string"
-                }
-              ]
-            },
-            "method": "GET",
-            "header": [
-              {
-                "key": "App-Token",
-                "value": "{{json_web_token_05bq}}",
-                "type": "text"
-              },
-              {
-                "key": "Content-Type",
-                "value": "application/json",
-                "type": "text"
-              }
-            ],
-            "body": {
-              "mode": "raw",
-              "raw": ""
-            },
-            "url": {
-              "raw": "http://13.200.42.214/book/mapp/mapp_b2b/agent_markups",
-              "protocol": "http",
-              "host": [
-                "13",
-                "200",
-                "42",
-                "214"
-              ],
-              "path": [
-                "book",
-                "mapp",
-                "mapp_b2b",
-                "agent_markups"
-              ]
-            }
-          },
-          "response": []
-        },
-        {
           "name": "Agent Calendar",
           "protocolProfileBehavior": {
             "disableBodyPruning": true
@@ -554,58 +1113,6 @@
           "response": []
         },
         {
-          "name": "Group Fares",
-          "protocolProfileBehavior": {
-            "disableBodyPruning": true
-          },
-          "request": {
-            "auth": {
-              "type": "bearer",
-              "bearer": [
-                {
-                  "key": "token",
-                  "value": "{{auth_secret_11qm}}",
-                  "type": "string"
-                }
-              ]
-            },
-            "method": "GET",
-            "header": [
-              {
-                "key": "App-Token",
-                "value": "{{json_web_token_05bq}}",
-                "type": "text"
-              },
-              {
-                "key": "Content-Type",
-                "value": "application/json",
-                "type": "text"
-              }
-            ],
-            "body": {
-              "mode": "raw",
-              "raw": ""
-            },
-            "url": {
-              "raw": "http://13.200.42.214/book/mapp/mapp_b2b/group_fares",
-              "protocol": "http",
-              "host": [
-                "13",
-                "200",
-                "42",
-                "214"
-              ],
-              "path": [
-                "book",
-                "mapp",
-                "mapp_b2b",
-                "group_fares"
-              ]
-            }
-          },
-          "response": []
-        },
-        {
           "name": "Group Fares Request",
           "request": {
             "auth": {
@@ -633,7 +1140,7 @@
             ],
             "body": {
               "mode": "raw",
-              "raw": "{\r\n  \"trip_type\": \"Round Trip\",\r\n  \"mobile_no\": \"9876543210\",\r\n  \"fromCity\": \"BLR\",\r\n  \"toCity\": \"DXB\",\r\n  \"departureDate\": \"2026-08-15\",\r\n  \"returnDate\": \"2026-08-20\",\r\n  \"numAdults\": 20,\r\n  \"numChild\": 2,\r\n  \"numInfant\": 1,\r\n  \"trip_purpose\": \"Corporate Travel\",\r\n  \"expFare\": \"18000\",\r\n  \"airlineDetailso\": \"IndiGo, Emirates\",\r\n  \"airlineDetailsr\": \"Emirates\",\r\n  \"remarks\": \"Need refundable fares with baggage included.\"\r\n}"
+              "raw": "{\r\n  \"trip_type\": \"OneWay\", // OneWay  and RoundTrip\r\n  \"mobile_no\": \"9876543210\",\r\n  \"fromCity\": \"BLR\",\r\n  \"toCity\": \"DXB\",\r\n  \"departureDate\": \"2026-08-15\",\r\n  \"returnDate\": \"\",\r\n  \"numAdults\": 20, // Min 15\r\n  \"numChild\": 2,\r\n  \"numInfant\": 1,\r\n  \"trip_purpose\": \"Corporate Travel\",\r\n  \"expFare\": \"18000\",\r\n  \"airlineDetailso\": \"IndiGo, Emirates\", //Onward Flight\r\n  \"airlineDetailsr\": \"Emirates\", //Return Flight\r\n  \"remarks\": \"Need refundable fares with baggage included.\" // It cannot be empty\r\n}"
             },
             "url": {
               "raw": "http://13.200.42.214/book/mapp/mapp_b2b/group_fares_request",
@@ -750,6 +1257,104 @@
                 "mapp",
                 "mapp_b2b",
                 "upload_money_request"
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "Payment Order",
+          "request": {
+            "auth": {
+              "type": "bearer",
+              "bearer": [
+                {
+                  "key": "token",
+                  "value": "{{auth_secret_0qyu}}",
+                  "type": "string"
+                }
+              ]
+            },
+            "method": "POST",
+            "header": [
+              {
+                "key": "App-Token",
+                "value": "{{json_web_token_05bq}}",
+                "type": "text"
+              },
+              {
+                "key": "Content-Type",
+                "value": "application/json",
+                "type": "text"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\r\n  \"transfer_amount\": 10\r\n}"
+            },
+            "url": {
+              "raw": "http://13.200.42.214/book/mapp/mapp_b2b/create_payment_order",
+              "protocol": "http",
+              "host": [
+                "13",
+                "200",
+                "42",
+                "214"
+              ],
+              "path": [
+                "book",
+                "mapp",
+                "mapp_b2b",
+                "create_payment_order"
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "Payment Checkout",
+          "request": {
+            "auth": {
+              "type": "bearer",
+              "bearer": [
+                {
+                  "key": "token",
+                  "value": "{{auth_secret_0jo3}}",
+                  "type": "string"
+                }
+              ]
+            },
+            "method": "POST",
+            "header": [
+              {
+                "key": "App-Token",
+                "value": "{{json_web_token_05bq}}",
+                "type": "text"
+              },
+              {
+                "key": "Content-Type",
+                "value": "application/json",
+                "type": "text"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\r\n    \"event_type\": \"globalHandleCheckoutResponse\",\r\n    \"payload\": {\r\n        \"status\": \"success\",\r\n        \"message\": \"Payment Successful\",\r\n        \"nimbbl_order_id\": \"o_OWYZ5zGVP9rL0MpG\",\r\n        \"nimbbl_transaction_id\": \"o_OWYZ5zGVP9rL0MpG-9QO5j\",\r\n        \"transaction\": {\r\n            \"transaction_id\": \"o_OWYZ5zGVP9rL0MpG-9QO5j\",\r\n            \"status\": \"succeeded\",\r\n            \"payment_partner\": \"Phonepe V2\",\r\n            \"psp_transaction_id\": \"OM2608051821578027315543\",\r\n            \"payment_mode\": \"Netbanking\",\r\n            \"retry_allowed\": null,\r\n            \"nimbbl_consumer_message\": \"\",\r\n            \"nimbbl_merchant_message\": \"\",\r\n            \"nimbbl_error_code\": \"\",\r\n            \"sub_payment_mode\": {\r\n                \"bank_name\": \"Axis Bank\"\r\n            },\r\n            \"processing_payment_partner\": \"Phonepe V2\",\r\n            \"payment_acquirer\": null,\r\n            \"psp_credential_label\": \"phonepe_v2_1\",\r\n            \"payment_arn\": \"391031461545\",\r\n            \"transaction_amount\": 280,\r\n            \"transaction_type\": \"payment\",\r\n            \"transaction_currency\": \"INR\",\r\n            \"additional_charges\": 0,\r\n            \"shipping_charges\": 0,\r\n            \"cod_charges\": 0,\r\n            \"offer_discount\": 0,\r\n            \"signture_version\": \"v3\",\r\n            \"signature_version\": \"v3\",\r\n            \"offer_id\": null,\r\n            \"signature\": \"2142e8cd1d45a55fe15cde8e2bc53dd26e2d3854de7989fb4a39f6eb4e0f979d\"\r\n        },\r\n        \"order\": {\r\n            \"order_date\": \"2026-08-05 12:51:43\",\r\n            \"amount_before_tax\": 0,\r\n            \"tax\": 0,\r\n            \"total_amount\": 280,\r\n            \"convenience_fee\": 0,\r\n            \"additional_charges\": 0,\r\n            \"grand_total\": 280,\r\n            \"offer_discount\": 0,\r\n            \"referrer_platform\": \"\",\r\n            \"referrer_platform_version\": null,\r\n            \"invoice_id\": \"PG72608051251432455454\",\r\n            \"shopfront_domain\": \"http://13.200.42.214/book/b2b/money-management\",\r\n            \"attempts\": 1,\r\n            \"device_user_agent\": \"Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/151.0.0.0 Safari/537.36 Edg/151.0.0.0\",\r\n            \"status\": \"completed\",\r\n            \"currency\": \"INR\",\r\n            \"description\": \"\",\r\n            \"cancellation_reason\": \"\",\r\n            \"device\": {\r\n                \"browser_name\": \"Edge\",\r\n                \"device_name\": \"Other\",\r\n                \"os_name\": \"Windows\",\r\n                \"ip_address\": \"13.200.42.214\"\r\n            },\r\n            \"refund_details\": {\r\n                \"refundable_currency\": \"INR\",\r\n                \"available_refundable_amount\": 280,\r\n                \"refunded_amount\": 0,\r\n                \"total_refundable_amount\": 280\r\n            },\r\n            \"shipping_charges\": 0,\r\n            \"cod_charges\": 0,\r\n            \"shipping_address\": null,\r\n            \"billing_address\": null\r\n        },\r\n        \"is_callback\": true,\r\n        \"version\": \"v3\",\r\n        \"order_id\": \"o_OWYZ5zGVP9rL0MpG\",\r\n        \"transaction_id\": \"o_OWYZ5zGVP9rL0MpG-9QO5j\",\r\n        \"user\": {\r\n            \"name\": \"R**** \",\r\n            \"mobile\": \"******0005\",\r\n            \"email\": \"su***rt@ftd.travel\",\r\n            \"user_id\": \"user_Wy7VPm85XWXJr3pw\",\r\n            \"source\": \"merchant_provided\"\r\n        },\r\n        \"nimbbl_signature\": \"2142e8cd1d45a55fe15cde8e2bc53dd26e2d3854de7989fb4a39f6eb4e0f979d\",\r\n        \"signature\": \"2142e8cd1d45a55fe15cde8e2bc53dd26e2d3854de7989fb4a39f6eb4e0f979d\"\r\n    }\r\n}"
+            },
+            "url": {
+              "raw": "http://13.200.42.214/book/mapp/mapp_b2b/payment_checkout",
+              "protocol": "http",
+              "host": [
+                "13",
+                "200",
+                "42",
+                "214"
+              ],
+              "path": [
+                "book",
+                "mapp",
+                "mapp_b2b",
+                "payment_checkout"
               ]
             }
           },
@@ -1617,6 +2222,120 @@
         }
       },
       "response": []
+    },
+    {
+      "name": "Terms & Condtion",
+      "request": {
+        "method": "GET",
+        "header": [
+          {
+            "key": "App-Token",
+            "value": "{{json_web_token_05bq}}",
+            "type": "text"
+          },
+          {
+            "key": "Content-Type",
+            "value": "application/json",
+            "type": "text"
+          }
+        ],
+        "url": {
+          "raw": "http://13.200.42.214/book/mapp/mapp_general/terms_condition",
+          "protocol": "http",
+          "host": [
+            "13",
+            "200",
+            "42",
+            "214"
+          ],
+          "path": [
+            "book",
+            "mapp",
+            "mapp_general",
+            "terms_condition"
+          ]
+        }
+      },
+      "response": []
+    },
+    {
+      "name": "Privacy",
+      "request": {
+        "method": "GET",
+        "header": [
+          {
+            "key": "App-Token",
+            "value": "{{json_web_token_05bq}}",
+            "type": "text"
+          },
+          {
+            "key": "Content-Type",
+            "value": "application/json",
+            "type": "text"
+          }
+        ],
+        "url": {
+          "raw": "http://13.200.42.214/book/mapp/mapp_general/privacy",
+          "protocol": "http",
+          "host": [
+            "13",
+            "200",
+            "42",
+            "214"
+          ],
+          "path": [
+            "book",
+            "mapp",
+            "mapp_general",
+            "privacy"
+          ]
+        }
+      },
+      "response": []
+    },
+    {
+      "name": "Contact",
+      "request": {
+        "method": "POST",
+        "header": [
+          {
+            "key": "App-Token",
+            "value": "{{json_web_token_05bq}}",
+            "type": "text"
+          },
+          {
+            "key": "Content-Type",
+            "value": "application/json",
+            "type": "text"
+          }
+        ],
+        "body": {
+          "mode": "raw",
+          "raw": "{\r\n    \"name\": \"John Doe\",\r\n    \"email\": \"john.doe@gmail.com\",\r\n    \"phone\": \"9876543210\",\r\n    \"message\": \"I would like to know more about your visa services.\"\r\n}",
+          "options": {
+            "raw": {
+              "language": "json"
+            }
+          }
+        },
+        "url": {
+          "raw": "http://13.200.42.214/book/mapp/mapp_general/contact",
+          "protocol": "http",
+          "host": [
+            "13",
+            "200",
+            "42",
+            "214"
+          ],
+          "path": [
+            "book",
+            "mapp",
+            "mapp_general",
+            "contact"
+          ]
+        }
+      },
+      "response": []
     }
   ],
   "event": [
@@ -1663,6 +2382,17 @@
     {
       "key": "auth_secret_037v",
       "secret": true
+    },
+    {
+      "key": "auth_secret_0jo3",
+      "secret": true
+    },
+    {
+      "key": "auth_secret_0qyu",
+      "secret": true
     }
   ]
 }
+
+
+

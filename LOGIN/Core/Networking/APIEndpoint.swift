@@ -15,12 +15,32 @@ enum APIEndpoint: Sendable {
     case agentRefunds(AgentRefundsRequest)
     case agencyStatement(AgencyStatementRequest)
     case agentProfile
+    case updateAgentProfile(UpdateAgentProfileRequest)
+    case changeAgentPassword(ChangeAgentPasswordRequest)
+    case agentAddTraveller(AgentAddTravellerRequest)
+    case agentEditTraveller(AgentEditTravellerRequest)
+    case agentUpdateTraveller(AgentUpdateTravellerRequest)
+    case agentDeleteTraveller(AgentDeleteTravellerRequest)
+    case agentAddGST(AgentAddGSTRequest)
+    case agentEditGST(AgentEditGSTRequest)
+    case agentUpdateGST(AgentUpdateGSTRequest)
+    case agentDeleteGST(AgentDeleteGSTRequest)
     case agentMarkups
+    case agentSaveMarkups(AgentSaveMarkupsRequest)
     case agentCalendar
     case groupFaresRequest(GroupFaresRequest)
     case uploadMoney
     case uploadMoneyRequest(UploadMoneyRequest)
+    case createPaymentOrder(CreatePaymentOrderRequest)
+    case paymentCheckout(Data)
     case agentRegister(AgentRegisterRequest)
+
+    // MARK: - General
+    case forgotPassword(ForgotPasswordRequest)
+    case countries
+    case termsCondition
+    case privacy
+    case contact(ContactRequest)
 
     // MARK: - Flights
     case flightDetails(UniqueRefNoRequest)
@@ -137,11 +157,99 @@ enum APIEndpoint: Sendable {
                 requiresAppToken: true,
                 requiresBearerToken: true
             )
+        case .updateAgentProfile(let body):
+            return APIRequest(
+                path: "/book/mapp/mapp_b2b/update_agent_profile",
+                method: .post,
+                body: try JSONEncoder().encode(body),
+                requiresAppToken: true,
+                requiresBearerToken: true
+            )
+        case .changeAgentPassword(let body):
+            return APIRequest(
+                path: "/book/mapp/mapp_b2b/change_agent_password",
+                method: .post,
+                body: try JSONEncoder().encode(body),
+                requiresAppToken: true,
+                requiresBearerToken: true
+            )
+        case .agentAddTraveller(let body):
+            return APIRequest(
+                path: "/book/mapp/mapp_b2b/agent_add_travellers",
+                method: .post,
+                body: try JSONEncoder().encode(body),
+                requiresAppToken: true,
+                requiresBearerToken: true
+            )
+        case .agentEditTraveller(let body):
+            return APIRequest(
+                path: "/book/mapp/mapp_b2b/agent_edit_travellers",
+                method: .post,
+                body: try JSONEncoder().encode(body),
+                requiresAppToken: true,
+                requiresBearerToken: true
+            )
+        case .agentUpdateTraveller(let body):
+            return APIRequest(
+                path: "/book/mapp/mapp_b2b/agent_update_travellers",
+                method: .post,
+                body: try JSONEncoder().encode(body),
+                requiresAppToken: true,
+                requiresBearerToken: true
+            )
+        case .agentDeleteTraveller(let body):
+            return APIRequest(
+                path: "/book/mapp/mapp_b2b/agent_delete_travellers",
+                method: .post,
+                body: try JSONEncoder().encode(body),
+                requiresAppToken: true,
+                requiresBearerToken: true
+            )
+        case .agentAddGST(let body):
+            return APIRequest(
+                path: "/book/mapp/mapp_b2b/agent_add_gst",
+                method: .post,
+                body: try JSONEncoder().encode(body),
+                requiresAppToken: true,
+                requiresBearerToken: true
+            )
+        case .agentEditGST(let body):
+            return APIRequest(
+                path: "/book/mapp/mapp_b2b/agent_edit_gst",
+                method: .post,
+                body: try JSONEncoder().encode(body),
+                requiresAppToken: true,
+                requiresBearerToken: true
+            )
+        case .agentUpdateGST(let body):
+            return APIRequest(
+                path: "/book/mapp/mapp_b2b/agent_update_gst",
+                method: .post,
+                body: try JSONEncoder().encode(body),
+                requiresAppToken: true,
+                requiresBearerToken: true
+            )
+        case .agentDeleteGST(let body):
+            return APIRequest(
+                path: "/book/mapp/mapp_b2b/agent_delete_gst",
+                method: .post,
+                body: try JSONEncoder().encode(body),
+                requiresAppToken: true,
+                requiresBearerToken: true
+            )
         case .agentMarkups:
             return APIRequest(
                 path: "/book/mapp/mapp_b2b/agent_markups",
                 method: .get,
                 body: nil,
+                requiresAppToken: true,
+                requiresBearerToken: true
+            )
+        case .agentSaveMarkups(let body):
+            return APIRequest(
+                path: "/book/mapp/mapp_b2b/agent_save_markups",
+                method: .post,
+                body: try JSONEncoder().encode(body),
                 requiresAppToken: true,
                 requiresBearerToken: true
             )
@@ -177,9 +285,67 @@ enum APIEndpoint: Sendable {
                 requiresAppToken: true,
                 requiresBearerToken: true
             )
+        case .createPaymentOrder(let body):
+            return APIRequest(
+                path: "/book/mapp/mapp_b2b/create_payment_order",
+                method: .post,
+                body: try JSONEncoder().encode(body),
+                requiresAppToken: true,
+                requiresBearerToken: true
+            )
+        case .paymentCheckout(let bodyData):
+            return APIRequest(
+                path: "/book/mapp/mapp_b2b/payment_checkout",
+                method: .post,
+                body: bodyData,
+                requiresAppToken: true,
+                requiresBearerToken: true
+            )
         case .agentRegister(let body):
             return APIRequest(
                 path: "/book/mapp/mapp_b2b/agent_register",
+                method: .post,
+                body: try JSONEncoder().encode(body),
+                requiresAppToken: true,
+                requiresBearerToken: false
+            )
+
+        // MARK: General
+        case .forgotPassword(let body):
+            return APIRequest(
+                path: "/book/mapp/mapp_general/forgot_password",
+                method: .post,
+                body: try JSONEncoder().encode(body),
+                requiresAppToken: true,
+                requiresBearerToken: false
+            )
+        case .countries:
+            return APIRequest(
+                path: "/book/mapp/mapp_general/countries",
+                method: .get,
+                body: nil,
+                requiresAppToken: true,
+                requiresBearerToken: false
+            )
+        case .termsCondition:
+            return APIRequest(
+                path: "/book/mapp/mapp_general/terms_condition",
+                method: .get,
+                body: nil,
+                requiresAppToken: true,
+                requiresBearerToken: false
+            )
+        case .privacy:
+            return APIRequest(
+                path: "/book/mapp/mapp_general/privacy",
+                method: .get,
+                body: nil,
+                requiresAppToken: true,
+                requiresBearerToken: false
+            )
+        case .contact(let body):
+            return APIRequest(
+                path: "/book/mapp/mapp_general/contact",
                 method: .post,
                 body: try JSONEncoder().encode(body),
                 requiresAppToken: true,
@@ -207,7 +373,7 @@ enum APIEndpoint: Sendable {
         // MARK: Bus
         case .busDetails(let body):
             return APIRequest(
-                path: "/book/mapp/bus/bus_details",
+                path: "/book/mapp/mapp_bus/bus_details",
                 method: .post,
                 body: try JSONEncoder().encode(body),
                 requiresAppToken: true,

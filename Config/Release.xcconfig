@@ -1,3 +1,5 @@
+#include "Pods/Target Support Files/Pods-LOGIN/Pods-LOGIN.release.xcconfig"
+
 // Release / production configuration.
 //
 // SECURITY: This file must be gitignored — it will contain production credentials.
@@ -6,6 +8,7 @@
 //   echo "APP_PASSWORD = $FTD_PROD_APP_PASSWORD" >> Config/Release.xcconfig
 
 INFOPLIST_FILE = Config/Info.plist
+ENABLE_USER_SCRIPT_SANDBOXING = NO
 
 // xcconfig treats // as a comment, so use $(SLASH) to embed // in a URL value.
 SLASH = /

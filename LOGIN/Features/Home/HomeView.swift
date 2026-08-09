@@ -34,7 +34,9 @@ struct HomeView: View {
             AgentProfileView(viewModel: viewModel)
         }
         .sheet(isPresented: $viewModel.showStatement) {
-            StatementView(viewModel: viewModel)
+            // Statement is handled by FTDHomeView with StatementViewModel.
+            ContentUnavailableView("Statements", systemImage: "doc.text.fill",
+                                   description: Text("Use the FTD home screen to view your statement."))
         }
         .sheet(isPresented: $viewModel.showMarkups) {
             MarkupView(viewModel: viewModel)

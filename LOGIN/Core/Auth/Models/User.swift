@@ -13,6 +13,9 @@ struct User: Codable, Equatable, Sendable {
     let mobileNo: String?
     let creditBalance: String?
     let bookingBalance: String?
+    let registerDate: String?
+    let lastLogin: String?
+    let lastBooking: String?
 
     var displayName: String {
         [title, firstName, lastName].compactMap { $0 }.joined(separator: " ")
@@ -31,13 +34,17 @@ struct User: Codable, Equatable, Sendable {
         case mobileNo     = "mobile_no"
         case creditBalance  = "creditbalance"
         case bookingBalance = "bookingbalance"
+        case registerDate   = "register_date"
+        case lastLogin      = "last_login"
+        case lastBooking    = "last_booking"
     }
 
     nonisolated init(
         agentId: String?, distId: String?, agentNo: String?,
         agencyName: String?, agentEmail: String?, agentLogo: String?,
         title: String?, firstName: String?, lastName: String?,
-        mobileNo: String?, creditBalance: String?, bookingBalance: String?
+        mobileNo: String?, creditBalance: String?, bookingBalance: String?,
+        registerDate: String? = nil, lastLogin: String? = nil, lastBooking: String? = nil
     ) {
         self.agentId = agentId
         self.distId = distId
@@ -51,6 +58,9 @@ struct User: Codable, Equatable, Sendable {
         self.mobileNo = mobileNo
         self.creditBalance = creditBalance
         self.bookingBalance = bookingBalance
+        self.registerDate = registerDate
+        self.lastLogin = lastLogin
+        self.lastBooking = lastBooking
     }
 
     nonisolated init(from decoder: any Decoder) throws {
@@ -65,23 +75,29 @@ struct User: Codable, Equatable, Sendable {
         firstName     = try c.decodeIfPresent(String.self, forKey: .firstName)
         lastName      = try c.decodeIfPresent(String.self, forKey: .lastName)
         mobileNo      = try c.decodeIfPresent(String.self, forKey: .mobileNo)
-        creditBalance = try c.decodeIfPresent(String.self, forKey: .creditBalance)
+        creditBalance  = try c.decodeIfPresent(String.self, forKey: .creditBalance)
         bookingBalance = try c.decodeIfPresent(String.self, forKey: .bookingBalance)
+        registerDate   = try c.decodeIfPresent(String.self, forKey: .registerDate)
+        lastLogin      = try c.decodeIfPresent(String.self, forKey: .lastLogin)
+        lastBooking    = try c.decodeIfPresent(String.self, forKey: .lastBooking)
     }
 
     nonisolated func encode(to encoder: any Encoder) throws {
         var c = encoder.container(keyedBy: CodingKeys.self)
-        try c.encodeIfPresent(agentId,       forKey: .agentId)
-        try c.encodeIfPresent(distId,        forKey: .distId)
-        try c.encodeIfPresent(agentNo,       forKey: .agentNo)
-        try c.encodeIfPresent(agencyName,    forKey: .agencyName)
-        try c.encodeIfPresent(agentEmail,    forKey: .agentEmail)
-        try c.encodeIfPresent(agentLogo,     forKey: .agentLogo)
-        try c.encodeIfPresent(title,         forKey: .title)
-        try c.encodeIfPresent(firstName,     forKey: .firstName)
-        try c.encodeIfPresent(lastName,      forKey: .lastName)
-        try c.encodeIfPresent(mobileNo,      forKey: .mobileNo)
-        try c.encodeIfPresent(creditBalance, forKey: .creditBalance)
+        try c.encodeIfPresent(agentId,        forKey: .agentId)
+        try c.encodeIfPresent(distId,         forKey: .distId)
+        try c.encodeIfPresent(agentNo,        forKey: .agentNo)
+        try c.encodeIfPresent(agencyName,     forKey: .agencyName)
+        try c.encodeIfPresent(agentEmail,     forKey: .agentEmail)
+        try c.encodeIfPresent(agentLogo,      forKey: .agentLogo)
+        try c.encodeIfPresent(title,          forKey: .title)
+        try c.encodeIfPresent(firstName,      forKey: .firstName)
+        try c.encodeIfPresent(lastName,       forKey: .lastName)
+        try c.encodeIfPresent(mobileNo,       forKey: .mobileNo)
+        try c.encodeIfPresent(creditBalance,  forKey: .creditBalance)
         try c.encodeIfPresent(bookingBalance, forKey: .bookingBalance)
+        try c.encodeIfPresent(registerDate,   forKey: .registerDate)
+        try c.encodeIfPresent(lastLogin,      forKey: .lastLogin)
+        try c.encodeIfPresent(lastBooking,    forKey: .lastBooking)
     }
 }

@@ -3,19 +3,27 @@ import SwiftUI
 // MARK: - FTDHomeView
 
 struct FTDHomeView: View {
-    @State private var viewModel:   FTDHomeViewModel
-    @State private var bookingsVM:  BookingsViewModel
-    @State private var profileVM:   ProfileViewModel
-    @State private var statementVM: StatementViewModel
-    @State private var markupsVM:   MarkupsViewModel
+    @State private var viewModel:      FTDHomeViewModel
+    @State private var bookingsVM:     BookingsViewModel
+    @State private var profileVM:      ProfileViewModel
+    @State private var statementVM:    StatementViewModel
+    @State private var markupsVM:      MarkupsViewModel
+    @State private var uploadMoneyVM:  UploadMoneyViewModel
+    @State private var contactVM:      ContactSupportViewModel
+    @State private var privacyVM:      PrivacyPolicyViewModel
+    @State private var termsVM:        TermsConditionViewModel
     @Environment(AppRouter.self) private var router
 
     init(authManager: AuthManager) {
-        _viewModel   = State(initialValue: FTDHomeViewModel(authManager: authManager))
-        _bookingsVM  = State(initialValue: BookingsViewModel(authManager: authManager))
-        _profileVM   = State(initialValue: ProfileViewModel(authManager: authManager))
-        _statementVM = State(initialValue: StatementViewModel(authManager: authManager))
-        _markupsVM   = State(initialValue: MarkupsViewModel(authManager: authManager))
+        _viewModel      = State(initialValue: FTDHomeViewModel(authManager: authManager))
+        _bookingsVM     = State(initialValue: BookingsViewModel(authManager: authManager))
+        _profileVM      = State(initialValue: ProfileViewModel(authManager: authManager))
+        _statementVM    = State(initialValue: StatementViewModel(authManager: authManager))
+        _markupsVM      = State(initialValue: MarkupsViewModel(authManager: authManager))
+        _uploadMoneyVM  = State(initialValue: UploadMoneyViewModel(authManager: authManager))
+        _contactVM      = State(initialValue: ContactSupportViewModel(authManager: authManager))
+        _privacyVM      = State(initialValue: PrivacyPolicyViewModel(authManager: authManager))
+        _termsVM        = State(initialValue: TermsConditionViewModel(authManager: authManager))
     }
 
     var body: some View {
@@ -32,17 +40,22 @@ struct FTDHomeView: View {
                 .onTapGesture { viewModel.closeSideMenu() }
 
             FTDSideMenuView(context: sideMenuContext)
-                .frame(width: 280)
-                .offset(x: viewModel.isSideMenuOpen ? 0 : -280)
+                .frame(width: 310)
+                .offset(x: viewModel.isSideMenuOpen ? 0 : -310)
                 .animation(.easeInOut(duration: DesignTokens.Animation.standard), value: viewModel.isSideMenuOpen)
         }
         .navigationBarHidden(true)
         .sheet(item: Bindable(router).homeSheet) { sheet in
             switch sheet {
-            case .myBookings: MyBookingsView(viewModel: bookingsVM)
-            case .profile:    AgentProfileView(viewModel: profileVM)
-            case .statement:  StatementView(viewModel: statementVM)
-            case .markups:    MarkupView(viewModel: markupsVM)
+            case .myBookings:  MyBookingsView(viewModel: bookingsVM)
+            case .profile:     AgentProfileView(viewModel: profileVM)
+            case .statement:   StatementView(viewModel: statementVM)
+            case .markups:     MarkupView(viewModel: markupsVM)
+            case .uploadMoney:     UploadMoneyView(viewModel: uploadMoneyVM)
+            case .aboutUs:         NavigationStack { AboutView() }
+            case .contactSupport:  NavigationStack { ContactSupportView(viewModel: contactVM) }
+            case .privacyPolicy:   NavigationStack { PrivacyPolicyView(viewModel: privacyVM) }
+            case .termsCondition:  NavigationStack { TermsConditionView(viewModel: termsVM) }
             }
         }
         .task {
@@ -54,16 +67,23 @@ struct FTDHomeView: View {
 
     private var sideMenuContext: SideMenuContext {
         SideMenuContext(
-            agentName:    viewModel.agentName,
-            agentEmail:   viewModel.agentEmail,
-            onMyBookings: { viewModel.closeSideMenu(); router.presentHome(.myBookings) },
-            onUploadMoney:{ viewModel.closeSideMenu() },
-            onMyRefund:   { viewModel.closeSideMenu() },
-            onStatement:  { viewModel.closeSideMenu(); router.presentHome(.statement) },
-            onMarkups:    { viewModel.closeSideMenu(); router.presentHome(.markups) },
-            onProfile:    { viewModel.closeSideMenu(); router.presentHome(.profile) },
-            onClose:      { viewModel.closeSideMenu() },
-            onLogout:     { viewModel.logout() }
+            agentName:     viewModel.agentName,
+            agentEmail:    viewModel.agentEmail,
+            agentPhone:    viewModel.mobileNo,
+            agentPhotoURL: viewModel.agentLogoURL,
+            onMyBookings:  { viewModel.closeSideMenu(); router.presentHome(.myBookings) },
+            onUploadMoney: { viewModel.closeSideMenu(); router.presentHome(.uploadMoney) },
+            onMyRefund:    { viewModel.closeSideMenu() },
+            onAppCode:     { viewModel.closeSideMenu() },
+            onStatement:   { viewModel.closeSideMenu(); router.presentHome(.statement) },
+            onMarkups:     { viewModel.closeSideMenu(); router.presentHome(.markups) },
+            onProfile:     { viewModel.closeSideMenu(); router.presentHome(.profile) },
+            onAboutUs:         { viewModel.closeSideMenu(); router.presentHome(.aboutUs) },
+            onContactSupport:  { viewModel.closeSideMenu(); router.presentHome(.contactSupport) },
+            onPrivacyPolicy:   { viewModel.closeSideMenu(); router.presentHome(.privacyPolicy) },
+            onTermsCondition:  { viewModel.closeSideMenu(); router.presentHome(.termsCondition) },
+            onClose:           { viewModel.closeSideMenu() },
+            onLogout:      { viewModel.logout() }
         )
     }
 
@@ -73,7 +93,8 @@ struct FTDHomeView: View {
         VStack(spacing: 0) {
             tabPageContent
                 .frame(maxWidth: .infinity, maxHeight: .infinity)
-            bottomTabBar
+            // TODO: Re-enable bottom tab bar once My Trips, Wishlists, Credit Card screens are built
+            // bottomTabBar
         }
     }
 
@@ -94,12 +115,23 @@ struct FTDHomeView: View {
             topBar
             ScrollView(showsIndicators: false) {
                 VStack(spacing: 0) {
-                    aiSearchBar
+                    // TODO: Re-enable AI search bar once travel assistant feature is ready
+                    // aiSearchBar
+                    //     .padding(.horizontal, DesignTokens.Spacing.lg)
+                    //     .padding(.vertical, DesignTokens.Spacing.md)
+
+                    agentProfileCard
                         .padding(.horizontal, DesignTokens.Spacing.lg)
-                        .padding(.vertical, DesignTokens.Spacing.md)
-                    categoryPanel
-                    offersSection
-                        .padding(.top, DesignTokens.Spacing.xl)
+                        .padding(.top, DesignTokens.Spacing.lg)
+                        .padding(.bottom, DesignTokens.Spacing.md)
+
+                    // TODO: Re-enable service category panel once booking flows are integrated
+                    // categoryPanel
+
+                    // TODO: Re-enable offers section once offer data API is integrated
+                    // offersSection
+                    //     .padding(.top, DesignTokens.Spacing.xl)
+
                     Spacer(minLength: DesignTokens.Spacing.xxl)
                 }
             }
@@ -286,6 +318,106 @@ struct FTDHomeView: View {
             .overlay(Rectangle().stroke(Color.ftdBorder.opacity(0.4), lineWidth: 0.5))
         }
         .buttonStyle(.plain)
+    }
+
+    // MARK: - Agent Profile Card
+
+    private var agentProfileCard: some View {
+        VStack(alignment: .leading, spacing: 0) {
+            profileLogoBanner
+            profileInfoGrid
+        }
+        .background(Color.ftdCardBackground)
+        .clipShape(RoundedRectangle(cornerRadius: DesignTokens.Radius.card))
+        .shadow(color: .black.opacity(0.07), radius: 8, y: 3)
+    }
+
+    // Logo image fills the banner; name / agency overlaid at the bottom.
+    private var profileLogoBanner: some View {
+        ZStack(alignment: .bottomLeading) {
+            LinearGradient(
+                colors: [Color.ftdAccentOrange.opacity(0.85), Color.ftdAccentTeal.opacity(0.75)],
+                startPoint: .topLeading,
+                endPoint: .bottomTrailing
+            )
+
+            AsyncImage(url: viewModel.agentLogoURL) { phase in
+                switch phase {
+                case .success(let image):
+                    image
+                        .resizable()
+                        .aspectRatio(contentMode: .fill)
+                        .clipped()
+                default:
+                    Color.clear
+                }
+            }
+            .allowsHitTesting(false)
+
+            // Scrim so the text stays readable over any logo
+            LinearGradient(
+                colors: [.black.opacity(0.05), .black.opacity(0.60)],
+                startPoint: .top,
+                endPoint: .bottom
+            )
+
+            VStack(alignment: .leading, spacing: DesignTokens.Spacing.xxs) {
+                Text(viewModel.agentName)
+                    .font(.subheadline).fontWeight(.bold)
+                    .foregroundStyle(.white)
+                if !viewModel.agencyName.isEmpty {
+                    Text(viewModel.agencyName)
+                        .font(.caption)
+                        .foregroundStyle(.white.opacity(0.85))
+                }
+            }
+            .padding(DesignTokens.Spacing.md)
+        }
+        .frame(height: 120)
+    }
+
+    private var profileInfoGrid: some View {
+        let fields: [(String, String)] = [
+            (String(localized: "Agent No"),        viewModel.agentNo),
+            (String(localized: "Email"),           viewModel.agentEmail),
+            (String(localized: "Mobile"),          viewModel.mobileNo),
+            (String(localized: "Booking Balance"), viewModel.bookingBalanceLabel),
+            (String(localized: "Credit Balance"),  viewModel.creditBalanceDisplayLabel),
+            (String(localized: "Registered"),      viewModel.registerDate),
+            (String(localized: "Last Login"),      viewModel.lastLogin),
+            (String(localized: "Last Booking"),    viewModel.lastBooking),
+        ].filter { !$0.1.isEmpty }
+
+        return LazyVGrid(
+            columns: [GridItem(.flexible()), GridItem(.flexible())],
+            alignment: .leading,
+            spacing: 0
+        ) {
+            ForEach(fields, id: \.0) { label, value in
+                profileInfoCell(label: label, value: value)
+            }
+        }
+        .padding(.vertical, DesignTokens.Spacing.xs)
+        .padding(.horizontal, DesignTokens.Spacing.xs)
+    }
+
+    private func profileInfoCell(label: String, value: String) -> some View {
+        VStack(alignment: .leading, spacing: DesignTokens.Spacing.xxs) {
+            Text(label)
+                .font(.caption2)
+                .foregroundStyle(Color.ftdTextSecondary)
+                .textCase(.uppercase)
+                .tracking(0.4)
+            Text(value)
+                .font(.subheadline)
+                .fontWeight(.medium)
+                .foregroundStyle(Color.ftdTextPrimary)
+                .lineLimit(1)
+                .minimumScaleFactor(0.75)
+        }
+        .frame(maxWidth: .infinity, alignment: .leading)
+        .padding(.horizontal, DesignTokens.Spacing.sm)
+        .padding(.vertical, DesignTokens.Spacing.sm)
     }
 
     // MARK: - Offers Section

@@ -35,9 +35,10 @@ final class AuthManager {
         let response: AgentLoginResponse = try await apiClient.send(.agentLogin(request))
 
         guard response.status, let data = response.data else {
-            throw NetworkError.serverError(
-                response.serverMessage ?? String(localized: "Login failed. Please check your credentials.")
-            )
+            // Prefer ErrorDesc when the server returns an error code (e.g. 1104 KYC pending, 1105 account blocked).
+            let message = response.errorDesc ?? response.message
+                ?? String(localized: "Login failed. Please check your credentials.")
+            throw NetworkError.serverError(message)
         }
 
         pendingAgentNo = data.agentNo
@@ -116,11 +117,81 @@ final class AuthManager {
         return try await apiClient.send(.agentMarkups)
     }
 
+    func fetchCountries() async throws -> [CountryItem] {
+        let response: CountriesResponse = try await apiClient.send(.countries)
+        guard response.status, let data = response.data else {
+            throw NetworkError.serverError(
+                response.serverMessage ?? String(localized: "Failed to fetch countries.")
+            )
+        }
+        return data
+    }
+
+    func forgotPassword(_ request: ForgotPasswordRequest) async throws {
+        let response: GenericAPIResponse = try await apiClient.send(.forgotPassword(request))
+        guard response.status else {
+            throw NetworkError.serverError(
+                response.serverMessage ?? String(localized: "Password reset failed. Please try again.")
+            )
+        }
+    }
+
     func register(request: AgentRegisterRequest) async throws {
         let response: GenericAPIResponse = try await apiClient.send(.agentRegister(request))
         guard response.status else {
             throw NetworkError.serverError(
                 response.serverMessage ?? String(localized: "Registration failed. Please try again.")
+            )
+        }
+    }
+
+    func fetchTermsCondition() async throws -> PrivacyData {
+        let response: TermsResponse = try await apiClient.send(.termsCondition)
+        guard response.status, let data = response.data else {
+            throw NetworkError.serverError(
+                response.message ?? String(localized: "Failed to load Terms & Conditions.")
+            )
+        }
+        return data
+    }
+
+    func fetchPrivacyPolicy() async throws -> PrivacyData {
+        let response: PrivacyResponse = try await apiClient.send(.privacy)
+        guard response.status, let data = response.data else {
+            throw NetworkError.serverError(
+                response.message ?? String(localized: "Failed to load privacy policy.")
+            )
+        }
+        return data
+    }
+
+    func submitContact(_ request: ContactRequest) async throws {
+        let response: GenericAPIResponse = try await apiClient.send(.contact(request))
+        guard response.status else {
+            throw NetworkError.serverError(
+                response.serverMessage ?? String(localized: "Failed to send your message. Please try again.")
+            )
+        }
+    }
+
+    // MARK: - Payment
+
+    func createPaymentOrder(amount: Int) async throws -> CreatePaymentOrderData {
+        let request = CreatePaymentOrderRequest(transferAmount: amount)
+        let response: CreatePaymentOrderResponse = try await apiClient.send(.createPaymentOrder(request))
+        guard response.status, let data = response.data else {
+            throw NetworkError.serverError(
+                response.message ?? String(localized: "Failed to create payment order.")
+            )
+        }
+        return data
+    }
+
+    func confirmPayment(bodyData: Data) async throws {
+        let response: GenericAPIResponse = try await apiClient.send(.paymentCheckout(bodyData))
+        guard response.status else {
+            throw NetworkError.serverError(
+                response.serverMessage ?? String(localized: "Payment confirmation failed.")
             )
         }
     }

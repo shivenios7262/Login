@@ -30,15 +30,31 @@ final class SignUpViewModel {
     var gstNumber: String = ""
 
     // MARK: - Address
-    var address: String = ""         { didSet { addressError  = nil } }
-    var pinCode: String = ""         { didSet { pinCodeError  = nil } }
-    var city: String = ""            { didSet { cityError     = nil } }
-    var selectedState: String = ""   { didSet { stateError    = nil } }
-    var selectedCountry: String = "" { didSet { countryError  = nil } }
+    var address: String = ""  { didSet { addressError = nil } }
+    var pinCode: String = ""  { didSet { pinCodeError  = nil } }
+    var city: String = ""     { didSet { cityError     = nil } }
 
+    var selectedCountry: CountryItem = .unselected {
+        didSet {
+            selectedState = ""
+            stateError    = nil
+            countryError  = nil
+        }
+    }
+    var selectedState: String = "" { didSet { stateError = nil } }
+
+    // MARK: - Country / State options (from API)
+
+    var countries: [CountryItem] = []
+    var isLoadingCountries: Bool = false
+
+    // Derived from selected country — if non-empty, show dropdown; otherwise free-text
+    var stateOptions: [String] { selectedCountry.states.map(\.name) }
+    var hasStateOptions: Bool  { !selectedCountry.states.isEmpty }
 
     // MARK: - Submission state
     private(set) var isSubmitting: Bool = false
+    private(set) var isRegistered: Bool = false
     private(set) var apiError: String?
 
     // MARK: - Field errors
@@ -57,33 +73,27 @@ final class SignUpViewModel {
     private(set) var stateError: String?
     private(set) var countryError: String?
 
-    // MARK: - Option lists
-
+    // MARK: - Static options
     let titleOptions: [String] = ["Mr", "Mrs", "Ms", "Dr"]
 
-    let stateOptions: [String] = [
-        "Andhra Pradesh", "Arunachal Pradesh", "Assam", "Bihar", "Chhattisgarh",
-        "Goa", "Gujarat", "Haryana", "Himachal Pradesh", "Jharkhand",
-        "Karnataka", "Kerala", "Madhya Pradesh", "Maharashtra", "Manipur",
-        "Meghalaya", "Mizoram", "Nagaland", "Odisha", "Punjab",
-        "Rajasthan", "Sikkim", "Tamil Nadu", "Telangana", "Tripura",
-        "Uttar Pradesh", "Uttarakhand", "West Bengal",
-        "Delhi", "Jammu & Kashmir", "Ladakh", "Puducherry"
-    ]
-
-    let countryOptions: [String] = [
-        "India", "United States", "United Kingdom", "UAE", "Singapore",
-        "Australia", "Canada", "Germany", "France", "Japan", "Other"
-    ]
-
     // MARK: - Dependencies
-
     private let authManager: AuthManager
-    private let onSuccess: () -> Void
 
-    init(authManager: AuthManager, onSuccess: @escaping () -> Void) {
+    init(authManager: AuthManager) {
         self.authManager = authManager
-        self.onSuccess   = onSuccess
+        Task { await loadCountries() }
+    }
+
+    // MARK: - Load Countries
+
+    func loadCountries() async {
+        isLoadingCountries = true
+        defer { isLoadingCountries = false }
+        do {
+            countries = try await authManager.fetchCountries()
+        } catch {
+            // Non-fatal: picker remains empty; user can retry via the retry button
+        }
     }
 
     // MARK: - Submit
@@ -94,6 +104,7 @@ final class SignUpViewModel {
         apiError = nil
         defer { isSubmitting = false }
 
+        // Password equality is verified in validate() before building the request
         let request = AgentRegisterRequest(
             agentType:       selectedUserType.apiValue,
             title:           selectedTitle,
@@ -115,14 +126,17 @@ final class SignUpViewModel {
             pinCode:         pinCode.trimmed,
             city:            city.trimmed,
             state:           selectedState,
-            country:         selectedCountry
+            country:         selectedCountry.name,
+            adCampaign:      "Mobile App"
         )
 
         do {
             try await authManager.register(request: request)
-            onSuccess()
+            isRegistered = true
         } catch let error as NetworkError {
-            apiError = error.errorDescription
+            let message = error.errorDescription ?? String(localized: "Registration failed. Please try again.")
+            apiError = message
+            mapAPIErrorToFields(message)
         } catch {
             apiError = error.localizedDescription
         }
@@ -140,19 +154,19 @@ final class SignUpViewModel {
 
         check(Validator.requiredText(firstName, fieldName: "First name")) { firstNameError = $0 }
         check(Validator.requiredText(lastName,  fieldName: "Last name"))  { lastNameError  = $0 }
-        check(Validator.phone(mobile))   { mobileError   = $0 }
-        check(Validator.email(email))    { emailError    = $0 }
-        check(Validator.password(password)) { passwordError = $0 }
+        check(Validator.phone(mobile))              { mobileError          = $0 }
+        check(Validator.email(email))               { emailError           = $0 }
+        check(Validator.password(password))         { passwordError        = $0 }
         check(Validator.confirmPassword(confirmPassword, matching: password)) { confirmPasswordError = $0 }
-        check(Validator.pan(panNumber))  { panNumberError = $0 }
-        check(Validator.requiredText(panCardName,  fieldName: "Name on PAN card")) { panCardNameError  = $0 }
-        check(Validator.requiredText(companyName,  fieldName: "Company name"))     { companyNameError  = $0 }
-        check(Validator.requiredText(address,      fieldName: "Address"))          { addressError      = $0 }
-        check(Validator.pinCode(pinCode)) { pinCodeError = $0 }
-        check(Validator.requiredText(city,          fieldName: "City"))            { cityError         = $0 }
+        check(Validator.pan(panNumber))             { panNumberError       = $0 }
+        check(Validator.requiredText(panCardName,  fieldName: "Name on PAN card")) { panCardNameError = $0 }
+        check(Validator.requiredText(companyName,  fieldName: "Company name"))     { companyNameError = $0 }
+        check(Validator.requiredText(address,      fieldName: "Address"))          { addressError     = $0 }
+        check(Validator.pinCode(pinCode))           { pinCodeError         = $0 }
+        check(Validator.requiredText(city,         fieldName: "City"))             { cityError        = $0 }
 
-        if selectedState.isEmpty   { stateError   = String(localized: "Please select a state");   valid = false }
-        if selectedCountry.isEmpty { countryError = String(localized: "Please select a country"); valid = false }
+        if selectedCountry.name.isEmpty { countryError = String(localized: "Please select a country"); valid = false }
+        if selectedState.isEmpty        { stateError   = String(localized: "Please enter a state");    valid = false }
 
         return valid
     }
@@ -165,11 +179,29 @@ final class SignUpViewModel {
         stateError = nil;       countryError = nil
         apiError = nil
     }
+
+    // Parses the server error message and highlights the relevant field.
+    // The full message is still shown in the API error banner.
+    private func mapAPIErrorToFields(_ message: String) {
+        let lower = message.lowercased()
+        let hint  = String(localized: "Already registered")
+        if lower.contains("mobile") || lower.contains("phone") {
+            mobileError = hint
+        } else if lower.contains("email") {
+            emailError = hint
+        } else if lower.contains("pan") {
+            panNumberError = hint
+        } else if lower.contains("agency") || lower.contains("company") {
+            companyNameError = hint
+        } else if lower.contains("aadhar") || lower.contains("aadhaar") {
+            // Aadhaar maps to idCardNumber — no dedicated error property; banner covers it
+        }
+    }
 }
 
 // MARK: - String Helpers
 
 private extension String {
-    var trimmed: String { trimmingCharacters(in: .whitespaces) }
+    var trimmed: String    { trimmingCharacters(in: .whitespaces) }
     var trimmedOrNil: String? { trimmed.isEmpty ? nil : trimmed }
 }

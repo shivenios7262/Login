@@ -1,24 +1,67 @@
 import SwiftUI
 
 struct SignUpView: View {
-    private let authManager: AuthManager
+    private let onSuccess: () -> Void
     @State private var viewModel: SignUpViewModel
 
     private enum Layout {
-        static let fieldSpacing: CGFloat       = DesignTokens.Spacing.fieldSpacing
-        static let pairedSpacing: CGFloat      = DesignTokens.Spacing.md
-        static let titleFieldMaxWidth: CGFloat = 100
-        static let errorCornerRadius: CGFloat  = DesignTokens.Radius.field
+        static let fieldSpacing: CGFloat           = DesignTokens.Spacing.fieldSpacing
+        static let pairedSpacing: CGFloat          = DesignTokens.Spacing.md
+        static let titleFieldMaxWidth: CGFloat     = 100
+        static let errorCornerRadius: CGFloat      = DesignTokens.Radius.field
         static let errorVerticalPadding: CGFloat   = DesignTokens.Spacing.inputVertical
         static let errorHorizontalPadding: CGFloat = DesignTokens.Spacing.inputHorizontal
     }
 
     init(authManager: AuthManager, onSuccess: @escaping () -> Void) {
-        self.authManager = authManager
-        _viewModel = State(initialValue: SignUpViewModel(authManager: authManager, onSuccess: onSuccess))
+        self.onSuccess = onSuccess
+        _viewModel = State(initialValue: SignUpViewModel(authManager: authManager))
     }
 
     var body: some View {
+        if viewModel.isRegistered {
+            thankYouView
+        } else {
+            formView
+        }
+    }
+
+    // MARK: - Thank You View
+
+    private var thankYouView: some View {
+        VStack(spacing: DesignTokens.Spacing.xl) {
+            Image(systemName: "checkmark.seal.fill")
+                .font(.system(size: 80))
+                .foregroundStyle(Color.ftdAccentOrange)
+
+            VStack(spacing: DesignTokens.Spacing.sm) {
+                Text(String(localized: "Registration Submitted!"))
+                    .font(.title2.weight(.semibold))
+                    .foregroundStyle(Color.ftdTextPrimary)
+                    .multilineTextAlignment(.center)
+
+                Text(String(localized: "Thank you for registering with FTD Travel. Your application is under review. We'll notify you once your account is approved."))
+                    .font(.subheadline)
+                    .foregroundStyle(Color.ftdTextSecondary)
+                    .multilineTextAlignment(.center)
+            }
+
+            FTDPrimaryButton(
+                title: String(localized: "Continue to Login"),
+                isLoading: false
+            ) {
+                onSuccess()
+            }
+        }
+        .padding(.horizontal, DesignTokens.Spacing.screenHorizontal)
+        .padding(.vertical, DesignTokens.Spacing.xxl)
+        .frame(maxWidth: .infinity, minHeight: 420)
+        .background(Color.ftdCardBackground)
+    }
+
+    // MARK: - Form View
+
+    private var formView: some View {
         VStack(spacing: 0) {
             userTypeRow
                 .padding(.horizontal, DesignTokens.Spacing.screenHorizontal)
@@ -42,7 +85,7 @@ struct SignUpView: View {
         }
     }
 
-    // MARK: - User Type Row (transparent — dotted map shows through)
+    // MARK: - User Type Row
 
     private var userTypeRow: some View {
         @Bindable var vm = viewModel
@@ -224,24 +267,51 @@ struct SignUpView: View {
                 )
             }
             HStack(alignment: .top, spacing: Layout.pairedSpacing) {
-                FTDDropdownField(
-                    label: String(localized: "State *"),
-                    placeholder: String(localized: "State"),
-                    selection: $vm.selectedState,
-                    options: vm.stateOptions,
-                    optionLabel: { $0 },
-                    errorMessage: vm.stateError
-                )
-                FTDDropdownField(
-                    label: String(localized: "Country *"),
-                    placeholder: String(localized: "Country"),
-                    selection: $vm.selectedCountry,
-                    options: vm.countryOptions,
-                    optionLabel: { $0 },
-                    errorMessage: vm.countryError
-                )
+                stateField
+                countryField
             }
         }
+    }
+
+    // State: dropdown when selected country has states, free-text otherwise
+    @ViewBuilder
+    private var stateField: some View {
+        @Bindable var vm = viewModel
+        if vm.hasStateOptions {
+            FTDDropdownField(
+                label: String(localized: "State *"),
+                placeholder: String(localized: "State"),
+                selection: $vm.selectedState,
+                options: vm.stateOptions,
+                optionLabel: { $0 },
+                errorMessage: vm.stateError
+            )
+        } else {
+            FTDTextField(
+                label: "",
+                placeholder: String(localized: "State *"),
+                text: $vm.selectedState,
+                errorMessage: vm.stateError
+            )
+        }
+    }
+
+    // Country: loaded from API, with loading indicator
+    private var countryField: some View {
+        @Bindable var vm = viewModel
+        return FTDDropdownField(
+            label: vm.isLoadingCountries
+                ? String(localized: "Country")
+                : String(localized: "Country *"),
+            placeholder: vm.isLoadingCountries
+                ? String(localized: "Loading...")
+                : String(localized: "Country"),
+            selection: $vm.selectedCountry,
+            options: vm.countries,
+            optionLabel: { $0.name },
+            errorMessage: vm.countryError
+        )
+        .disabled(vm.isLoadingCountries)
     }
 
     // MARK: - Terms Disclosure
@@ -284,4 +354,3 @@ struct SignUpView: View {
         }
     }
 }
-

@@ -154,7 +154,7 @@ final class HomeViewModel {
         do {
             let response = try await authManager.fetchStatement(request: request)
             if response.status {
-                statements = response.data ?? []
+                statements = response.data?.depositStatement ?? []
             } else {
                 statementError = response.message ?? String(localized: "Failed to load statement.")
             }

@@ -12,7 +12,7 @@ struct LOGINApp: App {
 //        keychain.delete(key: .userData)
 //       keychain.delete(key: .deviceId)
 //        keychain.delete(key: .appToken)
-//         print("appToken cleared:", keychain.read(key: .appToken) ?? "nil")
+////         print("appToken cleared:", keychain.read(key: .appToken) ?? "nil")
         let apiClient  = APIClient(
             httpClient:     URLSessionHTTPClient(),
             baseURL:        AppConfiguration.apiBaseURL,

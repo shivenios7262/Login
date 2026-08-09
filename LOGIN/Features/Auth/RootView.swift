@@ -32,7 +32,7 @@ struct RootView: View {
         .sheet(item: Bindable(router).authSheet) { sheet in
             switch sheet {
             case .forgotPassword:
-                ForgotPasswordView()
+                ForgotPasswordView(authManager: authManager)
                     .presentationDetents([.fraction(0.72), .large])
                     .presentationDragIndicator(.visible)
                     .presentationCornerRadius(24)

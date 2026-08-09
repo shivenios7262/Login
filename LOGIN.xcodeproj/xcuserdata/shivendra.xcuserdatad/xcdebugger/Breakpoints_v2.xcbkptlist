@@ -240,7 +240,7 @@
             endingColumnNumber = "9223372036854775807"
             startingLineNumber = "134"
             endingLineNumber = "134"
-            landmarkName = "checkAndRefreshTokenIfNeeded()"
+            landmarkName = "forgotPassword(_:)"
             landmarkType = "7">
          </BreakpointContent>
       </BreakpointProxy>

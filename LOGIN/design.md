@@ -171,6 +171,17 @@ If any of these steps require touching shared/core files, the architecture has l
 
 ---
 
+## 10. Typography
+
+- **Font family**: Poppins (OFL licensed)
+- **Bundled weights**: Light, Regular, Medium, SemiBold, Bold
+- **Font files location**: `LOGIN/Poppins/` — all `.ttf` files must have the LOGIN target checked in Xcode's File Inspector (Target Membership) so they are copied into the app bundle at build time
+- **Registration**: Declared under `UIAppFonts` in `Config/Info.plist` with paths prefixed by the folder name (e.g. `Poppins/Poppins-Regular.ttf`)
+- **Usage**: All font tokens are defined in `DesignSystem/Font+AppTypography.swift` via `Font.custom(...)` — use the `Font.ftd*` static properties throughout the app; do not call `Font.custom` directly in Views
+- **Adding a new weight**: Drop the `.ttf` into the `Poppins/` folder → add it to `UIAppFonts` in Info.plist → add a new case to `PoppinsWeight` enum in `Font+AppTypography.swift`
+
+---
+
 ## Open Questions (⚠️ resolve before implementation)
 - [ ] Exact Phase 1 vs Phase 2 vertical list
 - [ ] Payment gateway choice
