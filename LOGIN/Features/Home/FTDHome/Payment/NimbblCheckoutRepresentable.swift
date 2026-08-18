@@ -16,7 +16,7 @@ struct NimbblCheckoutRepresentable: UIViewControllerRepresentable {
     func makeUIViewController(context: Context) -> NimbblCheckoutWebView {
         let options = NimbblCheckoutOptions(
             orderToken: orderToken,
-            paymentModeCode: nil,
+            paymentModeCode: "NB",
             bankCode: nil,
             walletCode: nil,
             paymentFlow: nil

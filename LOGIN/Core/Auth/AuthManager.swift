@@ -136,6 +136,16 @@ final class AuthManager {
         }
     }
 
+    func forgotPasswordLink(agentEmail: String) async throws {
+        let request = ForgotPasswordLinkRequest(agentEmail: agentEmail)
+        let response: GenericAPIResponse = try await apiClient.send(.forgotPasswordLink(request))
+        guard response.status else {
+            throw NetworkError.serverError(
+                response.serverMessage ?? String(localized: "Failed to send reset link. Please try again.")
+            )
+        }
+    }
+
     func register(request: AgentRegisterRequest) async throws {
         let response: GenericAPIResponse = try await apiClient.send(.agentRegister(request))
         guard response.status else {
@@ -194,6 +204,26 @@ final class AuthManager {
                 response.serverMessage ?? String(localized: "Payment confirmation failed.")
             )
         }
+    }
+
+    func fetchUploadMoney() async throws -> UploadMoneyData {
+        let response: UploadMoneyResponse = try await apiClient.send(.uploadMoney)
+        guard response.status, let data = response.data else {
+            throw NetworkError.serverError(
+                response.message ?? String(localized: "Failed to load upload money data.")
+            )
+        }
+        return data
+    }
+
+    func submitUploadMoneyRequest(_ request: UploadMoneyRequest) async throws -> UploadMoneySubmitData {
+        let response: UploadMoneySubmitResponse = try await apiClient.send(.uploadMoneyRequest(request))
+        guard response.status, let data = response.data else {
+            throw NetworkError.serverError(
+                response.message ?? String(localized: "Failed to submit money request.")
+            )
+        }
+        return data
     }
 
     func cancelPendingOTP() {

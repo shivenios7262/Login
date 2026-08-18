@@ -2,8 +2,13 @@ import SwiftUI
 
 struct ForgotPasswordView: View {
     let authManager: AuthManager
-    @State private var viewModel = ForgotPasswordViewModel()
-    @State private var showResetPassword = false
+    @State private var viewModel: ForgotPasswordViewModel
+    @State private var showMailUnavailableAlert = false
+
+    init(authManager: AuthManager) {
+        self.authManager = authManager
+        _viewModel = State(initialValue: ForgotPasswordViewModel(authManager: authManager))
+    }
     @Environment(\.dismiss) private var dismiss
     @Environment(\.openURL) private var openURL
 
@@ -31,20 +36,30 @@ struct ForgotPasswordView: View {
             .frame(maxWidth: .infinity, maxHeight: .infinity, alignment: .top)
             .background(Color.ftdCardBackground)
             .toolbar(.hidden, for: .navigationBar)
-            .navigationDestination(isPresented: $showResetPassword) {
-                ResetPasswordView(
-                    email: viewModel.email,
-                    authManager: authManager,
-                    dismissSheet: dismiss
-                )
+            .alert("No Email App Found", isPresented: $showMailUnavailableAlert) {
+                Button("OK", role: .cancel) { }
+            } message: {
+                Text("Please set up an email app on your device to open your email.")
             }
+        }
+    }
+
+    private func openMailApp() {
+        let mailURL = URL(string: "message://")!
+        let mailtoURL = URL(string: "mailto:")!
+        if UIApplication.shared.canOpenURL(mailURL) {
+            openURL(mailURL)
+        } else if UIApplication.shared.canOpenURL(mailtoURL) {
+            openURL(mailtoURL)
+        } else {
+            showMailUnavailableAlert = true
         }
     }
 
     // MARK: - Form
 
     private var formContent: some View {
-        VStack(spacing: 24) {
+        VStack(spacing: 0) {
             VStack(spacing: 8) {
                 Text("Forgot password")
                     .font(.title2.weight(.bold))
@@ -56,6 +71,8 @@ struct ForgotPasswordView: View {
                     .multilineTextAlignment(.center)
             }
 
+            Spacer()
+
             FTDTextField(
                 label: "",
                 placeholder: String(localized: "Email Address*"),
@@ -65,6 +82,16 @@ struct ForgotPasswordView: View {
                 autocapitalization: .never
             )
 
+            Spacer()
+
+            if let apiError = viewModel.apiError {
+                Text(apiError)
+                    .font(.caption)
+                    .foregroundStyle(Color.red)
+                    .multilineTextAlignment(.center)
+                    .padding(.bottom, 4)
+            }
+
             FTDPrimaryButton(
                 title: String(localized: "Send Reset Link"),
                 isLoading: viewModel.isLoading
@@ -72,9 +99,15 @@ struct ForgotPasswordView: View {
                 Task { await viewModel.sendResetLink() }
             }
 
-            whatsNextCard
+            Spacer()
 
-            Spacer(minLength: 16)
+            InfoBanner(
+                icon: .asset("iconShield"),
+                title: "What's Next?",
+                message: "We'll send a password reset link to your registered email address."
+            )
+
+            Spacer()
 
             loginHereFooter
         }
@@ -84,31 +117,56 @@ struct ForgotPasswordView: View {
         .init(get: { viewModel.email }, set: { viewModel.email = $0 })
     }
 
-    // MARK: - What's Next Card
+    // MARK: - Success State
 
-    private var whatsNextCard: some View {
-        HStack(alignment: .top, spacing: 12) {
+    private var successContent: some View {
+        VStack(spacing: 0) {
             ZStack {
                 Circle()
-                    .fill(Color.blue.opacity(0.14))
-                    .frame(width: 36, height: 36)
-                Image(systemName: "info.circle.fill")
-                    .font(.system(size: 18))
-                    .foregroundStyle(Color.blue)
+                    .fill(Color.ftdAccentOrange.opacity(0.12))
+                    .frame(width: 96, height: 96)
+                Image("mail")
+                    .resizable()
+                    .scaledToFit()
+                    .frame(width: 52, height: 52)
+                    .foregroundStyle(Color.ftdAccentOrange)
             }
-            VStack(alignment: .leading, spacing: 4) {
-                Text("What's Next?")
-                    .font(.subheadline.weight(.semibold))
-                    .foregroundStyle(Color.blue)
-                Text("We'll send a password reset link to your registered email address.")
-                    .font(.caption)
+            .padding(.top, 8)
+
+            Spacer()
+
+            VStack(spacing: 10) {
+                Text("Check Your Email")
+                    .font(.title2.weight(.bold))
+                    .foregroundStyle(Color.ftdTextPrimary)
+                Text("We have sent password recovery instructions to **\(viewModel.email)**.")
+                    .font(.subheadline)
                     .foregroundStyle(Color.ftdTextSecondary)
+                    .multilineTextAlignment(.center)
             }
-            Spacer(minLength: 0)
+
+            Spacer()
+
+            FTDPrimaryButton(title: String(localized: "Open Email App"), leadingIcon: "envelope.fill") {
+                openMailApp()
+            }
+
+            Spacer()
+
+            Button(String(localized: "Cancel")) {
+                dismiss()
+            }
+            .font(.subheadline)
+            .foregroundStyle(Color.ftdTextSecondary)
+
+            Spacer()
+
+            Text("Did not receive the email? Check your spam folder or try another address.")
+                .font(.caption)
+                .foregroundStyle(Color.ftdTextSecondary)
+                .multilineTextAlignment(.center)
+                .padding(.horizontal, 8)
         }
-        .padding(14)
-        .background(Color.blue.opacity(0.07))
-        .clipShape(RoundedRectangle(cornerRadius: 12))
     }
 
     // MARK: - Footer
@@ -127,57 +185,4 @@ struct ForgotPasswordView: View {
         }
     }
 
-    // MARK: - Success State
-
-    private var successContent: some View {
-        VStack(spacing: 24) {
-            Spacer(minLength: 24)
-
-            ZStack {
-                Circle()
-                    .fill(Color.ftdAccentOrange.opacity(0.12))
-                    .frame(width: 100, height: 100)
-                Image("mail")
-                    .font(.system(size: 48))
-                    .foregroundStyle(Color.ftdAccentOrange)
-            }
-
-            VStack(spacing: 8) {
-                Text("Check Your Email")
-                    .font(.title2.weight(.bold))
-                    .foregroundStyle(Color.ftdTextPrimary)
-
-                Group {
-                    Text("We have sent a Password reset link to\n") +
-                    Text(viewModel.email)
-                        .fontWeight(.semibold)
-                        .foregroundColor(Color.ftdAccentOrange)
-                }
-                .font(.subheadline)
-                .foregroundStyle(Color.ftdTextSecondary)
-                .multilineTextAlignment(.center)
-
-                Text("Please check your inbox and click on the link to reset your password")
-                    .font(.subheadline)
-                    .foregroundStyle(Color.ftdTextSecondary)
-                    .multilineTextAlignment(.center)
-                    .padding(.top, 4)
-            }
-
-            FTDPrimaryButton(title: String(localized: "Open Email"), leadingIcon: "envelope.fill") {
-                if let url = URL(string: "message://") {
-                    openURL(url)
-                }
-            }
-
-            Button(String(localized: "Reset Password")) {
-                showResetPassword = true
-            }
-            .font(.subheadline.weight(.semibold))
-            .foregroundStyle(Color.ftdAccentOrange)
-            .buttonStyle(.plain)
-
-            Spacer(minLength: 0)
-        }
-    }
 }

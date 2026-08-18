@@ -3,15 +3,15 @@ import Foundation
 enum UserType: String, CaseIterable, Hashable {
     case travelAgent
     case customer
-    case distributor
-    case sales
+//    case distributor
+//    case sales
 
     var displayName: String {
         switch self {
         case .travelAgent:  return String(localized: "Travel Agent")
         case .customer:     return String(localized: "Customer")
-        case .distributor:  return String(localized: "Distributor")
-        case .sales:        return String(localized: "Sales")
+//        case .distributor:  return String(localized: "Distributor")
+//        case .sales:        return String(localized: "Sales")
         }
     }
 
@@ -19,8 +19,8 @@ enum UserType: String, CaseIterable, Hashable {
         switch self {
         case .travelAgent:  return "agent"
         case .customer:     return "customer"
-        case .distributor:  return "distributor"
-        case .sales:        return "sales"
+//        case .distributor:  return "distributor"
+//        case .sales:        return "sales"
         }
     }
 

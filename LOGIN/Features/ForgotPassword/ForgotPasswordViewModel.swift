@@ -4,19 +4,34 @@ import Observation
 @Observable
 @MainActor
 final class ForgotPasswordViewModel {
-    var email: String = "" { didSet { emailError = nil } }
+    var email: String = "" { didSet { emailError = nil; apiError = nil } }
 
     private(set) var emailError: String? = nil
+    private(set) var apiError: String? = nil
     private(set) var isLoading: Bool = false
     private(set) var showSuccess: Bool = false
+
+    private let authManager: AuthManager
+
+    init(authManager: AuthManager) {
+        self.authManager = authManager
+    }
 
     func sendResetLink() async {
         guard validate() else { return }
         isLoading = true
+        apiError = nil
         defer { isLoading = false }
-        // TODO: wire to forgot-password endpoint once available
-        try? await Task.sleep(for: .milliseconds(800))
-        showSuccess = true
+        do {
+            try await authManager.forgotPasswordLink(
+                agentEmail: email.trimmingCharacters(in: .whitespaces)
+            )
+            showSuccess = true
+        } catch let error as NetworkError {
+            apiError = error.errorDescription
+        } catch {
+            apiError = error.localizedDescription
+        }
     }
 
     private func validate() -> Bool {

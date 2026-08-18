@@ -16,6 +16,10 @@ final class AppRouter {
     // MARK: - Home sheet
     var homeSheet: HomeSheet? = nil
 
+    // MARK: - Home full-screen covers
+    var uploadMoneyPresented: Bool = false
+    var agencyStatementPresented: Bool = false
+
     // MARK: - Destination types
 
     enum AuthDestination: Hashable {
@@ -33,7 +37,6 @@ final class AppRouter {
         case profile
         case statement
         case markups
-        case uploadMoney
         case aboutUs
         case contactSupport
         case privacyPolicy
@@ -53,6 +56,14 @@ final class AppRouter {
 
     func presentHome(_ sheet: HomeSheet) {
         homeSheet = sheet
+    }
+
+    func presentUploadMoney() {
+        uploadMoneyPresented = true
+    }
+
+    func presentAgencyStatement() {
+        agencyStatementPresented = true
     }
 
     func popToAuthRoot() {

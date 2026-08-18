@@ -42,6 +42,7 @@ struct GenericAPIResponse: Codable, Sendable {
 
 // MARK: - Forgot Password
 
+// Used by /mapp_general/forgot_password — direct password reset with credentials.
 struct ForgotPasswordRequest: Codable, Sendable {
     let email: String
     let agentNo: String
@@ -76,6 +77,29 @@ struct ForgotPasswordRequest: Codable, Sendable {
         try c.encode(agentNo,  forKey: .agentNo)
         try c.encode(password, forKey: .password)
         try c.encode(passconf, forKey: .passconf)
+    }
+}
+
+// Used by /mapp_general/forgot_password_link — sends a reset link to the registered email.
+struct ForgotPasswordLinkRequest: Codable, Sendable {
+    let agentEmail: String
+
+    enum CodingKeys: String, CodingKey {
+        case agentEmail = "agent_email"
+    }
+
+    nonisolated init(agentEmail: String) {
+        self.agentEmail = agentEmail
+    }
+
+    nonisolated init(from decoder: any Decoder) throws {
+        let c      = try decoder.container(keyedBy: CodingKeys.self)
+        agentEmail = try c.decode(String.self, forKey: .agentEmail)
+    }
+
+    nonisolated func encode(to encoder: any Encoder) throws {
+        var c = encoder.container(keyedBy: CodingKeys.self)
+        try c.encode(agentEmail, forKey: .agentEmail)
     }
 }
 

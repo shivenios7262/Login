@@ -20,7 +20,7 @@ struct VerifyOTPView: View {
 
                 if let error = viewModel.apiError {
                     Text(error)
-                        .font(.subheadline)
+                        .font(.ftdBodyMD)
                         .foregroundStyle(Color.ftdDestructiveRed)
                         .multilineTextAlignment(.center)
                         .frame(maxWidth: .infinity)
@@ -32,13 +32,13 @@ struct VerifyOTPView: View {
 
                 if let msg = viewModel.resendMessage {
                     Text(msg)
-                        .font(.subheadline)
-                        .foregroundStyle(Color.green)
+                        .font(.ftdBodyMD)
+                        .foregroundStyle(Color.ftdMessageTextSuccess)
                         .multilineTextAlignment(.center)
                         .frame(maxWidth: .infinity)
                         .padding(.vertical, DesignTokens.Spacing.inputVertical)
                         .padding(.horizontal, DesignTokens.Spacing.inputHorizontal)
-                        .background(Color.green.opacity(0.08))
+                        .background(Color.ftdMessageBGSuccess)
                         .clipShape(RoundedRectangle(cornerRadius: DesignTokens.Radius.field))
                 }
 
@@ -51,7 +51,13 @@ struct VerifyOTPView: View {
                     Task { await viewModel.verify() }
                 }
 
-                infoBanner
+                InfoBanner(
+                    icon: .asset("iconShield"),
+                    showIconBackground: true,
+                    iconTint: .ftdAccentTeal,
+                    title: "Additional verification required",
+                    message: "Your code is valid for 10 minutes, To finish signing in, enter the code."
+                )
             }
             .padding(.horizontal, DesignTokens.Spacing.screenHorizontal)
             .padding(.bottom, DesignTokens.Spacing.screenBottom)
@@ -65,21 +71,19 @@ struct VerifyOTPView: View {
     // MARK: - Header
 
     private var header: some View {
-        VStack(spacing: DesignTokens.Spacing.sm) {
+        VStack(spacing: DesignTokens.Spacing.xxl) {
             Text(String(localized: "OTP Verification"))
-                .font(.title2)
-                .fontWeight(.bold)
+                .font(.ftdTitleLG)
                 .foregroundStyle(Color.ftdTextPrimary)
 
             VStack(spacing: DesignTokens.Spacing.xxs) {
                 Text(String(localized: "Enter the 4 digit code sent to"))
-                    .font(.subheadline)
-                    .foregroundStyle(Color.ftdTextSecondary)
+                    .font(.ftdBodyMD)
+                    .foregroundStyle(Color.ftdTextTertiary)
 
                 if !viewModel.otpEmail.isEmpty {
                     Text(viewModel.otpEmail)
-                        .font(.subheadline)
-                        .fontWeight(.semibold)
+                        .font(.ftdLabelMD)
                         .foregroundStyle(Color.ftdAccentOrange)
                 }
             }
@@ -147,19 +151,16 @@ struct VerifyOTPView: View {
                     .fill(Color.ftdAccentOrange)
                     .frame(width: 2, height: 24)
             } else if digit.isEmpty {
-                Text("*")
-                    .font(.title2)
-                    .fontWeight(.medium)
+                Text("✼")
+                    .font(.system(size: 18))
                     .foregroundStyle(Color.ftdTextSecondary.opacity(0.4))
             } else if maskedDigits.contains(index) {
-                Text("*")
-                    .font(.title2)
-                    .fontWeight(.medium)
+                Text("✼")
+                    .font(.system(size: 18))
                     .foregroundStyle(Color.ftdTextPrimary)
             } else {
                 Text(digit)
-                    .font(.title2)
-                    .fontWeight(.semibold)
+                    .font(.ftdOTPDigit)
                     .foregroundStyle(Color.ftdAccentOrange)
             }
         }
@@ -173,8 +174,8 @@ struct VerifyOTPView: View {
     private var resendSection: some View {
         VStack(spacing: DesignTokens.Spacing.xs) {
             Text(String(localized: "Didn't received the code?"))
-                .font(.subheadline)
-                .foregroundStyle(Color.ftdTextSecondary)
+                .font(.ftdBodyMD)
+                .foregroundStyle(Color.ftdTextTertiary)
 
             if viewModel.resendCooldown > 0 {
                 (
@@ -183,8 +184,7 @@ struct VerifyOTPView: View {
                     Text(viewModel.timerDisplay)
                         .foregroundStyle(Color.ftdAccentOrange)
                 )
-                .font(.subheadline)
-                .fontWeight(.semibold)
+                .font(.ftdLabelMD)
             } else {
                 Button {
                     Task { await viewModel.resend() }
@@ -194,8 +194,7 @@ struct VerifyOTPView: View {
                             .tint(Color.ftdAccentOrange)
                     } else {
                         Text(String(localized: "Resend OTP"))
-                            .font(.subheadline)
-                            .fontWeight(.semibold)
+                            .font(.ftdLabelMD)
                             .foregroundStyle(Color.ftdAccentOrange)
                     }
                 }
@@ -204,31 +203,6 @@ struct VerifyOTPView: View {
         }
     }
 
-    // MARK: - Info Banner
-
-    private var infoBanner: some View {
-        HStack(alignment: .top, spacing: DesignTokens.Spacing.md) {
-            Image(systemName: "checkmark.shield")
-                .font(.system(size: DesignTokens.IconSize.lg))
-                .foregroundStyle(Color.blue)
-
-            VStack(alignment: .leading, spacing: DesignTokens.Spacing.xxs) {
-                Text(String(localized: "Additional verification required"))
-                    .font(.subheadline)
-                    .fontWeight(.semibold)
-                    .foregroundStyle(Color.blue)
-
-                Text(String(localized: "Your code is valid for 10 minutes, To finish signing in, enter the code."))
-                    .font(.caption)
-                    .foregroundStyle(Color.ftdTextSecondary)
-            }
-
-            Spacer()
-        }
-        .padding(DesignTokens.Spacing.md)
-        .background(Color.blue.opacity(0.08))
-        .clipShape(RoundedRectangle(cornerRadius: DesignTokens.Radius.card))
-    }
 }
 
 //// MARK: - Preview

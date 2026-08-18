@@ -37,6 +37,7 @@ enum APIEndpoint: Sendable {
 
     // MARK: - General
     case forgotPassword(ForgotPasswordRequest)
+    case forgotPasswordLink(ForgotPasswordLinkRequest)
     case countries
     case termsCondition
     case privacy
@@ -314,6 +315,14 @@ enum APIEndpoint: Sendable {
         case .forgotPassword(let body):
             return APIRequest(
                 path: "/book/mapp/mapp_general/forgot_password",
+                method: .post,
+                body: try JSONEncoder().encode(body),
+                requiresAppToken: true,
+                requiresBearerToken: false
+            )
+        case .forgotPasswordLink(let body):
+            return APIRequest(
+                path: "/book/mapp/mapp_general/forgot_password_link",
                 method: .post,
                 body: try JSONEncoder().encode(body),
                 requiresAppToken: true,

@@ -118,25 +118,30 @@ struct FTDDropdownField<T: Hashable>: View {
             } label: {
                 VStack(alignment: .leading, spacing: DesignTokens.Spacing.inputLabelGap) {
                     ftdRequiredLabel(label)
-                        .font(.caption)
+                        .font(.ftdPlaceholder)
 
-                    HStack(spacing: DesignTokens.Spacing.xs) {
-                        let displayText = optionLabel(selection)
-                        Text(displayText.isEmpty ? placeholder : displayText)
-                            .foregroundStyle(
-                                displayText.isEmpty ? Color.ftdTextSecondary : Color.ftdTextPrimary
-                            )
-                            .frame(maxWidth: .infinity, alignment: .leading)
-
-                        Image(systemName: "chevron.down")
-                            .font(.caption)
-                            .foregroundStyle(Color.ftdTextSecondary)
-                            .padding(.trailing, DesignTokens.Spacing.inputHorizontal)
-                            .padding(.bottom)
-                    }
+                    let displayText = optionLabel(selection)
+                    Text(displayText.isEmpty ? placeholder : displayText)
+                        .foregroundStyle(
+                            displayText.isEmpty ? Color.ftdTextSecondary : Color.ftdTextPrimary
+                        )
+                        .frame(maxWidth: .infinity, alignment: .leading)
+                        .font(.ftdBodySM)
                 }
-                .ftdInputContainer(hasError: errorMessage != nil)
+                .padding(.horizontal, DesignTokens.Spacing.inputHorizontal)
+                .padding(.top, DesignTokens.Spacing.inputVertical)
+                .frame(minHeight: DesignTokens.Spacing.inputFieldHeight, alignment: .top)
                 .background(Color.ftdCardBackground, in: RoundedRectangle(cornerRadius: DesignTokens.Radius.field))
+                .overlay(
+                    RoundedRectangle(cornerRadius: DesignTokens.Radius.field)
+                        .stroke(errorMessage != nil ? Color.ftdDestructiveRed : Color.ftdBorder, lineWidth: 1)
+                )
+                .overlay(alignment: .trailing) {
+                    Image("chevron.down")
+                        .font(.ftdPlaceholder)
+                        .foregroundStyle(Color.ftdTextSecondary)
+                        .padding(.trailing, DesignTokens.Spacing.inputHorizontal)
+                }
                 .frame(maxWidth: .infinity)
                 .contentShape(Rectangle())
             }
@@ -144,7 +149,7 @@ struct FTDDropdownField<T: Hashable>: View {
 
             if let error = errorMessage {
                 Text(error)
-                    .font(.caption)
+                    .font(.ftdPlaceholder)
                     .foregroundStyle(Color.ftdDestructiveRed)
                     .padding(.horizontal, DesignTokens.Spacing.xxs)
             }
@@ -195,13 +200,13 @@ struct FTDDropdownField<T: Hashable>: View {
                                             .resizable()
                                             .scaledToFit()
                                             .foregroundStyle(
-                                                selection == option ? Color.ftdAccentOrange : Color.black
+                                                selection == option ? Color.ftdAccentOrange : Color.ftdTextSecondary
                                             )
                                             .frame(width: 24, height: 24)
                                     }
 
                                     Text(optionLabel(option))
-                                        .font(.body)
+                                        .font(.ftdIconEye)
                                         .foregroundStyle(Color.ftdTextPrimary)
                                         .frame(maxWidth: .infinity, alignment: .leading)
 
@@ -240,7 +245,7 @@ struct FTDDropdownField<T: Hashable>: View {
             }
             .presentationDetents([.medium])
             .presentationDragIndicator(.visible)
-            .presentationBackground(.white)
+            .presentationBackground(Color.ftdCardBackground)
         }
     }
 }

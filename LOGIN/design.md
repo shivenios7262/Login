@@ -171,7 +171,31 @@ If any of these steps require touching shared/core files, the architecture has l
 
 ---
 
-## 10. Typography
+## 10. Shared Design System Components
+
+### InfoBanner
+`DesignSystem/InfoBanner.swift` — reusable info/trust banner used wherever an icon + title + body banner is needed.
+
+**API:**
+```swift
+InfoBanner(
+    icon: .system("checkmark.shield"),   // or .asset("iconShield") for image assets
+    showIconBackground: false,           // wraps icon in a ftdMessageIconBGInfo rounded box
+    iconTint: .ftdMessageTextInfo,       // defaults to info blue; override for brand colours
+    title: "Banner title",
+    message: "Descriptive body text."
+)
+```
+
+**Rules:**
+- Always use `InfoBanner` for this pattern — never inline the HStack/VStack layout in a View
+- `TrustBanner` (`DesignSystem/TrustBanner.swift`) is a zero-arg convenience wrapper over `InfoBanner` for the "Secure & Trusted" callsite in SignInView — do not duplicate it
+- Color tokens used: `ftdMessageBGInfo` (bg), `ftdMessageTextInfo` (title + default icon tint), `ftdMessageIconBGInfo` (icon background box), `ftdTextSecondary` (body text)
+- To add a success-state banner use `ftdMessageBGSuccess` / `ftdMessageTextSuccess` tokens directly on a `Text` — a success variant of `InfoBanner` is not needed until there are multiple callsites
+
+---
+
+## 11. Typography
 
 - **Font family**: Poppins (OFL licensed)
 - **Bundled weights**: Light, Regular, Medium, SemiBold, Bold
@@ -191,3 +215,6 @@ If any of these steps require touching shared/core files, the architecture has l
 - [ ] **NEW**: Do Customer/Distributor/Sales have their own Sign Up forms like Travel Agent's (PAN, GST, company docs), or a simpler consumer-style form? Only Travel Agent's Sign In/Sign Up screens have been shared so far
 - [ ] **NEW**: Confirm Admin has no iOS presence at all (not seen in "Choose User Type" list)
 - [ ] **NEW**: Is there a "Forgot Password" backend endpoint? (seen in UI, not in Postman collection)
+
+
+

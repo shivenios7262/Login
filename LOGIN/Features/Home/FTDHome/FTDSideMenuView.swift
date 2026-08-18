@@ -34,6 +34,7 @@ private struct SideMenuRowItem: Identifiable {
     let icon: String
     let title: String
     var badge: String? = nil
+    let action: () -> Void
 }
 
 // MARK: - FTDSideMenuView
@@ -41,44 +42,47 @@ private struct SideMenuRowItem: Identifiable {
 struct FTDSideMenuView: View {
     let context: SideMenuContext
 
-    private static let menuSections: [SideMenuSection] = [
-        SideMenuSection(title: "MY WALLET", items: [
-            SideMenuRowItem(icon: "doc.text.fill",            title: "Statements"),
-            SideMenuRowItem(icon: "chart.bar.fill",           title: "Markup"),
-        ]),
-        SideMenuSection(title: "MY BOOKINGS", items: [
-            SideMenuRowItem(icon: "suitcase.fill",            title: "Bookings"),
-            SideMenuRowItem(icon: "person.2.fill",            title: "Group Fare"),
-            SideMenuRowItem(icon: "heart.fill",               title: "Wishlist"),
-            SideMenuRowItem(icon: "calendar",                 title: "Calendar"),
-        ]),
-        SideMenuSection(title: "MY ACCOUNT", items: [
-            SideMenuRowItem(icon: "person.fill",              title: "Profile"),
-            SideMenuRowItem(icon: "bell.fill",                title: "Notification", badge: "12"),
-            SideMenuRowItem(icon: "star.fill",                title: "Reviews"),
-            SideMenuRowItem(icon: "gift.fill",                title: "Refer & Earn"),
-        ]),
-        SideMenuSection(title: "SUPPORT & SETTINGS", items: [
-            SideMenuRowItem(icon: "qrcode",                   title: "App Code"),
-            SideMenuRowItem(icon: "questionmark.circle.fill", title: "Help & Support"),
-            SideMenuRowItem(icon: "gearshape.fill",           title: "Settings"),
-        ]),
-        SideMenuSection(title: "ABOUT", items: [
-            SideMenuRowItem(icon: "info.circle.fill",         title: "About Us"),
-            SideMenuRowItem(icon: "lock.shield.fill",         title: "Privacy Policy"),
-            SideMenuRowItem(icon: "doc.plaintext.fill",       title: "Terms & Condition"),
-        ]),
-    ]
+    private var menuSections: [SideMenuSection] {
+        [
+            SideMenuSection(title: "MY WALLET", items: [
+                SideMenuRowItem(icon: "statments",            title: "Statements",      action: context.onStatement),
+                SideMenuRowItem(icon: "markup",           title: "Markup",          action: context.onMarkups),
+            ]),
+            SideMenuSection(title: "MY BOOKINGS", items: [
+                SideMenuRowItem(icon: "ticket",            title: "Bookings",        action: context.onMyBookings),
+                SideMenuRowItem(icon: "group",            title: "Group Fare",      action: context.onClose),
+                SideMenuRowItem(icon: "wishlist",               title: "Wishlist",        action: context.onClose),
+                SideMenuRowItem(icon: "calender",                 title: "Calendar",        action: context.onClose),
+            ]),
+            SideMenuSection(title: "MY ACCOUNT", items: [
+                SideMenuRowItem(icon: "profile",              title: "Profile",         action: context.onProfile),
+                SideMenuRowItem(icon: "notification",                title: "Notification",    badge: "12", action: context.onClose),
+                SideMenuRowItem(icon: "review",                title: "Reviews",         action: context.onClose),
+                SideMenuRowItem(icon: "refer",                title: "Refer & Earn",    action: context.onClose),
+            ]),
+            SideMenuSection(title: "SUPPORT & SETTINGS", items: [
+                SideMenuRowItem(icon: "appcode",                   title: "App Code",        action: context.onAppCode),
+                SideMenuRowItem(icon: "help", title: "Help & Support",  action: context.onContactSupport),
+                SideMenuRowItem(icon: "setting",           title: "Settings",        action: context.onClose),
+            ]),
+            SideMenuSection(title: "ABOUT", items: [
+                SideMenuRowItem(icon: "info",         title: "About Us",        action: context.onAboutUs),
+                SideMenuRowItem(icon: "doc",         title: "Privacy Policy",  action: context.onPrivacyPolicy),
+                SideMenuRowItem(icon: "doc",       title: "Terms & Condition", action: context.onTermsCondition),
+            ]),
+        ]
+    }
 
     var body: some View {
         VStack(spacing: 0) {
             bannerHeader
+            Spacer(minLength: 8)
             quickActionsRow
             Divider()
                 .overlay(Color.ftdBorder)
             ScrollView(showsIndicators: false) {
                 VStack(spacing: 0) {
-                    ForEach(Self.menuSections, id: \.title) { section in
+                    ForEach(menuSections, id: \.title) { section in
                         sectionView(section)
                     }
                 }
@@ -95,11 +99,11 @@ struct FTDSideMenuView: View {
 
     private var bannerHeader: some View {
         ZStack(alignment: .bottom) {
-            Image("splashMiddleImg")
+            Image("menuHeader")
                 .resizable()
-                .aspectRatio(contentMode: .fill)
+                .scaledToFill()
                 .frame(maxWidth: .infinity)
-                .frame(height: 160)
+                .frame(height: 150, alignment: .bottom)
                 .clipped()
             LinearGradient(
                 colors: [.clear, .black.opacity(0.70)],
@@ -109,24 +113,30 @@ struct FTDSideMenuView: View {
             Button { context.onProfile() } label: {
                 HStack(spacing: DesignTokens.Spacing.md) {
                     avatarView
-                    VStack(alignment: .leading, spacing: 2) {
+                    VStack(alignment: .leading, spacing: 0) {
+                        Spacer(minLength: 0)
                         Text(context.agentName)
-                            .font(Font.custom("Poppins-SemiBold", size: 15))
+                            .font(.ftdMenuName)
                             .foregroundStyle(.white)
                             .lineLimit(1)
-                        if !context.agentEmail.isEmpty {
-                            Text(context.agentEmail)
-                                .font(Font.custom("Poppins-Regular", size: 12))
-                                .foregroundStyle(.white.opacity(0.85))
-                                .lineLimit(1)
+                        //Spacer(minLength: )
+                        VStack(alignment: .leading, spacing: 1) {
+                            if !context.agentEmail.isEmpty {
+                                Text(context.agentEmail)
+                                    .font(.ftdPlaceholder)
+                                    .foregroundStyle(.white.opacity(0.85))
+                                    .lineLimit(1)
+                            }
+                            if !context.agentPhone.isEmpty {
+                                Text(context.agentPhone)
+                                    .font(.ftdPlaceholder)
+                                    .foregroundStyle(.white.opacity(0.85))
+                                    .lineLimit(1)
+                            }
                         }
-                        if !context.agentPhone.isEmpty {
-                            Text(context.agentPhone)
-                                .font(Font.custom("Poppins-Regular", size: 12))
-                                .foregroundStyle(.white.opacity(0.85))
-                                .lineLimit(1)
-                        }
+                        Spacer(minLength: 0)
                     }
+                    .frame(height: 64)
                     Spacer()
                 }
                 .padding(.horizontal, DesignTokens.Spacing.lg)
@@ -135,7 +145,7 @@ struct FTDSideMenuView: View {
             }
             .buttonStyle(.plain)
         }
-        .frame(height: 160)
+        .frame(height: 150)
     }
 
     private var avatarView: some View {
@@ -165,7 +175,7 @@ struct FTDSideMenuView: View {
                 )
                 .frame(width: 64, height: 64)
             Text(agentInitials)
-                .font(Font.custom("Poppins-Bold", size: 18))
+                .font(.ftdAvatarLabel)
                 .foregroundStyle(.white)
         }
     }
@@ -180,15 +190,16 @@ struct FTDSideMenuView: View {
 
     private var quickActionsRow: some View {
         HStack(spacing: 0) {
-            quickActionItem(icon: "ticket.fill",                        label: "Bookings") { context.onMyBookings() }
+            quickActionItem(icon: "ticket",                        label: "sidemenu.action.bookings") { context.onMyBookings() }
             quickActionSeparator
-            quickActionItem(icon: "arrow.up.circle.fill",               label: "Upload")   { context.onUploadMoney() }
+            quickActionItem(icon: "wallet",               label: "sidemenu.action.upload")   { context.onUploadMoney() }
             quickActionSeparator
-            quickActionItem(icon: "arrow.counterclockwise.circle.fill", label: "Refund")   { context.onMyRefund() }
+            quickActionItem(icon: "refund", label: "sidemenu.action.refund")   { context.onMyRefund() }
             quickActionSeparator
-            quickActionItem(icon: "qrcode",                             label: "App Code") { context.onAppCode() }
+            quickActionItem(icon: "appcode",                             label: "sidemenu.action.appcode") { context.onAppCode() }
         }
-        .padding(.vertical, DesignTokens.Spacing.md)
+        
+        .padding(.vertical, DesignTokens.Spacing.lg)
         .padding(.horizontal, DesignTokens.Spacing.md)
         .background(Color.ftdSideMenuBackground)
         .clipShape(RoundedRectangle(cornerRadius: DesignTokens.Radius.card))
@@ -206,10 +217,10 @@ struct FTDSideMenuView: View {
             .frame(width: 1, height: 36)
     }
 
-    private func quickActionItem(icon: String, label: String, action: @escaping () -> Void) -> some View {
+    private func quickActionItem(icon: String, label: LocalizedStringKey, action: @escaping () -> Void) -> some View {
         Button { action() } label: {
             VStack(spacing: 5) {
-                Image(systemName: icon)
+                Image(icon)
                     .font(.system(size: DesignTokens.IconSize.lg))
                     .foregroundStyle(Color.ftdAccentOrange)
                 Text(label)
@@ -246,40 +257,30 @@ struct FTDSideMenuView: View {
             .padding(.top, labelOffset)
 
             // Title centred on the top border line; background erases the border behind it
-            Text(section.title)
-                .font(.ftdSectionHeader)
-                .foregroundStyle(Color.ftdTextSecondary)
+            Text(LocalizedStringKey(section.title))
+                .font(.ftdLabelXS)
+                .foregroundStyle(Color.ftdTextShade)
                 .tracking(0.8)
                 .padding(.horizontal, 5)
                 .background(Color.ftdSideMenuBackground)
                 .padding(.leading, DesignTokens.Spacing.lg)
         }
         .padding(.horizontal, DesignTokens.Spacing.md)
-        .padding(.top, DesignTokens.Spacing.xl)
+        .padding(.top, DesignTokens.Spacing.sm)
         .padding(.bottom, DesignTokens.Spacing.xs)
     }
 
     private func menuRow(_ item: SideMenuRowItem) -> some View {
         Button {
-            switch item.title {
-            case "Statements":        context.onStatement()
-            case "Markup":            context.onMarkups()
-            case "Profile":           context.onProfile()
-            case "About Us":          context.onAboutUs()
-            case "Help & Support":    context.onContactSupport()
-            case "Privacy Policy":    context.onPrivacyPolicy()
-            case "Terms & Condition": context.onTermsCondition()
-            case "App Code":          context.onAppCode()
-            default:                  context.onClose()
-            }
+            item.action()
         } label: {
             HStack(spacing: 14) {
-                Image(systemName: item.icon)
+                Image(item.icon)
                     .font(.system(size: DesignTokens.IconSize.md))
                     .frame(width: 22)
                     .foregroundStyle(Color.ftdAccentOrange)
-                Text(item.title)
-                    .font(Font.custom("Poppins-Regular", size: 14))
+                Text(LocalizedStringKey(item.title))
+                    .font(.ftdLabelMD)
                     .foregroundStyle(Color.ftdTextPrimary)
                 Spacer()
                 if let badge = item.badge {
@@ -291,7 +292,7 @@ struct FTDSideMenuView: View {
                         .background(Color.ftdAccentOrange)
                         .clipShape(Capsule())
                 }
-                Image(systemName: "chevron.right")
+                Image("chevron.right")
                     .font(.system(size: DesignTokens.IconSize.xs))
                     .foregroundStyle(Color.ftdTextSecondary.opacity(0.45))
             }
@@ -309,10 +310,10 @@ struct FTDSideMenuView: View {
             Divider().overlay(Color.ftdBorder)
             Button { context.onLogout() } label: {
                 HStack(spacing: DesignTokens.Spacing.sm) {
-                    Image(systemName: "rectangle.portrait.and.arrow.right")
+                    Image("logout")
                         .font(.system(size: DesignTokens.IconSize.sm, weight: .semibold))
                     Text("Logout")
-                        .font(Font.custom("Poppins-SemiBold", size: 14))
+                        .font(.ftdLabelXS)
                 }
                 .foregroundStyle(.white)
                 .frame(maxWidth: .infinity)
@@ -324,8 +325,8 @@ struct FTDSideMenuView: View {
             .padding(.horizontal, DesignTokens.Spacing.lg)
 
             Text("FTD Travel v1.0.0")
-                .font(.ftdTabLabel)
-                .foregroundStyle(Color.ftdTextSecondary.opacity(0.55))
+                .font(.ftdLabelXS)
+                .foregroundStyle(Color.ftdTextTertiary/*.opacity(0.55)*/)
         }
         .padding(.top, DesignTokens.Spacing.xs)
         .padding(.bottom, 24)
@@ -334,23 +335,23 @@ struct FTDSideMenuView: View {
 }
 
 // MARK: - Preview
-
-private let previewContext = SideMenuContext(
-    agentName: "Abhishek Jain",
-    agentEmail: "abhishekjain.ftd@gmail.com",
-    agentPhone: "9876543210",
-    agentPhotoURL: nil,
-    onMyBookings: {},
-    onUploadMoney: {},
-    onMyRefund: {},
-    onAppCode: {},
-    onStatement: {},
-    onMarkups: {},
-    onProfile: {},
-    onAboutUs: {},
-    onContactSupport: {},
-    onPrivacyPolicy: {},
-    onTermsCondition: {},
-    onClose: {},
-    onLogout: {}
-)
+//
+//private let previewContext = SideMenuContext(
+//    agentName: "Abhishek Jain",
+//    agentEmail: "abhishekjain.ftd@gmail.com",
+//    agentPhone: "9876543210",
+//    agentPhotoURL: nil,
+//    onMyBookings: {},
+//    onUploadMoney: {},
+//    onMyRefund: {},
+//    onAppCode: {},
+//    onStatement: {},
+//    onMarkups: {},
+//    onProfile: {},
+//    onAboutUs: {},
+//    onContactSupport: {},
+//    onPrivacyPolicy: {},
+//    onTermsCondition: {},
+//    onClose: {},
+//    onLogout: {}
+//)

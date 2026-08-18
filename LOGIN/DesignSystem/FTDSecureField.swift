@@ -6,7 +6,7 @@ struct FTDSecureField: View {
     @Binding var text: String
     @Binding var isVisible: Bool
     var errorMessage: String?
-    var placeholderColor: Color = Color.ftdTextSecondary
+    var placeholderColor: Color = Color.ftdTextTertiary
     var placeholderFont: Font = Font.ftdPlaceholder
 
     private func buildPrompt() -> Text {
@@ -52,7 +52,7 @@ struct FTDSecureField: View {
                     Button {
                         isVisible.toggle()
                     } label: {
-                        Image(systemName: isVisible ? "eye.slash" : "eye")
+                        Image(isVisible ? "eye.slash" : "eye")
                             .foregroundStyle(Color.ftdTextSecondary)
                             .font(.ftdIconEye)
                     }

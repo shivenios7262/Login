@@ -3,27 +3,29 @@ import SwiftUI
 // MARK: - FTDHomeView
 
 struct FTDHomeView: View {
-    @State private var viewModel:      FTDHomeViewModel
-    @State private var bookingsVM:     BookingsViewModel
-    @State private var profileVM:      ProfileViewModel
-    @State private var statementVM:    StatementViewModel
-    @State private var markupsVM:      MarkupsViewModel
-    @State private var uploadMoneyVM:  UploadMoneyViewModel
-    @State private var contactVM:      ContactSupportViewModel
-    @State private var privacyVM:      PrivacyPolicyViewModel
-    @State private var termsVM:        TermsConditionViewModel
+    private let authManager: AuthManager
+    @State private var viewModel:     FTDHomeViewModel
+    @State private var bookingsVM:    BookingsViewModel
+    @State private var profileVM:     ProfileViewModel
+    @State private var statementVM:   StatementViewModel
+    @State private var markupsVM:     MarkupsViewModel
+    @State private var uploadMoneyVM: UploadMoneyViewModel
+    @State private var contactVM:     ContactSupportViewModel
+    @State private var privacyVM:     PrivacyPolicyViewModel
+    @State private var termsVM:       TermsConditionViewModel
     @Environment(AppRouter.self) private var router
 
     init(authManager: AuthManager) {
-        _viewModel      = State(initialValue: FTDHomeViewModel(authManager: authManager))
-        _bookingsVM     = State(initialValue: BookingsViewModel(authManager: authManager))
-        _profileVM      = State(initialValue: ProfileViewModel(authManager: authManager))
-        _statementVM    = State(initialValue: StatementViewModel(authManager: authManager))
-        _markupsVM      = State(initialValue: MarkupsViewModel(authManager: authManager))
-        _uploadMoneyVM  = State(initialValue: UploadMoneyViewModel(authManager: authManager))
-        _contactVM      = State(initialValue: ContactSupportViewModel(authManager: authManager))
-        _privacyVM      = State(initialValue: PrivacyPolicyViewModel(authManager: authManager))
-        _termsVM        = State(initialValue: TermsConditionViewModel(authManager: authManager))
+        self.authManager  = authManager
+        _viewModel        = State(initialValue: FTDHomeViewModel(authManager: authManager))
+        _bookingsVM       = State(initialValue: BookingsViewModel(authManager: authManager))
+        _profileVM        = State(initialValue: ProfileViewModel(authManager: authManager))
+        _statementVM      = State(initialValue: StatementViewModel(authManager: authManager))
+        _markupsVM        = State(initialValue: MarkupsViewModel(authManager: authManager))
+        _uploadMoneyVM    = State(initialValue: UploadMoneyViewModel(authManager: authManager))
+        _contactVM        = State(initialValue: ContactSupportViewModel(authManager: authManager))
+        _privacyVM        = State(initialValue: PrivacyPolicyViewModel(authManager: authManager))
+        _termsVM          = State(initialValue: TermsConditionViewModel(authManager: authManager))
     }
 
     var body: some View {
@@ -51,12 +53,17 @@ struct FTDHomeView: View {
             case .profile:     AgentProfileView(viewModel: profileVM)
             case .statement:   StatementView(viewModel: statementVM)
             case .markups:     MarkupView(viewModel: markupsVM)
-            case .uploadMoney:     UploadMoneyView(viewModel: uploadMoneyVM)
             case .aboutUs:         NavigationStack { AboutView() }
             case .contactSupport:  NavigationStack { ContactSupportView(viewModel: contactVM) }
             case .privacyPolicy:   NavigationStack { PrivacyPolicyView(viewModel: privacyVM) }
             case .termsCondition:  NavigationStack { TermsConditionView(viewModel: termsVM) }
             }
+        }
+        .fullScreenCover(isPresented: Bindable(router).uploadMoneyPresented) {
+            UploadMoneyView(viewModel: uploadMoneyVM)
+        }
+        .fullScreenCover(isPresented: Bindable(router).agencyStatementPresented) {
+            AgencyStatementView(authManager: authManager)
         }
         .task {
             await viewModel.checkAndRefreshTokenIfNeeded()
@@ -72,10 +79,10 @@ struct FTDHomeView: View {
             agentPhone:    viewModel.mobileNo,
             agentPhotoURL: viewModel.agentLogoURL,
             onMyBookings:  { viewModel.closeSideMenu(); router.presentHome(.myBookings) },
-            onUploadMoney: { viewModel.closeSideMenu(); router.presentHome(.uploadMoney) },
-            onMyRefund:    { viewModel.closeSideMenu() },
+            onUploadMoney: { viewModel.closeSideMenu(); router.presentUploadMoney() },
+            onMyRefund:    { viewModel.closeSideMenu(); router.presentHome(.statement) },
             onAppCode:     { viewModel.closeSideMenu() },
-            onStatement:   { viewModel.closeSideMenu(); router.presentHome(.statement) },
+            onStatement:   { viewModel.closeSideMenu(); router.presentAgencyStatement() },
             onMarkups:     { viewModel.closeSideMenu(); router.presentHome(.markups) },
             onProfile:     { viewModel.closeSideMenu(); router.presentHome(.profile) },
             onAboutUs:         { viewModel.closeSideMenu(); router.presentHome(.aboutUs) },

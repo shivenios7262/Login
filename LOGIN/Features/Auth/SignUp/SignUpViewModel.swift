@@ -49,7 +49,20 @@ final class SignUpViewModel {
     var isLoadingCountries: Bool = false
 
     // Derived from selected country — if non-empty, show dropdown; otherwise free-text
-    var stateOptions: [String] { selectedCountry.states.map(\.name) }
+    var stateOptions: [String] {
+        selectedCountry.states
+            .sorted {
+                let isTrailing: (String) -> Bool = {
+                    let l = $0.lowercased()
+                    return l.hasPrefix("other") || l.hasPrefix("outside")
+                }
+                let lTrail = isTrailing($0.name)
+                let rTrail = isTrailing($1.name)
+                if lTrail != rTrail { return !lTrail }
+                return $0.name < $1.name
+            }
+            .map(\.name)
+    }
     var hasStateOptions: Bool  { !selectedCountry.states.isEmpty }
 
     // MARK: - Submission state
@@ -90,7 +103,20 @@ final class SignUpViewModel {
         isLoadingCountries = true
         defer { isLoadingCountries = false }
         do {
-            countries = try await authManager.fetchCountries()
+            let raw = try await authManager.fetchCountries()
+            countries = raw.sorted {
+                let lIndia = $0.iso2.uppercased() == "IN"
+                let rIndia = $1.iso2.uppercased() == "IN"
+                let lOther = $0.name.lowercased().hasPrefix("other")
+                let rOther = $1.name.lowercased().hasPrefix("other")
+                if lIndia != rIndia { return lIndia }
+                if lOther != rOther { return !lOther }
+                return $0.name < $1.name
+            }
+            if selectedCountry == .unselected,
+               let india = countries.first(where: { $0.iso2.uppercased() == "IN" }) {
+                selectedCountry = india
+            }
         } catch {
             // Non-fatal: picker remains empty; user can retry via the retry button
         }

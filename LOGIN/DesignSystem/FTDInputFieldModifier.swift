@@ -32,13 +32,13 @@ extension View {
 func ftdRequiredLabel(_ text: String) -> Text {
     let parts = text.components(separatedBy: "*")
     guard parts.count > 1 else {
-        return Text(text).foregroundStyle(Color.ftdTextSecondary)
+        return Text(text).foregroundStyle(Color.ftdTextTertiary)
     }
-    var result = Text(parts[0]).foregroundStyle(Color.ftdTextSecondary)
+    var result = Text(parts[0]).foregroundStyle(Color.ftdTextTertiary)
     for part in parts.dropFirst() {
         result = result + Text("*").foregroundStyle(Color.ftdDestructiveRed)
         if !part.isEmpty {
-            result = result + Text(part).foregroundStyle(Color.ftdTextSecondary)
+            result = result + Text(part).foregroundStyle(Color.ftdTextTertiary)
         }
     }
     return result

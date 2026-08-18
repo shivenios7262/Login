@@ -18,7 +18,7 @@ enum DesignTokens {
         static let inputVertical:   CGFloat = 10
         static let inputLabelGap:   CGFloat = 3
         static let fieldSpacing:    CGFloat = 20
-        static let inputFieldHeight: CGFloat = 56
+        static let inputFieldHeight: CGFloat = 55
         static let screenHorizontal: CGFloat = 24
         static let screenBottom:    CGFloat = 36
     }

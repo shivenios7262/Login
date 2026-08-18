@@ -16,8 +16,6 @@ struct SplashView: View {
                 .containerRelativeFrame(.vertical, alignment: .top) { height, _ in height * (440.0 / 932.0) }
                 .frame(maxWidth: .infinity, alignment: .top)
                 .clipped()
-                .opacity(0.95)
-                
                 .ignoresSafeArea(edges: .top)
                 .padding(.top, 0)
                 .padding(.horizontal, 4)
@@ -29,8 +27,8 @@ struct SplashView: View {
                     .frame(width: 144)
                     .padding(.top, 56)
 
-                Text("\(Text("Travel Far, ").foregroundStyle(Color.ftdAccentTeal))\(Text("Discover More").foregroundStyle(Color.ftdAccentOrange))")
-                    .font(.system(size: 18, weight: .medium))
+                Text("\(Text("Travel Far. ").foregroundStyle(Color.ftdAccentTeal))\(Text("Discover More").foregroundStyle(Color.ftdAccentOrange))")
+                    .font(.ftdSectionHeaderMedium)
                     .padding(.top, DesignTokens.Spacing.lg)
                 
                 
@@ -38,11 +36,10 @@ struct SplashView: View {
                 Image("splashMiddleImg")
                     .resizable()
                     .scaledToFit()
-                    .frame(maxWidth: 220)
+                    .frame(maxWidth: 280)
                     .padding(.top,24)
 
-                FTDPrimaryButton(title: "Let's Get Started", trailingIcon: "arrow.right", isLoading: isLoading, fontSize: 16,
-                                 fontWeight: .semibold) {
+                FTDPrimaryButton(title: "Let's Get Started", trailingIcon: "arrow.right", isLoading: isLoading) {
                     Task {
                         isLoading = true
                         defer { isLoading = false }

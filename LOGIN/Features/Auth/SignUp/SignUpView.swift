@@ -1,8 +1,10 @@
 import SwiftUI
 
 struct SignUpView: View {
+    private let authManager: AuthManager
     private let onSuccess: () -> Void
     @State private var viewModel: SignUpViewModel
+    @State private var showTerms = false
 
     private enum Layout {
         static let fieldSpacing: CGFloat           = DesignTokens.Spacing.fieldSpacing
@@ -14,6 +16,7 @@ struct SignUpView: View {
     }
 
     init(authManager: AuthManager, onSuccess: @escaping () -> Void) {
+        self.authManager = authManager
         self.onSuccess = onSuccess
         _viewModel = State(initialValue: SignUpViewModel(authManager: authManager))
     }
@@ -83,6 +86,11 @@ struct SignUpView: View {
             .padding(.bottom, DesignTokens.Spacing.screenBottom)
             .background(Color.ftdCardBackground)
         }
+        .sheet(isPresented: $showTerms) {
+            NavigationStack {
+                TermsConditionView(viewModel: TermsConditionViewModel(authManager: authManager))
+            }
+        }
     }
 
     // MARK: - User Type Row
@@ -91,7 +99,7 @@ struct SignUpView: View {
         @Bindable var vm = viewModel
         return HStack(alignment: .top, spacing: Layout.pairedSpacing) {
             FTDDropdownField(
-                label: String(localized: "Select User Type *"),
+                label: String(localized: "Choose User Type *"),//Choose User Type Select User Type
                 placeholder: String(localized: "User Type"),
                 selection: $vm.selectedUserType,
                 options: UserType.allCases,
@@ -179,14 +187,14 @@ struct SignUpView: View {
         return HStack(alignment: .top, spacing: Layout.pairedSpacing) {
             FTDSecureField(
                 label: String(localized: "Password *"),
-                placeholder: "••••••••",
+                placeholder: "✻ ✻ ✻ ✻ ✻ ✻ ✻ ✻",
                 text: $vm.password,
                 isVisible: $vm.showPassword,
                 errorMessage: vm.passwordError
             )
             FTDSecureField(
                 label: String(localized: "Confirm Password *"),
-                placeholder: "••••••••",
+                placeholder: "✻ ✻ ✻ ✻ ✻ ✻ ✻ ✻",
                 text: $vm.confirmPassword,
                 isVisible: $vm.showConfirmPassword,
                 errorMessage: vm.confirmPasswordError
@@ -280,7 +288,7 @@ struct SignUpView: View {
         if vm.hasStateOptions {
             FTDDropdownField(
                 label: String(localized: "State *"),
-                placeholder: String(localized: "State"),
+                placeholder: String(localized: ""),
                 selection: $vm.selectedState,
                 options: vm.stateOptions,
                 optionLabel: { $0 },
@@ -319,11 +327,16 @@ struct SignUpView: View {
     private var termsDisclosure: some View {
         VStack(spacing: DesignTokens.Spacing.xxs) {
             Text(String(localized: "By clicking on the Sign Up button, I agree to the"))
-                .font(.caption)
+                .font(.ftdPlaceholder)
                 .foregroundStyle(Color.ftdTextSecondary)
-            Text(String(localized: "Terms & Condition"))
-                .font(.caption)
-                .foregroundStyle(Color.ftdAccentTeal)
+            Button {
+                showTerms = true
+            } label: {
+                Text(String(localized: "Terms & Condition"))
+                    .font(.ftdLabelSM)
+                    .foregroundStyle(Color.ftdAccentTeal)
+            }
+            .buttonStyle(.plain)
         }
         .multilineTextAlignment(.center)
     }

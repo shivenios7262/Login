@@ -75,8 +75,10 @@ struct User: Codable, Equatable, Sendable {
         firstName     = try c.decodeIfPresent(String.self, forKey: .firstName)
         lastName      = try c.decodeIfPresent(String.self, forKey: .lastName)
         mobileNo      = try c.decodeIfPresent(String.self, forKey: .mobileNo)
-        creditBalance  = try c.decodeIfPresent(String.self, forKey: .creditBalance)
-        bookingBalance = try c.decodeIfPresent(String.self, forKey: .bookingBalance)
+        creditBalance  = (try? c.decodeIfPresent(String.self, forKey: .creditBalance))
+            ?? (try? c.decodeIfPresent(Double.self, forKey: .creditBalance)).map { String($0) }
+        bookingBalance = (try? c.decodeIfPresent(String.self, forKey: .bookingBalance))
+            ?? (try? c.decodeIfPresent(Double.self, forKey: .bookingBalance)).map { String($0) }
         registerDate   = try c.decodeIfPresent(String.self, forKey: .registerDate)
         lastLogin      = try c.decodeIfPresent(String.self, forKey: .lastLogin)
         lastBooking    = try c.decodeIfPresent(String.self, forKey: .lastBooking)

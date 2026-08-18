@@ -563,9 +563,21 @@ struct AgentProfileResponse: Codable, Sendable {
 
 // Each row in deposit_statement. All string fields are nullable in the API.
 struct StatementItem: Codable, Sendable, Identifiable {
-    // Stable identity from content — same booking/mode combination is unique.
+    // Stable identity from content. Some API rows have a null transactionid, so avoid UUID here.
     var id: String {
-        "\(valueDate ?? "")-\(transactionId ?? UUID().uuidString)-\(mode ?? "nil")-\(transactionAmount ?? "0")"
+        [
+            valueDate,
+            trasactionType,
+            transactionId,
+            referenceNo,
+            mode,
+            transactionAmount,
+            withdrawAmount,
+            addBookingBalance,
+            bookingBalance
+        ]
+            .map { $0?.trimmingCharacters(in: .whitespacesAndNewlines) ?? "nil" }
+            .joined(separator: "|")
     }
 
     let valueDate: String?           // "valuedate"
@@ -943,9 +955,10 @@ struct AgencyStatementRequest: Codable, Sendable {
 
     nonisolated func encode(to encoder: any Encoder) throws {
         var c = encoder.container(keyedBy: CodingKeys.self)
-        try c.encodeIfPresent(fromDate,        forKey: .fromDate)
-        try c.encodeIfPresent(toDate,          forKey: .toDate)
-        try c.encodeIfPresent(transactionType, forKey: .transactionType)
+        try c.encodeIfPresent(fromDate, forKey: .fromDate)
+        // Server requires these keys present even when optional — send empty string rather than omitting.
+        try c.encode(toDate ?? "", forKey: .toDate)
+        try c.encode(transactionType ?? "", forKey: .transactionType)
     }
 }
 
@@ -1100,6 +1113,237 @@ struct UploadMoneyRequest: Codable, Sendable {
         try c.encodeIfPresent(chequeDrawnBank, forKey: .chequeDrawnBank)
         try c.encodeIfPresent(chequeNo,        forKey: .chequeNo)
         try c.encodeIfPresent(remarks,         forKey: .remarks)
+    }
+}
+
+// MARK: - Upload Money Response
+
+struct BankItem: Codable, Sendable, Identifiable {
+    var id: String { bankId }
+    let bankId: String
+    let bankName: String
+    let accountName: String
+    let bankPayMethod: String
+    let cashPayMethod: String
+    let chequePayMethod: String
+    let accountNo: String
+    let ifscCode: String
+    let branch: String?
+    let bankLogo: String?
+    let bankRemarks: String?
+    let cashRemarks: String?
+    let chequeRemarks: String?
+
+    enum CodingKeys: String, CodingKey {
+        case bankId          = "bank_id"
+        case bankName        = "bank_name"
+        case accountName     = "account_name"
+        case bankPayMethod   = "bank_pay_method"
+        case cashPayMethod   = "cash_pay_method"
+        case chequePayMethod = "cheque_pay_method"
+        case accountNo       = "account_no"
+        case ifscCode        = "ifsc_code"
+        case branch
+        case bankLogo        = "bank_logo"
+        case bankRemarks     = "bank_remarks"
+        case cashRemarks     = "cash_remarks"
+        case chequeRemarks   = "cheque_remarks"
+    }
+
+    nonisolated init(from decoder: any Decoder) throws {
+        let c = try decoder.container(keyedBy: CodingKeys.self)
+        bankId          = try c.decode(String.self, forKey: .bankId)
+        bankName        = try c.decode(String.self, forKey: .bankName)
+        accountName     = try c.decode(String.self, forKey: .accountName)
+        bankPayMethod   = try c.decode(String.self, forKey: .bankPayMethod)
+        cashPayMethod   = try c.decode(String.self, forKey: .cashPayMethod)
+        chequePayMethod = try c.decode(String.self, forKey: .chequePayMethod)
+        accountNo       = try c.decode(String.self, forKey: .accountNo)
+        ifscCode        = try c.decode(String.self, forKey: .ifscCode)
+        branch          = try c.decodeIfPresent(String.self, forKey: .branch)
+        bankLogo        = try c.decodeIfPresent(String.self, forKey: .bankLogo)
+        bankRemarks     = try c.decodeIfPresent(String.self, forKey: .bankRemarks)
+        cashRemarks     = try c.decodeIfPresent(String.self, forKey: .cashRemarks)
+        chequeRemarks   = try c.decodeIfPresent(String.self, forKey: .chequeRemarks)
+    }
+
+    nonisolated func encode(to encoder: any Encoder) throws {
+        var c = encoder.container(keyedBy: CodingKeys.self)
+        try c.encode(bankId,          forKey: .bankId)
+        try c.encode(bankName,        forKey: .bankName)
+        try c.encode(accountName,     forKey: .accountName)
+        try c.encode(bankPayMethod,   forKey: .bankPayMethod)
+        try c.encode(cashPayMethod,   forKey: .cashPayMethod)
+        try c.encode(chequePayMethod, forKey: .chequePayMethod)
+        try c.encode(accountNo,       forKey: .accountNo)
+        try c.encode(ifscCode,        forKey: .ifscCode)
+        try c.encodeIfPresent(branch,        forKey: .branch)
+        try c.encodeIfPresent(bankLogo,      forKey: .bankLogo)
+        try c.encodeIfPresent(bankRemarks,   forKey: .bankRemarks)
+        try c.encodeIfPresent(cashRemarks,   forKey: .cashRemarks)
+        try c.encodeIfPresent(chequeRemarks, forKey: .chequeRemarks)
+    }
+}
+
+struct BankList: Codable, Sendable {
+    let bank: [BankItem]
+    let cash: [BankItem]
+    let cheque: [BankItem]
+
+    enum CodingKeys: String, CodingKey { case bank, cash, cheque }
+
+    nonisolated init(from decoder: any Decoder) throws {
+        let c = try decoder.container(keyedBy: CodingKeys.self)
+        bank   = try c.decode([BankItem].self, forKey: .bank)
+        cash   = try c.decode([BankItem].self, forKey: .cash)
+        cheque = try c.decode([BankItem].self, forKey: .cheque)
+    }
+
+    nonisolated func encode(to encoder: any Encoder) throws {
+        var c = encoder.container(keyedBy: CodingKeys.self)
+        try c.encode(bank,   forKey: .bank)
+        try c.encode(cash,   forKey: .cash)
+        try c.encode(cheque, forKey: .cheque)
+    }
+}
+
+struct UploadPendingData: Codable, Sendable {
+    let amount: String
+    let count: String
+
+    enum CodingKeys: String, CodingKey { case amount, count }
+
+    nonisolated init(from decoder: any Decoder) throws {
+        let c = try decoder.container(keyedBy: CodingKeys.self)
+        amount = try c.decode(String.self, forKey: .amount)
+        count  = try c.decode(String.self, forKey: .count)
+    }
+
+    nonisolated func encode(to encoder: any Encoder) throws {
+        var c = encoder.container(keyedBy: CodingKeys.self)
+        try c.encode(amount, forKey: .amount)
+        try c.encode(count,  forKey: .count)
+    }
+}
+
+struct UploadTimings: Codable, Sendable {
+    let startTime: String
+    let endTime: String
+
+    enum CodingKeys: String, CodingKey {
+        case startTime = "start_time"
+        case endTime   = "end_time"
+    }
+
+    nonisolated init(from decoder: any Decoder) throws {
+        let c = try decoder.container(keyedBy: CodingKeys.self)
+        startTime = try c.decode(String.self, forKey: .startTime)
+        endTime   = try c.decode(String.self, forKey: .endTime)
+    }
+
+    nonisolated func encode(to encoder: any Encoder) throws {
+        var c = encoder.container(keyedBy: CodingKeys.self)
+        try c.encode(startTime, forKey: .startTime)
+        try c.encode(endTime,   forKey: .endTime)
+    }
+}
+
+struct UploadMoneyData: Codable, Sendable {
+    let pendingData: [UploadPendingData]
+    let bankList: BankList
+    let uploadTimings: UploadTimings
+    let specialMessage: String?
+
+    enum CodingKeys: String, CodingKey {
+        case pendingData    = "pendingdata"
+        case bankList       = "bank_list"
+        case uploadTimings  = "upload_timings"
+        case specialMessage = "special_message"
+    }
+
+    nonisolated init(from decoder: any Decoder) throws {
+        let c = try decoder.container(keyedBy: CodingKeys.self)
+        pendingData    = try c.decode([UploadPendingData].self, forKey: .pendingData)
+        bankList       = try c.decode(BankList.self,            forKey: .bankList)
+        uploadTimings  = try c.decode(UploadTimings.self,       forKey: .uploadTimings)
+        specialMessage = try c.decodeIfPresent(String.self,     forKey: .specialMessage)
+    }
+
+    nonisolated func encode(to encoder: any Encoder) throws {
+        var c = encoder.container(keyedBy: CodingKeys.self)
+        try c.encode(pendingData,   forKey: .pendingData)
+        try c.encode(bankList,      forKey: .bankList)
+        try c.encode(uploadTimings, forKey: .uploadTimings)
+        try c.encodeIfPresent(specialMessage, forKey: .specialMessage)
+    }
+}
+
+struct UploadMoneyResponse: Codable, Sendable {
+    let status: Bool
+    let message: String?
+    let data: UploadMoneyData?
+
+    enum CodingKeys: String, CodingKey { case status, message, data }
+
+    nonisolated init(from decoder: any Decoder) throws {
+        let c = try decoder.container(keyedBy: CodingKeys.self)
+        status  = try c.decode(Bool.self,                     forKey: .status)
+        message = try c.decodeIfPresent(String.self,          forKey: .message)
+        data    = try c.decodeIfPresent(UploadMoneyData.self, forKey: .data)
+    }
+
+    nonisolated func encode(to encoder: any Encoder) throws {
+        var c = encoder.container(keyedBy: CodingKeys.self)
+        try c.encode(status, forKey: .status)
+        try c.encodeIfPresent(message, forKey: .message)
+        try c.encodeIfPresent(data,    forKey: .data)
+    }
+}
+
+struct UploadMoneySubmitData: Codable, Sendable {
+    let status: Bool
+    let message: String
+    let referenceNo: String
+
+    enum CodingKeys: String, CodingKey {
+        case status, message
+        case referenceNo = "reference_no"
+    }
+
+    nonisolated init(from decoder: any Decoder) throws {
+        let c = try decoder.container(keyedBy: CodingKeys.self)
+        status      = try c.decode(Bool.self,   forKey: .status)
+        message     = try c.decode(String.self, forKey: .message)
+        referenceNo = try c.decode(String.self, forKey: .referenceNo)
+    }
+
+    nonisolated func encode(to encoder: any Encoder) throws {
+        var c = encoder.container(keyedBy: CodingKeys.self)
+        try c.encode(status,      forKey: .status)
+        try c.encode(message,     forKey: .message)
+        try c.encode(referenceNo, forKey: .referenceNo)
+    }
+}
+
+struct UploadMoneySubmitResponse: Codable, Sendable {
+    let status: Bool
+    let message: String?
+    let data: UploadMoneySubmitData?
+
+    enum CodingKeys: String, CodingKey { case status, message, data }
+
+    nonisolated init(from decoder: any Decoder) throws {
+        let c = try decoder.container(keyedBy: CodingKeys.self)
+        status  = try c.decode(Bool.self,                         forKey: .status)
+        message = try c.decodeIfPresent(String.self,              forKey: .message)
+        data    = try c.decodeIfPresent(UploadMoneySubmitData.self, forKey: .data)
+    }
+
+    nonisolated func encode(to encoder: any Encoder) throws {
+        var c = encoder.container(keyedBy: CodingKeys.self)
+        try c.encode(status, forKey: .status)
+        try c.encodeIfPresent(message, forKey: .message)
+        try c.encodeIfPresent(data,    forKey: .data)
     }
 }
 

@@ -5,13 +5,8 @@ struct FTDPrimaryButton: View {
     var leadingIcon: String? = nil
     var trailingIcon: String? = nil
     var isLoading: Bool = false
-    var fontSize: CGFloat = 16
-    var fontWeight: Font.Weight = .medium
+    var font: Font = .ftdButton
     let action: () -> Void
-
-    private var titleFont: Font {
-        .system(size: fontSize, weight: fontWeight)
-    }
 
     var body: some View {
         Button(action: action) {
@@ -23,13 +18,13 @@ struct FTDPrimaryButton: View {
                     HStack(spacing: DesignTokens.Spacing.sm) {
                         if let icon = leadingIcon {
                             Image(systemName: icon)
-                                .font(titleFont)
+                                .font(font)
                         }
                         Text(title)
-                            .font(titleFont)
+                            .font(font)
                         if let icon = trailingIcon {
                             Image(systemName: icon)
-                                .font(titleFont)
+                                .font(font)
                         }
                     }
                     .foregroundStyle(.white)

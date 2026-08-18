@@ -38,6 +38,18 @@
         <string>Poppins-Light.ttf</string>
     </array>
 
+    <!-- Nimbbl payment SDK: required to detect installed UPI apps via canOpenURL -->
+    <key>LSApplicationQueriesSchemes</key>
+    <array>
+        <string>gpay</string>
+        <string>phonepe</string>
+        <string>paytmmp</string>
+        <string>bhim</string>
+        <string>tez</string>
+        <string>credpay</string>
+        <string>amazonpay</string>
+    </array>
+
     <!-- Standard iOS keys -->
     <key>CFBundleDevelopmentRegion</key>
     <string>$(DEVELOPMENT_LANGUAGE)</string>

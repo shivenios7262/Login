@@ -7,7 +7,7 @@ struct FTDTextField: View {
     var errorMessage: String?
     var keyboardType: UIKeyboardType = .default
     var autocapitalization: TextInputAutocapitalization = .sentences
-    var placeholderColor: Color = Color.ftdTextSecondary
+    var placeholderColor: Color = Color.ftdTextTertiary
     var placeholderFont: Font = Font.ftdPlaceholder
 
     private func buildPrompt() -> Text {

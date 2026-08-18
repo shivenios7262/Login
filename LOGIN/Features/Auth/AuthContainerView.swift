@@ -96,15 +96,14 @@ struct AuthContainerView: View {
             // Text("Welcome to FTD Travel")
             Text(String(localized: "auth.welcome.title"))
                 // .title is 28pt semibold in SF Pro and scales with Dynamic Type — no fixed-size token needed
-                .font(.title.weight(.semibold))
-                //.fontWeight(.semibold)
+                .font(.ftdTitleLG)
                 .foregroundStyle(Color.ftdTextPrimary)
                 .padding(.top, DesignTokens.Spacing.md)
 
             // design.md §2a (localization): hardcoded string replaced — key must exist in .xcstrings catalog
             // Text("Your next journey begins here")
             Text(String(localized: "auth.welcome.subtitle"))
-                .font(.subheadline)
+                .font(.ftdBodyMD)
                 .foregroundStyle(Color.ftdTextSecondary)
         }
         .frame(maxWidth: .infinity, alignment: .leading)
@@ -123,9 +122,8 @@ struct AuthContainerView: View {
                     }
                 } label: {
                     Text(tab.label)
-                        .font(.subheadline)
-                        .fontWeight(selectedTab == tab ? .semibold : .regular)
-                        .foregroundStyle(selectedTab == tab ? Color.ftdAccentOrange : Color.ftdTextPrimary)
+                        .font(selectedTab == tab ? .ftdLabelMD : .ftdLabelMD)
+                        .foregroundStyle(selectedTab == tab ? Color.ftdAccentOrange : Color.ftdTextSecondary)
                         .frame(maxWidth: .infinity)
                         .frame(height: Layout.tabItemHeight)
                         .background(selectedTab == tab ? Color.ftdCardBackground : Color.clear)

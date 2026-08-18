@@ -83,7 +83,7 @@ struct SignInView: View {
             Button(String(localized: "Forgot Password?")) {
                 viewModel.tapForgotPassword()
             }
-            .font(.subheadline)
+            .font(.ftdLabelMD)
             .foregroundStyle(Color.ftdAccentOrange)
         }
     }
@@ -94,7 +94,7 @@ struct SignInView: View {
     private var apiErrorBanner: some View {
         if let error = viewModel.apiError {
             Text(error)
-                .font(.subheadline)
+                .font(.ftdBodySM)
                 .foregroundStyle(Color.ftdDestructiveRed)
                 .multilineTextAlignment(.center)
                 .frame(maxWidth: .infinity)
