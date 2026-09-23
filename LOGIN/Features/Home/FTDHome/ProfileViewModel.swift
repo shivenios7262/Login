@@ -4,7 +4,7 @@ import Observation
 @Observable
 @MainActor
 final class ProfileViewModel: ProfileProvider {
-    private(set) var profile: AgentProfileData? = nil
+    private(set) var profile: AgentProfileFullData? = nil
     private(set) var isLoadingProfile = false
     private(set) var profileError: String? = nil
 

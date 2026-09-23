@@ -30,7 +30,7 @@ final class AgencyStatementViewModel {
     var selectedChip: DateChip = .sevenDays
     var fromDate: Date = Calendar.current.startOfDay(for: Calendar.current.date(byAdding: .day, value: -7, to: Date()) ?? Date())
     var toDate: Date? = nil
-    var selectedType: TransactionType = .all
+    var selectedType: String? = nil   // nil = All
     var searchText: String = ""
 
     // Stable key that drives .task(id:) — changes whenever any filter that requires an API
@@ -39,12 +39,13 @@ final class AgencyStatementViewModel {
     var filterKey: String {
         let from = apiFmt.string(from: fromDate)
         let to = toDate.map { apiFmt.string(from: $0) } ?? "open"
-        return "\(from)|\(to)|\(selectedType.rawValue)"
+        return "\(from)|\(to)|\(selectedType ?? "All")"
     }
 
     // MARK: - API state
 
     private(set) var statements: [StatementItem] = []
+    private(set) var availableTypes: [String] = []
     private(set) var isLoading: Bool = true
     private(set) var error: String? = nil
 
@@ -129,13 +130,16 @@ final class AgencyStatementViewModel {
         let request = AgencyStatementRequest(
             fromDate: apiFmt.string(from: fromDate),
             toDate: toDate.map { apiFmt.string(from: $0) },
-            transactionType: selectedType.apiValue
+            transactionType: selectedType
         )
 
         do {
             let response = try await authManager.fetchStatement(request: request)
             if response.status {
                 statements = response.data?.depositStatement ?? []
+                if let types = response.data?.transactionTypes, !types.isEmpty {
+                    availableTypes = types.keys.sorted()
+                }
             } else {
                 statements = []
                 error = response.message ?? String(localized: "Failed to load statement.")
@@ -185,7 +189,29 @@ final class AgencyStatementViewModel {
     private func buildCSV() -> URL? {
         let rows = filteredStatements
         guard !rows.isEmpty else { return nil }
-        let header = "Date,Type,Reference ID,Debit,Credit,Gross,Commission,Txn Fees,TDS,PG Fees,Balance,Credit Balance,Markup,Insurance,Remark"
+
+        let displayFmt: DateFormatter = {
+            let f = DateFormatter()
+            f.dateFormat = "d MMM yyyy"
+            f.locale = Locale(identifier: "en_US_POSIX")
+            return f
+        }()
+
+        let agencyName = authManager.currentUser?.agencyName ?? ""
+        let fromStr    = displayFmt.string(from: fromDate)
+        let toStr      = toDate.map { displayFmt.string(from: $0) } ?? displayFmt.string(from: Date())
+        let typeStr    = selectedType ?? "All"
+
+        let meta = [
+            "Agency Name:,\(agencyName)",
+            "Report:,Agency Statement",
+            "From Date:,\(fromStr)",
+            "To Date:,\(toStr)",
+            "Transaction Type:,\(typeStr)",
+            "",
+        ]
+
+        let columnHeader = "Date,Type,Reference ID,Debit,Credit,Gross,Commission,Txn Fees,TDS,PG Fees,Balance,Credit Balance,Markup,Insurance,Remark"
         let lines = rows.map { item in
             [item.valueDate, item.trasactionType, item.transactionId,
              item.withdrawAmount, item.addBookingBalance, item.transactionAmount,
@@ -195,7 +221,7 @@ final class AgencyStatementViewModel {
                 .map { $0 ?? "" }
                 .joined(separator: ",")
         }
-        let csv = ([header] + lines).joined(separator: "\n")
+        let csv = (meta + [columnHeader] + lines).joined(separator: "\n")
         let name = "Statement_\(apiFmt.string(from: fromDate)).csv"
         let url = FileManager.default.temporaryDirectory.appendingPathComponent(name)
         try? csv.write(to: url, atomically: true, encoding: .utf8)

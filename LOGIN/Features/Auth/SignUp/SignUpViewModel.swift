@@ -65,9 +65,17 @@ final class SignUpViewModel {
     }
     var hasStateOptions: Bool  { !selectedCountry.states.isEmpty }
 
+    // MARK: - Scroll-to-error
+    enum FormField: String {
+        case personal, contact, security, compliance, business, address
+    }
+    private(set) var scrollToField: FormField? = nil
+    private(set) var scrollToken: UUID = UUID()
+
     // MARK: - Submission state
     private(set) var isSubmitting: Bool = false
     private(set) var isRegistered: Bool = false
+    private(set) var registeredAgentNo: String?
     private(set) var apiError: String?
 
     // MARK: - Field errors
@@ -87,7 +95,7 @@ final class SignUpViewModel {
     private(set) var countryError: String?
 
     // MARK: - Static options
-    let titleOptions: [String] = ["Mr", "Mrs", "Ms", "Dr"]
+    let titleOptions: [String] = ["Mr", "Mrs", "Ms"/*, "Dr"*/]
 
     // MARK: - Dependencies
     private let authManager: AuthManager
@@ -157,7 +165,7 @@ final class SignUpViewModel {
         )
 
         do {
-            try await authManager.register(request: request)
+            registeredAgentNo = try await authManager.register(request: request)
             isRegistered = true
         } catch let error as NetworkError {
             let message = error.errorDescription ?? String(localized: "Registration failed. Please try again.")
@@ -194,6 +202,23 @@ final class SignUpViewModel {
         if selectedCountry.name.isEmpty { countryError = String(localized: "Please select a country"); valid = false }
         if selectedState.isEmpty        { stateError   = String(localized: "Please enter a state");    valid = false }
 
+        if !valid {
+            scrollToken = UUID()
+            if firstNameError != nil || lastNameError != nil {
+                scrollToField = .personal
+            } else if mobileError != nil || emailError != nil {
+                scrollToField = .contact
+            } else if passwordError != nil || confirmPasswordError != nil {
+                scrollToField = .security
+            } else if panNumberError != nil || panCardNameError != nil {
+                scrollToField = .compliance
+            } else if companyNameError != nil {
+                scrollToField = .business
+            } else {
+                scrollToField = .address
+            }
+        }
+
         return valid
     }
 
@@ -210,18 +235,20 @@ final class SignUpViewModel {
     // The full message is still shown in the API error banner.
     private func mapAPIErrorToFields(_ message: String) {
         let lower = message.lowercased()
-        let hint  = String(localized: "Already registered")
         if lower.contains("mobile") || lower.contains("phone") {
-            mobileError = hint
+            mobileError = String(localized: "Account already exists with this mobile number")
+            scrollToField = .contact
         } else if lower.contains("email") {
-            emailError = hint
+            emailError = String(localized: "Account already exists with this email address")
+            scrollToField = .contact
         } else if lower.contains("pan") {
-            panNumberError = hint
+            panNumberError = String(localized: "Already registered")
+            scrollToField = .compliance
         } else if lower.contains("agency") || lower.contains("company") {
-            companyNameError = hint
-        } else if lower.contains("aadhar") || lower.contains("aadhaar") {
-            // Aadhaar maps to idCardNumber — no dedicated error property; banner covers it
+            companyNameError = String(localized: "Already registered")
+            scrollToField = .business
         }
+        scrollToken = UUID()
     }
 }
 

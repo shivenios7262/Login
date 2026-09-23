@@ -25,7 +25,14 @@ struct GenericAPIResponse: Codable, Sendable {
 
     nonisolated init(from decoder: any Decoder) throws {
         let c = try decoder.container(keyedBy: CodingKeys.self)
-        status    = try c.decode(Bool.self, forKey: .status)
+        // Some API endpoints return status as an integer (0/1) rather than a boolean.
+        if let boolVal = try? c.decode(Bool.self, forKey: .status) {
+            status = boolVal
+        } else if let intVal = try? c.decode(Int.self, forKey: .status) {
+            status = intVal != 0
+        } else {
+            status = false
+        }
         message   = try c.decodeIfPresent(String.self, forKey: .message)
         errorCode = try c.decodeIfPresent(Int.self,    forKey: .errorCode)
         errorDesc = try c.decodeIfPresent(String.self, forKey: .errorDesc)

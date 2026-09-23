@@ -35,6 +35,9 @@ struct SignInView: View {
             .padding(.bottom, DesignTokens.Spacing.screenBottom)
             .background(Color.clear/*ftdCardBackground*/)
         }
+        .sheet(isPresented: kycSheetBinding) {
+            KYCPendingSheet()
+        }
     }
 
     // MARK: - User Type
@@ -92,7 +95,17 @@ struct SignInView: View {
 
     @ViewBuilder
     private var apiErrorBanner: some View {
-        if let error = viewModel.apiError {
+        if let message = viewModel.blockedError {
+            InfoBanner(
+                icon: .system("exclamationmark.triangle"),
+                showIconBackground: true,
+                iconTint: .ftdDestructiveRed,
+                iconBackgroundcolor: .ftdDestructiveRed.opacity(0.12),
+                backgroundColor: .ftdDestructiveRed.opacity(0.06),
+                title: "Account Blocked",
+                message: LocalizedStringKey(message)
+            )
+        } else if let error = viewModel.apiError {
             Text(error)
                 .font(.ftdBodySM)
                 .foregroundStyle(Color.ftdDestructiveRed)
@@ -103,6 +116,15 @@ struct SignInView: View {
                 .background(Color.ftdDestructiveRed.opacity(0.08))
                 .clipShape(RoundedRectangle(cornerRadius: Layout.errorCornerRadius))
         }
+    }
+
+    // MARK: - KYC Sheet
+
+    private var kycSheetBinding: Binding<Bool> {
+        Binding(
+            get: { viewModel.showKYCSheet },
+            set: { if !$0 { viewModel.dismissKYCSheet() } }
+        )
     }
 
     // MARK: - Login Button

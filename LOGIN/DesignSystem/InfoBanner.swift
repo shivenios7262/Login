@@ -9,6 +9,9 @@ struct InfoBanner: View {
     let icon: InfoBannerIcon
     var showIconBackground: Bool = false
     var iconTint: Color = .ftdMessageTextInfo
+    var iconBackgroundcolor: Color = .ftdMessageIconBGInfo
+    
+    var backgroundColor: Color = .ftdMessageBGInfo
     let title: LocalizedStringKey
     let message: LocalizedStringKey
 
@@ -18,7 +21,7 @@ struct InfoBanner: View {
             VStack(alignment: .leading, spacing: DesignTokens.Spacing.xxs) {
                 Text(title)
                     .font(.ftdLabelMD)
-                    .foregroundStyle(Color.ftdMessageTextInfo)
+                    .foregroundStyle(iconTint)
                 Text(message)
                     .font(.ftdPlaceholder)
                     .foregroundStyle(Color.ftdTextSecondary)
@@ -26,7 +29,7 @@ struct InfoBanner: View {
             Spacer()
         }
         .padding(DesignTokens.Spacing.md)
-        .background(Color.ftdMessageBGInfo)
+        .background(backgroundColor)
         .clipShape(RoundedRectangle(cornerRadius: DesignTokens.Radius.card))
     }
 
@@ -51,7 +54,7 @@ struct InfoBanner: View {
         if showIconBackground {
             rawIcon
                 .padding(DesignTokens.Spacing.sm)
-                .background(Color.ftdMessageIconBGInfo)
+                .background(iconBackgroundcolor)
                 .clipShape(RoundedRectangle(cornerRadius: DesignTokens.Radius.field))
         } else {
             rawIcon

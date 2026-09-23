@@ -108,8 +108,16 @@ struct FTDDropdownField<T: Hashable>: View {
     let optionLabel: (T) -> String
     var optionIcon: ((T) -> String)?
     var errorMessage: String?
+    var searchable: Bool = false
 
     @State private var isPresented = false
+    @State private var searchQuery = ""
+
+    private var filteredOptions: [T] {
+        guard searchable, !searchQuery.isEmpty else { return options }
+        let q = searchQuery.lowercased()
+        return options.filter { optionLabel($0).lowercased().contains(q) }
+    }
 
     var body: some View {
         VStack(alignment: .leading, spacing: DesignTokens.Spacing.xs) {
@@ -184,12 +192,33 @@ struct FTDDropdownField<T: Hashable>: View {
                 .padding(.bottom, 16)
 
                 Divider()
-                    //.opacity(0.95)
                     .background(Color.ftdTextSecondary)
+
+                if searchable {
+                    HStack(spacing: DesignTokens.Spacing.sm) {
+                        Image(systemName: "magnifyingglass")
+                            .foregroundStyle(Color.ftdTextSecondary)
+                        TextField("Search…", text: $searchQuery)
+                            .autocorrectionDisabled()
+                            .textInputAutocapitalization(.never)
+                        if !searchQuery.isEmpty {
+                            Button { searchQuery = "" } label: {
+                                Image(systemName: "xmark.circle.fill")
+                                    .foregroundStyle(Color.ftdTextSecondary)
+                            }
+                            .buttonStyle(.plain)
+                        }
+                    }
+                    .padding(.horizontal, 20)
+                    .padding(.vertical, 10)
+                    .background(Color.ftdInputBackground)
+
+                    Divider().background(Color.ftdTextSecondary)
+                }
 
                 ScrollView {
                     LazyVStack(spacing: 0) {
-                        ForEach(options, id: \.self) { option in
+                        ForEach(filteredOptions, id: \.self) { option in
                             Button {
                                 selection = option
                             } label: {
@@ -236,16 +265,26 @@ struct FTDDropdownField<T: Hashable>: View {
                                         }
                                     }
                                 )
+                                .contentShape(Rectangle())
                             }
                             .buttonStyle(.plain)
                         }
                     }
                     .padding(.vertical, 8)
+
+                    if searchable && filteredOptions.isEmpty {
+                        Text("No results for \"\(searchQuery)\"")
+                            .font(.subheadline)
+                            .foregroundStyle(Color.ftdTextSecondary)
+                            .frame(maxWidth: .infinity, alignment: .center)
+                            .padding(.vertical, DesignTokens.Spacing.xl)
+                    }
                 }
             }
-            .presentationDetents([.medium])
+            .presentationDetents([.medium, .large])
             .presentationDragIndicator(.visible)
             .presentationBackground(Color.ftdCardBackground)
+            .onDisappear { searchQuery = "" }
         }
     }
 }

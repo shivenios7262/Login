@@ -10,6 +10,9 @@ final class AppRouter {
     // MARK: - Auth stack (push navigation)
     var authPath = NavigationPath()
 
+    // MARK: - Home stack (push navigation)
+    var homePath = NavigationPath()
+
     // MARK: - Auth sheet
     var authSheet: AuthSheet? = nil
 
@@ -19,11 +22,20 @@ final class AppRouter {
     // MARK: - Home full-screen covers
     var uploadMoneyPresented: Bool = false
     var agencyStatementPresented: Bool = false
+    var groupFarePresented: Bool = false
+    var calendarPresented: Bool = false
+    var refundPresented: Bool = false
+    var markupsPresented: Bool = false
 
     // MARK: - Destination types
 
     enum AuthDestination: Hashable {
         // reserved for future push destinations in the auth flow
+    }
+
+    enum HomeDestination: Hashable {
+        case profile
+        case profileEdit
     }
 
     enum AuthSheet: Identifiable {
@@ -34,13 +46,13 @@ final class AppRouter {
 
     enum HomeSheet: Identifiable {
         case myBookings
-        case profile
-        case statement
+        // .statement removed — StatementView is an Excel export view, replaced by RefundView
         case markups
         case aboutUs
         case contactSupport
         case privacyPolicy
         case termsCondition
+        case appCode
         var id: Self { self }
     }
 
@@ -58,12 +70,32 @@ final class AppRouter {
         homeSheet = sheet
     }
 
+    func navigateHome(_ destination: HomeDestination) {
+        homePath.append(destination)
+    }
+
     func presentUploadMoney() {
         uploadMoneyPresented = true
     }
 
     func presentAgencyStatement() {
         agencyStatementPresented = true
+    }
+
+    func presentGroupFare() {
+        groupFarePresented = true
+    }
+
+    func presentCalendar() {
+        calendarPresented = true
+    }
+
+    func presentRefund() {
+        refundPresented = true
+    }
+
+    func presentMarkups() {
+        markupsPresented = true
     }
 
     func popToAuthRoot() {

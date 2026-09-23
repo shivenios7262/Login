@@ -20,7 +20,7 @@ struct TransactionDetailView: View {
                 .padding(DesignTokens.Spacing.md)
             }
         }
-        .background(Color.ftdInputBackground)
+        .background(Color.ftdSurfaceSubtle)
         .toolbar(.hidden, for: .navigationBar)
     }
 
@@ -30,13 +30,14 @@ struct TransactionDetailView: View {
         HStack {
             Button { dismiss() } label: {
                 ZStack {
-                    Circle()
-                        .fill(Color.ftdCardBackground)
-                        .frame(width: 36, height: 36)
-                        .shadow(color: .black.opacity(0.08), radius: 4, y: 2)
-                    Image(systemName: "chevron.left")
-                        .font(.system(size: 14, weight: .semibold))
-                        .foregroundStyle(Color.ftdTextPrimary)
+//                    Circle()
+//                        .fill(Color.ftdCardBackground)
+//                        .frame(width: 36, height: 36)
+//                        .shadow(color: .black.opacity(0.08), radius: 4, y: 2)
+                    Image("backImg")
+                        //.font(.system(size: 14, weight: .semibold))
+                        //.foregroundStyle(Color.ftdTextPrimary)
+                        //.frame(width: 36, height: 36)
                 }
             }
             .buttonStyle(.plain)
@@ -44,8 +45,8 @@ struct TransactionDetailView: View {
             Spacer()
 
             Text("Transaction Details")
-                .font(.headline)
-                .fontWeight(.bold)
+                .font(.ftdSectionHeaderMedium)
+//                .fontWeight(.bold)
                 .foregroundStyle(Color.ftdTextPrimary)
 
             Spacer()
@@ -53,7 +54,7 @@ struct TransactionDetailView: View {
             Color.clear.frame(width: 36, height: 36)
         }
         .padding(.horizontal, DesignTokens.Spacing.lg)
-        .padding(.vertical, DesignTokens.Spacing.md)
+        //.padding(.vertical, DesignTokens.Spacing.md)
         .background(Color.ftdCardBackground)
         .shadow(color: .black.opacity(0.06), radius: 4, y: 2)
     }
@@ -66,19 +67,19 @@ struct TransactionDetailView: View {
                 RoundedRectangle(cornerRadius: 12)
                     .fill(Color.ftdAccentOrange)
                     .frame(width: 52, height: 52)
-                Image(systemName: "info.circle.fill")
+                Image("infoW")
                     .font(.title2)
                     .foregroundStyle(.white)
             }
 
             VStack(alignment: .leading, spacing: 3) {
                 Text((item.trasactionType ?? "Transaction").uppercased())
-                    .font(.subheadline)
-                    .fontWeight(.bold)
+                    .font(.ftdSectionHeaderMedium)
+                    //.fontWeight(.bold)
                     .foregroundStyle(Color.ftdTextPrimary)
                 Text(formatDetailDate(item.valueDate))
-                    .font(.caption)
-                    .foregroundStyle(Color.ftdTextSecondary)
+                    .font(.ftdBodySM)
+                    .foregroundStyle(Color.ftdTextTertiary)
             }
 
             Spacer()
@@ -98,13 +99,13 @@ struct TransactionDetailView: View {
         let isDebit = !debit.isEmpty && debit != "0" && debit != "0.0"
         if isDebit {
             Text("– ₹\(debit)")
-                .font(.headline)
-                .fontWeight(.bold)
+                .font(.ftdButton)
+                //.fontWeight(.bold)
                 .foregroundStyle(Color(red: 0.85, green: 0.15, blue: 0.15))
         } else {
             Text("+ ₹\(credit.isEmpty || credit == "0" || credit == "0.0" ? "0" : credit)")
-                .font(.headline)
-                .fontWeight(.bold)
+                .font(.ftdButton)
+                //.fontWeight(.bold)
                 .foregroundStyle(Color(red: 0.10, green: 0.60, blue: 0.25))
         }
     }
@@ -114,12 +115,12 @@ struct TransactionDetailView: View {
     private var refIDCard: some View {
         VStack(alignment: .leading, spacing: 6) {
             Text("Reference ID")
-                .font(.caption)
-                .foregroundStyle(Color.ftdTextSecondary)
+                .font(.ftdBodySM)
+                .foregroundStyle(Color.ftdTextTertiary)
             HStack {
                 Text(item.transactionId ?? item.referenceNo ?? "-")
-                    .font(.subheadline)
-                    .fontWeight(.medium)
+                    .font(.ftdButton)
+                    //.fontWeight(.medium)
                     .foregroundStyle(Color.ftdTextPrimary)
                     .lineLimit(1)
                     .minimumScaleFactor(0.65)
@@ -127,7 +128,7 @@ struct TransactionDetailView: View {
                 Button {
                     UIPasteboard.general.string = item.transactionId ?? item.referenceNo
                 } label: {
-                    Image(systemName: "doc.on.doc")
+                    Image("copy")
                         .font(.subheadline)
                         .foregroundStyle(Color.ftdTextSecondary)
                 }
@@ -145,8 +146,8 @@ struct TransactionDetailView: View {
     private var breakdownCard: some View {
         VStack(alignment: .leading, spacing: 0) {
             Text("Transaction Breakdown")
-                .font(.subheadline)
-                .fontWeight(.bold)
+                .font(.ftdButton)
+                //.fontWeight(.bold)
                 .foregroundStyle(Color.ftdTextPrimary)
                 .padding(.bottom, DesignTokens.Spacing.sm)
 
@@ -198,12 +199,12 @@ struct TransactionDetailView: View {
         }()
         return HStack {
             Text(label)
-                .font(.subheadline)
-                .foregroundStyle(Color.ftdTextSecondary)
+                .font(.ftdBodySM)
+                .foregroundStyle(Color.ftdTextTertiary)
             Spacer()
             Text(display)
-                .font(.subheadline)
-                .fontWeight(.medium)
+                .font(.ftdLabelMD)
+                //.fontWeight(.medium)
                 .foregroundStyle(color)
         }
         .padding(.vertical, 10)
@@ -217,11 +218,11 @@ struct TransactionDetailView: View {
         let remark = !r1.isEmpty ? r1 : !r2.isEmpty ? r2 : "-"
         return VStack(alignment: .leading, spacing: 4) {
             Text("Remark")
-                .font(.caption)
-                .foregroundStyle(Color.ftdTextSecondary)
+                .font(.ftdBodySM)
+                .foregroundStyle(Color.ftdTextTertiary)
             Text(remark)
-                .font(.subheadline)
-                .fontWeight(remark == "-" ? .regular : .medium)
+                .font(.ftdLabelMD)
+                //.fontWeight(remark == "-" ? .regular : .medium)
                 .foregroundStyle(remark == "-" ? Color.ftdTextSecondary : Color.ftdTextPrimary)
         }
         .frame(maxWidth: .infinity, alignment: .leading)
@@ -240,8 +241,8 @@ struct TransactionDetailView: View {
                     .font(.subheadline)
                     .fontWeight(.semibold)
                 Text("Back To All Transactions")
-                    .font(.subheadline)
-                    .fontWeight(.semibold)
+                    .font(.ftdButton)
+                    //.fontWeight(.semibold)
             }
             .foregroundStyle(.white)
             .frame(maxWidth: .infinity)

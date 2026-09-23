@@ -121,52 +121,56 @@ struct ForgotPasswordView: View {
 
     private var successContent: some View {
         VStack(spacing: 0) {
-            ZStack {
-                Circle()
-                    .fill(Color.ftdAccentOrange.opacity(0.12))
-                    .frame(width: 96, height: 96)
-                Image("mail")
-                    .resizable()
-                    .scaledToFit()
-                    .frame(width: 52, height: 52)
+            Spacer()
+
+            Image("logo")
+                .resizable()
+                .scaledToFit()
+                .frame(width: 96)
+                .padding(.bottom, 24)
+
+            Image("mail")
+                .resizable()
+                .scaledToFit()
+                .frame(width: 145)
+                .padding(.bottom, 24)
+
+            Text("Check Your Email")
+                .font(.ftdTitleLG)
+                .foregroundStyle(Color.ftdTextPrimary)
+                .padding(.bottom, 10)
+
+            VStack(spacing: 2) {
+                Text("We have sent a Password reset link to")
+                    .font(.ftdBodyMD)
+                    .foregroundStyle(Color.ftdTextSecondary)
+                Text(viewModel.email)
+                    .font(.ftdLabelSM)
                     .foregroundStyle(Color.ftdAccentOrange)
             }
-            .padding(.top, 8)
+            .multilineTextAlignment(.center)
+            .padding(.bottom, 12)
 
-            Spacer()
-
-            VStack(spacing: 10) {
-                Text("Check Your Email")
-                    .font(.title2.weight(.bold))
-                    .foregroundStyle(Color.ftdTextPrimary)
-                Text("We have sent password recovery instructions to **\(viewModel.email)**.")
-                    .font(.subheadline)
-                    .foregroundStyle(Color.ftdTextSecondary)
-                    .multilineTextAlignment(.center)
-            }
-
-            Spacer()
-
-            FTDPrimaryButton(title: String(localized: "Open Email App"), leadingIcon: "envelope.fill") {
-                openMailApp()
-            }
-
-            Spacer()
-
-            Button(String(localized: "Cancel")) {
-                dismiss()
-            }
-            .font(.subheadline)
-            .foregroundStyle(Color.ftdTextSecondary)
-
-            Spacer()
-
-            Text("Did not receive the email? Check your spam folder or try another address.")
-                .font(.caption)
+            Text("Please check your inbox and click on the link\nto reset your password")
+                .font(.ftdBodyMD)
                 .foregroundStyle(Color.ftdTextSecondary)
                 .multilineTextAlignment(.center)
-                .padding(.horizontal, 8)
+                .lineSpacing(2)
+
+            Spacer()
+
+            FTDPrimaryButton(title: "Open Email", leadingIcon: "envelope.fill") {
+                openMailApp()
+            }
+            .padding(.bottom, 16)
+
+            Button("Cancel") {
+                dismiss()
+            }
+            .font(.ftdButton)
+            .foregroundStyle(Color.ftdTextSecondary)
         }
+        .frame(maxWidth: .infinity)
     }
 
     // MARK: - Footer

@@ -10,6 +10,20 @@ struct SplashView: View {
         ZStack(alignment: .top) {
             Color.ftdCardBackground.ignoresSafeArea()
 
+            if AppConfiguration.environment != .production {
+                Text(AppConfiguration.environment == .debug ? "DEBUG" : "TESTFLIGHT")
+                    .font(.system(size: 10, weight: .bold))
+                    .foregroundStyle(.white)
+                    .padding(.horizontal, 8)
+                    .padding(.vertical, 4)
+                    .background(AppConfiguration.environment == .debug ? Color.orange : Color.purple)
+                    .clipShape(Capsule())
+                    .frame(maxWidth: .infinity, alignment: .trailing)
+                    .padding(.top, 56)
+                    .padding(.trailing, 16)
+                    .zIndex(1)
+            }
+
             Image("dottedMap")
                 .resizable()
                 .scaledToFill()

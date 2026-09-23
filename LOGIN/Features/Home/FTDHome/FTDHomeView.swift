@@ -13,50 +13,75 @@ struct FTDHomeView: View {
     @State private var contactVM:     ContactSupportViewModel
     @State private var privacyVM:     PrivacyPolicyViewModel
     @State private var termsVM:       TermsConditionViewModel
+    @State private var appCodeVM:          AppCodeViewModel
+    @State private var agentProfileEditVM: AgentProfileEditViewModel
+    @State private var groupFareVM:        GroupFareViewModel
+    @State private var calendarVM:         BookingCalendarViewModel
+    @State private var refundVM:           RefundViewModel
+    @State private var serviceSheetPresented = false
+    @State private var selectedServiceName = ""
+    @State private var selectedServiceIcon = ""
     @Environment(AppRouter.self) private var router
+    @Environment(\.openURL) private var openURL
 
     init(authManager: AuthManager) {
-        self.authManager  = authManager
-        _viewModel        = State(initialValue: FTDHomeViewModel(authManager: authManager))
-        _bookingsVM       = State(initialValue: BookingsViewModel(authManager: authManager))
-        _profileVM        = State(initialValue: ProfileViewModel(authManager: authManager))
-        _statementVM      = State(initialValue: StatementViewModel(authManager: authManager))
-        _markupsVM        = State(initialValue: MarkupsViewModel(authManager: authManager))
-        _uploadMoneyVM    = State(initialValue: UploadMoneyViewModel(authManager: authManager))
-        _contactVM        = State(initialValue: ContactSupportViewModel(authManager: authManager))
-        _privacyVM        = State(initialValue: PrivacyPolicyViewModel(authManager: authManager))
-        _termsVM          = State(initialValue: TermsConditionViewModel(authManager: authManager))
+        self.authManager      = authManager
+        _viewModel            = State(initialValue: FTDHomeViewModel(authManager: authManager))
+        _bookingsVM           = State(initialValue: BookingsViewModel(authManager: authManager))
+        _profileVM            = State(initialValue: ProfileViewModel(authManager: authManager))
+        _statementVM          = State(initialValue: StatementViewModel(authManager: authManager))
+        _markupsVM            = State(initialValue: MarkupsViewModel(authManager: authManager))
+        _uploadMoneyVM        = State(initialValue: UploadMoneyViewModel(authManager: authManager))
+        _contactVM            = State(initialValue: ContactSupportViewModel(authManager: authManager))
+        _privacyVM            = State(initialValue: PrivacyPolicyViewModel(authManager: authManager))
+        _termsVM              = State(initialValue: TermsConditionViewModel(authManager: authManager))
+        _appCodeVM            = State(initialValue: AppCodeViewModel(authManager: authManager))
+        _agentProfileEditVM   = State(initialValue: AgentProfileEditViewModel(authManager: authManager))
+        _groupFareVM          = State(initialValue: GroupFareViewModel(authManager: authManager))
+        _calendarVM           = State(initialValue: BookingCalendarViewModel(authManager: authManager))
+        _refundVM             = State(initialValue: RefundViewModel(authManager: authManager))
     }
 
     var body: some View {
-        ZStack(alignment: .leading) {
-            tabLayout
-                .frame(maxWidth: .infinity, maxHeight: .infinity)
+        NavigationStack(path: Bindable(router).homePath) {
+            ZStack(alignment: .leading) {
+                tabLayout
+                    .frame(maxWidth: .infinity, maxHeight: .infinity)
 
-            // Dim overlay behind open side menu
-            Color.black
-                .opacity(viewModel.isSideMenuOpen ? 0.45 : 0)
-                .ignoresSafeArea()
-                .animation(.easeInOut(duration: DesignTokens.Animation.standard), value: viewModel.isSideMenuOpen)
-                .allowsHitTesting(viewModel.isSideMenuOpen)
-                .onTapGesture { viewModel.closeSideMenu() }
+                // Dim overlay behind open side menu
+                Color.black
+                    .opacity(viewModel.isSideMenuOpen ? 0.45 : 0)
+                    .ignoresSafeArea()
+                    .animation(.easeInOut(duration: DesignTokens.Animation.standard), value: viewModel.isSideMenuOpen)
+                    .allowsHitTesting(viewModel.isSideMenuOpen)
+                    .onTapGesture { viewModel.closeSideMenu() }
 
-            FTDSideMenuView(context: sideMenuContext)
-                .frame(width: 310)
-                .offset(x: viewModel.isSideMenuOpen ? 0 : -310)
-                .animation(.easeInOut(duration: DesignTokens.Animation.standard), value: viewModel.isSideMenuOpen)
+                FTDSideMenuView(context: sideMenuContext)
+                    .frame(width: 310)
+                    .offset(x: viewModel.isSideMenuOpen ? 0 : -310)
+                    .animation(.easeInOut(duration: DesignTokens.Animation.standard), value: viewModel.isSideMenuOpen)
+            }
+            .navigationBarHidden(true)
+            .navigationDestination(for: AppRouter.HomeDestination.self) { dest in
+                switch dest {
+                case .profile:
+                    AgentProfileView(viewModel: profileVM)
+                case .profileEdit:
+                    AgentProfileEditView(viewModel: agentProfileEditVM)
+                }
+            }
         }
-        .navigationBarHidden(true)
         .sheet(item: Bindable(router).homeSheet) { sheet in
             switch sheet {
             case .myBookings:  MyBookingsView(viewModel: bookingsVM)
-            case .profile:     AgentProfileView(viewModel: profileVM)
-            case .statement:   StatementView(viewModel: statementVM)
-            case .markups:     MarkupView(viewModel: markupsVM)
+            // TODO: StatementView is an Excel export view — replaced by RefundView for the My Refund flow.
+            // case .statement: StatementView(viewModel: statementVM)
+            case .markups:     MarkupSummaryView(viewModel: markupsVM)
             case .aboutUs:         NavigationStack { AboutView() }
             case .contactSupport:  NavigationStack { ContactSupportView(viewModel: contactVM) }
             case .privacyPolicy:   NavigationStack { PrivacyPolicyView(viewModel: privacyVM) }
             case .termsCondition:  NavigationStack { TermsConditionView(viewModel: termsVM) }
+            case .appCode:         AppCodeView(viewModel: appCodeVM)
             }
         }
         .fullScreenCover(isPresented: Bindable(router).uploadMoneyPresented) {
@@ -65,8 +90,36 @@ struct FTDHomeView: View {
         .fullScreenCover(isPresented: Bindable(router).agencyStatementPresented) {
             AgencyStatementView(authManager: authManager)
         }
+        .fullScreenCover(isPresented: Bindable(router).groupFarePresented) {
+            GroupFareView(viewModel: groupFareVM)
+        }
+        .fullScreenCover(isPresented: Bindable(router).calendarPresented) {
+            BookingCalendarView(viewModel: calendarVM)
+        }
+        .fullScreenCover(isPresented: Bindable(router).refundPresented) {
+            RefundView(viewModel: refundVM)
+        }
+        .fullScreenCover(isPresented: Bindable(router).markupsPresented) {
+            MarkupSummaryView(viewModel: markupsVM)
+        }
+        .sheet(isPresented: $serviceSheetPresented) {
+            ServiceComingSoonView(icon: selectedServiceIcon, name: selectedServiceName)
+        }
+        .alert("Update Available", isPresented: Binding(
+            get: { viewModel.showUpdateAlert },
+            set: { viewModel.showUpdateAlert = $0 }
+        )) {
+            if let url = viewModel.appStoreURL {
+                Button("Update Now") { openURL(url) }
+            }
+            Button("Later", role: .cancel) { }
+        } message: {
+            Text("A new version of FTD Travel is available on the App Store.")
+        }
         .task {
             await viewModel.checkAndRefreshTokenIfNeeded()
+            await viewModel.refreshBalance()
+            await viewModel.checkForAppStoreUpdate()
         }
     }
 
@@ -80,11 +133,13 @@ struct FTDHomeView: View {
             agentPhotoURL: viewModel.agentLogoURL,
             onMyBookings:  { viewModel.closeSideMenu(); router.presentHome(.myBookings) },
             onUploadMoney: { viewModel.closeSideMenu(); router.presentUploadMoney() },
-            onMyRefund:    { viewModel.closeSideMenu(); router.presentHome(.statement) },
-            onAppCode:     { viewModel.closeSideMenu() },
+            onMyRefund:    { viewModel.closeSideMenu(); router.presentRefund() },
+            onAppCode:     { viewModel.closeSideMenu(); router.presentHome(.appCode) },
             onStatement:   { viewModel.closeSideMenu(); router.presentAgencyStatement() },
             onMarkups:     { viewModel.closeSideMenu(); router.presentHome(.markups) },
-            onProfile:     { viewModel.closeSideMenu(); router.presentHome(.profile) },
+            onGroupFare:   { viewModel.closeSideMenu(); router.presentGroupFare() },
+            onCalendar:    { viewModel.closeSideMenu(); router.presentCalendar() },
+            onProfile:     { viewModel.closeSideMenu(); router.navigateHome(.profileEdit) },
             onAboutUs:         { viewModel.closeSideMenu(); router.presentHome(.aboutUs) },
             onContactSupport:  { viewModel.closeSideMenu(); router.presentHome(.contactSupport) },
             onPrivacyPolicy:   { viewModel.closeSideMenu(); router.presentHome(.privacyPolicy) },
@@ -100,8 +155,7 @@ struct FTDHomeView: View {
         VStack(spacing: 0) {
             tabPageContent
                 .frame(maxWidth: .infinity, maxHeight: .infinity)
-            // TODO: Re-enable bottom tab bar once My Trips, Wishlists, Credit Card screens are built
-            // bottomTabBar
+            bottomTabBar
         }
     }
 
@@ -109,9 +163,9 @@ struct FTDHomeView: View {
     private var tabPageContent: some View {
         switch viewModel.selectedTab {
         case .home:       homeScreen
-        case .myTrips:    placeholderScreen(title: "My Trips",    icon: "bag.fill")
-        case .wishlists:  placeholderScreen(title: "Wishlists",   icon: "heart.fill")
-        case .creditCard: placeholderScreen(title: "Credit Card", icon: "creditcard.fill")
+        case .myTrips:    placeholderScreen(title: "Upload",   icon: "bag.fill")
+        case .wishlists:  placeholderScreen(title: "Markup",   icon: "heart.fill")
+        case .creditCard: placeholderScreen(title: "App Code", icon: "creditcard.fill")
         }
     }
 
@@ -120,34 +174,123 @@ struct FTDHomeView: View {
     private var homeScreen: some View {
         VStack(spacing: 0) {
             topBar
-            ScrollView(showsIndicators: false) {
-                VStack(spacing: 0) {
-                    // TODO: Re-enable AI search bar once travel assistant feature is ready
-                    // aiSearchBar
-                    //     .padding(.horizontal, DesignTokens.Spacing.lg)
-                    //     .padding(.vertical, DesignTokens.Spacing.md)
-
-                    agentProfileCard
-                        .padding(.horizontal, DesignTokens.Spacing.lg)
-                        .padding(.top, DesignTokens.Spacing.lg)
-                        .padding(.bottom, DesignTokens.Spacing.md)
-
-                    // TODO: Re-enable service category panel once booking flows are integrated
-                    // categoryPanel
-
-                    // TODO: Re-enable offers section once offer data API is integrated
-                    // offersSection
-                    //     .padding(.top, DesignTokens.Spacing.xl)
-
-                    Spacer(minLength: DesignTokens.Spacing.xxl)
+            Spacer(minLength: 0)
+            servicesGlassCard
+                .padding(.horizontal, DesignTokens.Spacing.lg)
+            Spacer(minLength: 0)
+            //Text(DeviceInfo.modelIdentifier)
+               // .font(.caption2)
+                //.foregroundStyle(.white.opacity(0.6))
+                //.padding(.bottom, DesignTokens.Spacing.sm)
+//            ScrollView(showsIndicators: false) {
+//                VStack(spacing: 0) {
+//                    // TODO: Re-enable AI search bar once travel assistant feature is ready
+//                    // aiSearchBar
+//                    //     .padding(.horizontal, DesignTokens.Spacing.lg)
+//                    //     .padding(.vertical, DesignTokens.Spacing.md)
+//
+//                    // TODO: Re-enable agent profile card once profile data flow is finalised
+//                    // agentProfileCard
+//                    //     .padding(.horizontal, DesignTokens.Spacing.lg)
+//                    //     .padding(.top, DesignTokens.Spacing.lg)
+//                    //     .padding(.bottom, DesignTokens.Spacing.md)
+//                    // TODO: Re-enable agent profile card once profile data flow is finalised
+//                    // categoryPanel
+//                    // TODO: Re-enable agent profile card once profile data flow is finalised
+//                    //offersSection
+//                    //     .padding(.top, DesignTokens.Spacing.xl)
+//
+//                    Spacer(minLength: DesignTokens.Spacing.xxl)
+//                }
+//            }
+//            .background(Color.clear)
+        }
+        .background {
+            ZStack {
+                LinearGradient(
+                    colors: [
+                        Color(red: 0.04, green: 0.12, blue: 0.30),
+                        Color(red: 0.01, green: 0.06, blue: 0.18)
+                    ],
+                    startPoint: .topLeading,
+                    endPoint: .bottomTrailing
+                )
+                if let image = viewModel.wallpaperImage {
+                    image
+                        .resizable()
+                        .aspectRatio(contentMode: .fill)
+                        .transition(.opacity)
                 }
             }
-            .background(Color.ftdInputBackground)
+            .animation(.easeIn(duration: 0.45), value: viewModel.wallpaperImage != nil)
+            .ignoresSafeArea()
         }
-        .background(Color.ftdInputBackground)
     }
 
     // MARK: - Top Bar
+
+    private var userAvatar: some View {
+        Button { router.navigateHome(.profileEdit) } label: {
+            HStack(spacing: DesignTokens.Spacing.sm) {
+//                // Logo / initials tile
+//                ZStack {
+//                    LinearGradient(
+//                        colors: [Color.ftdAccentOrange, Color.ftdAccentTeal],
+//                        startPoint: .topLeading,
+//                        endPoint: .bottomTrailing
+//                    )
+//                    if let url = viewModel.agentLogoURL {
+//                        AsyncImage(url: url) { phase in
+//                            if case .success(let image) = phase {
+//                                image
+//                                    .resizable()
+//                                    .aspectRatio(contentMode: .fit)
+//                                    .padding(4)
+//                            } else {
+//                                initialsLabel
+//                            }
+//                        }
+//                    } else {
+//                        initialsLabel
+//                    }
+//                }
+//                .frame(width: 36, height: 36)
+//                .clipShape(RoundedRectangle(cornerRadius: DesignTokens.Radius.field))
+//                .overlay(
+//                    RoundedRectangle(cornerRadius: DesignTokens.Radius.field)
+//                        .stroke(Color.ftdAccentOrange.opacity(0.4), lineWidth: 1)
+//                )
+
+                // Agency name
+                if !viewModel.agencyName.isEmpty {
+                    Text(viewModel.agencyName)
+                        .font(.ftdLabelSM)
+                        .fontWeight(.semibold)
+                        .foregroundStyle(.white)
+                        .lineLimit(1)
+                        .truncationMode(.tail)
+                        .frame(maxWidth: .infinity, alignment: .leading)
+                        .padding(.horizontal, DesignTokens.Spacing.sm)
+                        .padding(.vertical, 5)
+                        .background(
+                            LinearGradient(
+                                colors: [Color.ftdAccentOrange, Color.ftdAccentTeal],
+                                startPoint: .leading,
+                                endPoint: .trailing
+                            )
+                        )
+                        .clipShape(RoundedRectangle(cornerRadius: DesignTokens.Radius.field))
+                }
+            }
+        }
+        .buttonStyle(.plain)
+    }
+
+    private var initialsLabel: some View {
+        Text(viewModel.agentName.prefix(2).uppercased())
+            .font(.system(size: 13, weight: .bold))
+            .foregroundStyle(.white)
+    }
 
     private var topBar: some View {
         HStack(spacing: DesignTokens.Spacing.inputVertical) {
@@ -157,40 +300,30 @@ struct FTDHomeView: View {
                     .foregroundStyle(Color.ftdTextPrimary)
             }
 
-            Spacer()
+            userAvatar
+                .frame(maxWidth: .infinity, alignment: .leading)
 
-            HStack(spacing: DesignTokens.Spacing.xs) {
-                Image(systemName: "airplane")
-                    .fontWeight(.bold)
-                    .foregroundStyle(Color.ftdAccentOrange)
-                Text("FTD")
-                    .font(.headline).fontWeight(.black)
-                    .foregroundStyle(Color.ftdAccentOrange)
-            }
+//            Button { /* TODO: open agent wallet */ } label: {
+//                Text(viewModel.creditBalanceLabel)
+//                    .font(.caption).fontWeight(.semibold)
+//                    .padding(.horizontal, DesignTokens.Spacing.inputVertical)
+//                    .padding(.vertical, 5)
+//                    .background(Color.ftdAccentOrange.opacity(0.12))
+//                    .foregroundStyle(Color.ftdAccentOrange)
+//                    .clipShape(Capsule())
+//                    .overlay(Capsule().stroke(Color.ftdAccentOrange.opacity(0.4), lineWidth: 1))
+//            }
 
-            Spacer()
-
-            Button { /* TODO: open agent wallet */ } label: {
-                Text(viewModel.creditBalanceLabel)
-                    .font(.caption).fontWeight(.semibold)
-                    .padding(.horizontal, DesignTokens.Spacing.inputVertical)
-                    .padding(.vertical, 5)
-                    .background(Color.ftdAccentOrange.opacity(0.12))
-                    .foregroundStyle(Color.ftdAccentOrange)
-                    .clipShape(Capsule())
-                    .overlay(Capsule().stroke(Color.ftdAccentOrange.opacity(0.4), lineWidth: 1))
-            }
-
-            Button { /* TODO: open B2B portal */ } label: {
-                Text("B2B")
-                    .font(.caption).fontWeight(.bold)
-                    .padding(.horizontal, DesignTokens.Spacing.inputVertical)
-                    .padding(.vertical, 5)
-                    .background(Color.ftdAccentTeal.opacity(0.12))
-                    .foregroundStyle(Color.ftdAccentTeal)
-                    .clipShape(Capsule())
-                    .overlay(Capsule().stroke(Color.ftdAccentTeal.opacity(0.4), lineWidth: 1))
-            }
+//            Button { /* TODO: open B2B portal */ } label: {
+//                Text("B2B")
+//                    .font(.caption).fontWeight(.bold)
+//                    .padding(.horizontal, DesignTokens.Spacing.inputVertical)
+//                    .padding(.vertical, 5)
+//                    .background(Color.ftdAccentTeal.opacity(0.12))
+//                    .foregroundStyle(Color.ftdAccentTeal)
+//                    .clipShape(Capsule())
+//                    .overlay(Capsule().stroke(Color.ftdAccentTeal.opacity(0.4), lineWidth: 1))
+//            }
         }
         .padding(.horizontal, DesignTokens.Spacing.lg)
         .padding(.vertical, DesignTokens.Spacing.md)
@@ -327,6 +460,65 @@ struct FTDHomeView: View {
         .buttonStyle(.plain)
     }
 
+    // MARK: - Services Glass Card
+
+    private var servicesGlassCard: some View {
+        VStack(spacing: DesignTokens.Spacing.xl) {
+            VStack(spacing: DesignTokens.Spacing.xs) {
+                Text("Welcome to\nFTD Travel")
+                    .font(.title).fontWeight(.bold)
+                    .foregroundStyle(.white)
+                    .multilineTextAlignment(.center)
+                Text("A B2B Travel Portal Built Exclusively for Our Travel Partners")
+                    .font(.subheadline)
+                    .foregroundStyle(.white.opacity(0.85))
+                    .multilineTextAlignment(.center)
+            }
+
+            LazyVGrid(
+                columns: [GridItem(.flexible()), GridItem(.flexible())],
+                spacing: DesignTokens.Spacing.lg
+            ) {
+                ForEach(homeServiceItems, id: \.label) { item in
+                    serviceGlassTile(icon: item.icon, label: item.label)
+                }
+            }
+        }
+        .padding(DesignTokens.Spacing.xl)
+        .background(Color.white.opacity(0.12))
+        .clipShape(RoundedRectangle(cornerRadius: DesignTokens.Radius.card))
+        .overlay {
+            RoundedRectangle(cornerRadius: DesignTokens.Radius.card)
+                .stroke(.white.opacity(0.2), lineWidth: 1)
+        }
+        .shadow(color: .black.opacity(0.12), radius: 12, y: 4)
+    }
+
+    private func serviceGlassTile(icon: String, label: String) -> some View {
+        Button {
+            selectedServiceName = label
+            selectedServiceIcon = icon
+            serviceSheetPresented = true
+        } label: {
+            VStack(spacing: DesignTokens.Spacing.sm) {
+                Image(systemName: icon)
+                    .font(.system(size: 30, weight: .light))
+                    .foregroundStyle(.white)
+                Text(label)
+                    .font(.subheadline).fontWeight(.medium)
+                    .foregroundStyle(.white)
+            }
+            .padding(DesignTokens.Spacing.md)
+            .frame(maxWidth: .infinity)
+            .aspectRatio(1, contentMode: .fit)
+            .overlay {
+                RoundedRectangle(cornerRadius: DesignTokens.Radius.field)
+                    .stroke(.white.opacity(0.55), lineWidth: 1.5)
+            }
+        }
+        .buttonStyle(.plain)
+    }
+
     // MARK: - Agent Profile Card
 
     private var agentProfileCard: some View {
@@ -348,16 +540,8 @@ struct FTDHomeView: View {
                 endPoint: .bottomTrailing
             )
 
-            AsyncImage(url: viewModel.agentLogoURL) { phase in
-                switch phase {
-                case .success(let image):
-                    image
-                        .resizable()
-                        .aspectRatio(contentMode: .fill)
-                        .clipped()
-                default:
-                    Color.clear
-                }
+            FTDRemoteImage(url: viewModel.agentLogoURL, contentMode: .fill) {
+                Color.clear
             }
             .allowsHitTesting(false)
 
@@ -567,12 +751,27 @@ struct FTDHomeView: View {
     private func tabBarItem(_ tab: FTDHomeTab) -> some View {
         let isActive = viewModel.selectedTab == tab
         return Button {
-            viewModel.selectedTab = tab
+            switch tab {
+            case .home:
+                viewModel.selectedTab = .home
+            case .myTrips:
+                router.presentUploadMoney()
+            case .wishlists:
+                router.presentMarkups()
+            case .creditCard:
+                router.presentHome(.appCode)
+            }
         } label: {
             VStack(spacing: DesignTokens.Spacing.xs) {
-                Image(systemName: isActive ? tab.selectedIcon : tab.icon)
-                    .font(.system(size: DesignTokens.IconSize.lg))
-                    .foregroundStyle(isActive ? Color.ftdAccentOrange : Color.ftdTextSecondary)
+                Group {
+                    if tab.isSystemIcon {
+                        Image(systemName: isActive ? tab.selectedIcon : tab.icon)
+                    } else {
+                        Image(isActive ? tab.selectedIcon : tab.icon)
+                    }
+                }
+                .font(.system(size: DesignTokens.IconSize.lg))
+                .foregroundStyle(isActive ? Color.ftdAccentOrange : Color.ftdTextSecondary)
                 Text(tab.title)
                     .font(isActive ? .ftdTabLabelBold : .ftdTabLabel)
                     .foregroundStyle(isActive ? Color.ftdAccentOrange : Color.ftdTextSecondary)
@@ -589,10 +788,79 @@ struct FTDHomeView: View {
 // MARK: - Offer card data (ViewModel-level constant)
 
 private extension FTDHomeView {
+    var homeServiceItems: [(icon: String, label: String)] {[
+        ("airplane",              "Flight"),
+        ("building.2",           "Hotel"),
+        ("bus",                  "Bus"),
+        ("car",                  "Cab"),
+        ("cross.case",           "Trip Care"),
+        ("doc.badge.plus",       "Visa"),
+        ("simcard",              "eSim"),
+        ("figure.hiking",        "Activities"),
+    ]}
+
     var offerConfigs: [(label: String, tag: String, colors: [Color])] {[
         ("Break Free\nTravel Sale", "FLIGHTS",  [Color.ftdAccentOrange.opacity(0.8), .red.opacity(0.5)]),
         ("Summer\nEscape Deals",   "HOTELS",   [.blue.opacity(0.6),                 .purple.opacity(0.5)]),
         ("Holiday\nPackages",      "HOLIDAYS", [.green.opacity(0.55),               .teal.opacity(0.5)]),
         ("Rail\nSaver Pass",       "RAILS",    [Color.ftdAccentTeal.opacity(0.7),   .blue.opacity(0.4)]),
     ]}
+}
+
+// MARK: - Service Coming Soon Sheet
+
+private struct ServiceComingSoonView: View {
+    let icon: String
+    let name: String
+    @Environment(\.dismiss) private var dismiss
+
+    var body: some View {
+        VStack(spacing: 0) {
+            HStack {
+                Spacer()
+                Button { dismiss() } label: {
+                    Image(systemName: "xmark.circle.fill")
+                        .font(.title2)
+                        .foregroundStyle(Color.ftdTextSecondary)
+                }
+            }
+            .padding(.horizontal, DesignTokens.Spacing.lg)
+            .padding(.top, DesignTokens.Spacing.lg)
+
+            Spacer()
+
+            VStack(spacing: DesignTokens.Spacing.lg) {
+                ZStack {
+                    Circle()
+                        .fill(Color.ftdAccentOrange.opacity(0.1))
+                        .frame(width: 100, height: 100)
+                    Image(systemName: icon)
+                        .font(.system(size: 44, weight: .light))
+                        .foregroundStyle(Color.ftdAccentOrange)
+                }
+
+                VStack(spacing: DesignTokens.Spacing.sm) {
+                    Text(name)
+                        .font(.title2).fontWeight(.bold)
+                        .foregroundStyle(Color.ftdTextPrimary)
+
+                    Text("Coming Soon")
+                        .font(.headline).fontWeight(.semibold)
+                        .foregroundStyle(Color.ftdAccentOrange)
+                }
+
+                Text("Stay tuned for updates!")
+                    .font(.subheadline)
+                    .foregroundStyle(Color.ftdTextSecondary)
+                    .multilineTextAlignment(.center)
+                    .padding(.horizontal, DesignTokens.Spacing.xl)
+
+            }
+
+            Spacer()
+            Spacer()
+        }
+        .frame(maxWidth: .infinity, maxHeight: .infinity)
+        .background(Color.ftdInputBackground)
+    }
 }

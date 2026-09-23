@@ -13,6 +13,8 @@ struct SideMenuContext {
     let onAppCode: () -> Void
     let onStatement: () -> Void
     let onMarkups: () -> Void
+    let onGroupFare: () -> Void
+    let onCalendar: () -> Void
     let onProfile: () -> Void
     let onAboutUs: () -> Void
     let onContactSupport: () -> Void
@@ -50,20 +52,20 @@ struct FTDSideMenuView: View {
             ]),
             SideMenuSection(title: "MY BOOKINGS", items: [
                 SideMenuRowItem(icon: "ticket",            title: "Bookings",        action: context.onMyBookings),
-                SideMenuRowItem(icon: "group",            title: "Group Fare",      action: context.onClose),
-                SideMenuRowItem(icon: "wishlist",               title: "Wishlist",        action: context.onClose),
-                SideMenuRowItem(icon: "calender",                 title: "Calendar",        action: context.onClose),
+                SideMenuRowItem(icon: "group",            title: "Group Fare",      action: context.onGroupFare),
+               // SideMenuRowItem(icon: "wishlist",               title: "Wishlist",        action: context.onClose),
+               // SideMenuRowItem(icon: "calender",                 title: "Calendar",        action: context.onCalendar),
             ]),
             SideMenuSection(title: "MY ACCOUNT", items: [
                 SideMenuRowItem(icon: "profile",              title: "Profile",         action: context.onProfile),
-                SideMenuRowItem(icon: "notification",                title: "Notification",    badge: "12", action: context.onClose),
-                SideMenuRowItem(icon: "review",                title: "Reviews",         action: context.onClose),
-                SideMenuRowItem(icon: "refer",                title: "Refer & Earn",    action: context.onClose),
+                //SideMenuRowItem(icon: "notification",                title: "Notification",    badge: "12", action: context.onClose),
+               // SideMenuRowItem(icon: "review",                title: "Reviews",         action: context.onClose),
+               // SideMenuRowItem(icon: "refer",                title: "Refer & Earn",    action: context.onClose),
             ]),
             SideMenuSection(title: "SUPPORT & SETTINGS", items: [
                 SideMenuRowItem(icon: "appcode",                   title: "App Code",        action: context.onAppCode),
                 SideMenuRowItem(icon: "help", title: "Help & Support",  action: context.onContactSupport),
-                SideMenuRowItem(icon: "setting",           title: "Settings",        action: context.onClose),
+              //  SideMenuRowItem(icon: "setting",           title: "Settings",        action: context.onClose),
             ]),
             SideMenuSection(title: "ABOUT", items: [
                 SideMenuRowItem(icon: "info",         title: "About Us",        action: context.onAboutUs),
@@ -149,18 +151,13 @@ struct FTDSideMenuView: View {
     }
 
     private var avatarView: some View {
-        Group {
-            if let url = context.agentPhotoURL {
-                FTDRemoteImage(url: url, contentMode: .fit) {
-                    initialsBox
-                }
-                .frame(width: 64, height: 64)
-                .background(Color.ftdCardBackground)
-                .clipShape(RoundedRectangle(cornerRadius: 12))
-            } else {
-                initialsBox
-            }
+        let url = context.agentPhotoURL ?? FTDImageURL.agentLogoDefault
+        return FTDRemoteImage(url: url, contentMode: .fit) {
+            initialsBox
         }
+        .frame(width: 64, height: 64)
+        .background(Color.ftdCardBackground)
+        .clipShape(RoundedRectangle(cornerRadius: 12))
     }
 
     private var initialsBox: some View {
@@ -324,7 +321,7 @@ struct FTDSideMenuView: View {
             .buttonStyle(.plain)
             .padding(.horizontal, DesignTokens.Spacing.lg)
 
-            Text("FTD Travel v1.0.0")
+            Text("FTD Travel v\(Bundle.main.infoDictionary?["APP_VERSION"] as? String ?? "–")")
                 .font(.ftdLabelXS)
                 .foregroundStyle(Color.ftdTextTertiary/*.opacity(0.55)*/)
         }

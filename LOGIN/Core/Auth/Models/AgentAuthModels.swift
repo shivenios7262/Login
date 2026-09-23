@@ -37,22 +37,25 @@ struct AgentLoginRequest: Codable, Sendable {
 
 // Verified response shape:
 // Success: { "status": true, "message": "OTP has been sent...", "data": { "agent_no": "...", "email": "...", "otp_expiry": "..." } }
+// get_otp also includes "otp": "1234" in data.
 // Failure: { "status": false, "message": "Unauthorized Access..." }
 struct AgentLoginData: Codable, Sendable {
     let agentNo: String
     let email: String?
     let otpExpiry: String?
+    let otp: String?        // present only in get_otp response
 
     enum CodingKeys: String, CodingKey {
-        case email
+        case email, otp
         case agentNo   = "agent_no"
         case otpExpiry = "otp_expiry"
     }
 
-    nonisolated init(agentNo: String, email: String?, otpExpiry: String?) {
+    nonisolated init(agentNo: String, email: String?, otpExpiry: String?, otp: String? = nil) {
         self.agentNo = agentNo
         self.email = email
         self.otpExpiry = otpExpiry
+        self.otp = otp
     }
 
     nonisolated init(from decoder: any Decoder) throws {
@@ -60,6 +63,7 @@ struct AgentLoginData: Codable, Sendable {
         agentNo   = try c.decode(String.self, forKey: .agentNo)
         email     = try c.decodeIfPresent(String.self, forKey: .email)
         otpExpiry = try c.decodeIfPresent(String.self, forKey: .otpExpiry)
+        otp       = try c.decodeIfPresent(String.self, forKey: .otp)
     }
 
     nonisolated func encode(to encoder: any Encoder) throws {
@@ -67,6 +71,7 @@ struct AgentLoginData: Codable, Sendable {
         try c.encode(agentNo,            forKey: .agentNo)
         try c.encodeIfPresent(email,     forKey: .email)
         try c.encodeIfPresent(otpExpiry, forKey: .otpExpiry)
+        try c.encodeIfPresent(otp,       forKey: .otp)
     }
 }
 

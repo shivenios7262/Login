@@ -313,7 +313,7 @@
                   "bearer": [
                     {
                       "key": "token",
-                      "value": "{{auth_secret_0qyu}}",
+                      "value": "41b5eeeb383e707703f00f5739402e3b73edd700345ed473a1b06e20afa514a2",
                       "type": "string"
                     }
                   ]
@@ -322,7 +322,7 @@
                 "header": [
                   {
                     "key": "App-Token",
-                    "value": "{{json_web_token_05bq}}",
+                    "value": "eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJpZCI6IjIiLCJhcHBUeXBlIjoiMSIsImFwcFVzZXIiOiJmdGRpb3N0ZXN0IiwiYXBwVmVyc2lvbiI6IjEuMCJ9.mJWgUwIU-doZyr_N1vpqqYJ3fM-H9mheOzKvRDLe8aI",
                     "type": "text"
                   },
                   {
@@ -332,13 +332,85 @@
                   }
                 ],
                 "body": {
-                  "mode": "raw",
-                  "raw": "{\r\n    \"title\": \"Mr\",\r\n    \"first_name\": \"Rajiv\",\r\n    \"middle_name\": \"\",\r\n    \"last_name\": \"Jain\",\r\n    \"designation\": \"Senior PHP Backend Engineer\",\r\n    \"website\": \"https://www.ftd.travel\",\r\n    \"office_phone_no\": \"08041234567\",\r\n    \"fax\": \"\",\r\n    \"address\": \"Tank Bund Road, Magadi Road\",\r\n    \"city\": \"Bangalore\",\r\n    \"state\": \"Karnataka\",\r\n    \"country\": \"India\",\r\n    \"pin_code\": \"560021\",\r\n    \"gst_number\": \"29ABCDE1234F1Z5\"\r\n}",
-                  "options": {
-                    "raw": {
-                      "language": "json"
+                  "mode": "formdata",
+                  "formdata": [
+                    {
+                      "key": "title",
+                      "value": " Mr",
+                      "type": "text"
+                    },
+                    {
+                      "key": "first_name",
+                      "value": "Rajiv",
+                      "type": "text"
+                    },
+                    {
+                      "key": "middle_name",
+                      "value": "",
+                      "type": "text"
+                    },
+                    {
+                      "key": "last_name",
+                      "value": "Jain",
+                      "type": "text"
+                    },
+                    {
+                      "key": "designation",
+                      "value": "Senior PHP Backend Engineer",
+                      "type": "text"
+                    },
+                    {
+                      "key": "website",
+                      "value": "https://www.ftd.travel",
+                      "type": "text"
+                    },
+                    {
+                      "key": "office_phone_no",
+                      "value": "08041234567",
+                      "type": "text"
+                    },
+                    {
+                      "key": "fax",
+                      "value": "",
+                      "type": "text"
+                    },
+                    {
+                      "key": "address",
+                      "value": "Tank Bund Road, Magadi Road",
+                      "type": "text"
+                    },
+                    {
+                      "key": "city",
+                      "value": "Bangalore",
+                      "type": "text"
+                    },
+                    {
+                      "key": "state",
+                      "value": "Karnataka",
+                      "type": "text"
+                    },
+                    {
+                      "key": "country",
+                      "value": "India",
+                      "type": "text"
+                    },
+                    {
+                      "key": "pin_code",
+                      "value": "560021",
+                      "type": "text"
+                    },
+                    {
+                      "key": "gst_number",
+                      "value": "29ABCDE1234F1Z5",
+                      "type": "text"
+                    },
+                    {
+                      "key": "agency_logo",
+                      "type": "file",
+                      "uuid": "72110552-8859-4e52-a118-1b58f1d5abb5",
+                      "src": "/C:/Users/Admin/Downloads/pan card.JPG"
                     }
-                  }
+                  ]
                 },
                 "url": {
                   "raw": "http://13.200.42.214/book/mapp/mapp_b2b/update_agent_profile",
@@ -1467,6 +1539,281 @@
             }
           },
           "response": []
+        },
+        {
+          "name": "Fare Rules",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "App-Token",
+                "value": "{{json_web_token_05bq}}",
+                "type": "text"
+              },
+              {
+                "key": "Content-Type",
+                "value": "application/json",
+                "type": "text"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\r\n    \"searchId\" : 360199\r\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            },
+            "url": {
+              "raw": "http://13.200.42.214/book/mapp/mapp_flights/flight_fare_rules",
+              "protocol": "http",
+              "host": [
+                "13",
+                "200",
+                "42",
+                "214"
+              ],
+              "path": [
+                "book",
+                "mapp",
+                "mapp_flights",
+                "flight_fare_rules"
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "Cancel Request",
+          "request": {
+            "auth": {
+              "type": "bearer",
+              "bearer": [
+                {
+                  "key": "token",
+                  "value": "{{auth_secret_1a9k}}",
+                  "type": "string"
+                }
+              ]
+            },
+            "method": "POST",
+            "header": [
+              {
+                "key": "App-Token",
+                "value": "{{json_web_token_05bq}}",
+                "type": "text"
+              },
+              {
+                "key": "Content-Type",
+                "value": "application/json",
+                "type": "text"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\r\n    \"uniquerefno\" : \"SZ2608137K10371927173\"\r\n}"
+            },
+            "url": {
+              "raw": "http://13.200.42.214/book/mapp/mapp_flights/flight_cancellation",
+              "protocol": "http",
+              "host": [
+                "13",
+                "200",
+                "42",
+                "214"
+              ],
+              "path": [
+                "book",
+                "mapp",
+                "mapp_flights",
+                "flight_cancellation"
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "Cancel Submit",
+          "request": {
+            "auth": {
+              "type": "bearer",
+              "bearer": [
+                {
+                  "key": "token",
+                  "value": "{{auth_secret_1a9k}}",
+                  "type": "string"
+                }
+              ]
+            },
+            "method": "POST",
+            "header": [
+              {
+                "key": "App-Token",
+                "value": "{{json_web_token_05bq}}",
+                "type": "text"
+              },
+              {
+                "key": "Content-Type",
+                "value": "application/json",
+                "type": "text"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\r\n    \"selectedpax\": [\r\n        \"696499_0\"\r\n    ], // optional\r\n    \"selectedpaxid\": [\r\n        \"0\"\r\n    ], // optional\r\n    \"selectedpaxr\": [\r\n        \"696500_0\"\r\n    ], // optional\r\n    \"selectedpaxidr\": [\r\n        \"0\"\r\n    ], // optional\r\n    \"cancellationmode\": \"5\", //Required\r\n    \"remarks\": \"Test Cancel\", //Required\r\n    \"bookingid\": \"SZ2608037T13474803145\" //Required\r\n}"
+            },
+            "url": {
+              "raw": "http://13.200.42.214/book/mapp/mapp_flights/flight_cancel_submit",
+              "protocol": "http",
+              "host": [
+                "13",
+                "200",
+                "42",
+                "214"
+              ],
+              "path": [
+                "book",
+                "mapp",
+                "mapp_flights",
+                "flight_cancel_submit"
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "Reschedule Request",
+          "request": {
+            "auth": {
+              "type": "bearer",
+              "bearer": [
+                {
+                  "key": "token",
+                  "value": "{{auth_secret_12mq}}",
+                  "type": "string"
+                }
+              ]
+            },
+            "method": "POST",
+            "header": [
+              {
+                "key": "App-Token",
+                "value": "{{json_web_token_05bq}}",
+                "type": "text"
+              },
+              {
+                "key": "Content-Type",
+                "value": "application/json",
+                "type": "text"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\r\n    \"uniquerefno\" : \"SZ2608037T13474803145\"\r\n}"
+            },
+            "url": {
+              "raw": "http://13.200.42.214/book/mapp/mapp_flights/flight_reschedule_request",
+              "protocol": "http",
+              "host": [
+                "13",
+                "200",
+                "42",
+                "214"
+              ],
+              "path": [
+                "book",
+                "mapp",
+                "mapp_flights",
+                "flight_reschedule_request"
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "Reschedule Submit",
+          "request": {
+            "auth": {
+              "type": "bearer",
+              "bearer": [
+                {
+                  "key": "token",
+                  "value": "{{auth_secret_12mq}}",
+                  "type": "string"
+                }
+              ]
+            },
+            "method": "POST",
+            "header": [
+              {
+                "key": "App-Token",
+                "value": "{{json_web_token_05bq}}",
+                "type": "text"
+              },
+              {
+                "key": "Content-Type",
+                "value": "application/json",
+                "type": "text"
+              }
+            ],
+            "url": {
+              "raw": "http://13.200.42.214/book/mapp/mapp_flights/flight_reschedule_submit",
+              "protocol": "http",
+              "host": [
+                "13",
+                "200",
+                "42",
+                "214"
+              ],
+              "path": [
+                "book",
+                "mapp",
+                "mapp_flights",
+                "flight_reschedule_submit"
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "Eticket Email",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "App-Token",
+                "value": "{{json_web_token_05bq}}",
+                "type": "text"
+              },
+              {
+                "key": "Content-Type",
+                "value": "application/json",
+                "type": "text"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\r\n    \"uniquerefno\" : \"SZ2607067D12044395115\"\r\n}"
+            },
+            "url": {
+              "raw": "http://13.200.42.214/book/mapp/mapp_flights/flight_eticket_email",
+              "protocol": "http",
+              "host": [
+                "13",
+                "200",
+                "42",
+                "214"
+              ],
+              "path": [
+                "book",
+                "mapp",
+                "mapp_flights",
+                "flight_eticket_email"
+              ]
+            }
+          },
+          "response": []
         }
       ]
     },
@@ -1571,6 +1918,148 @@
                 "mapp",
                 "mapp_bus",
                 "modify_eticket"
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "Cancel Request",
+          "request": {
+            "auth": {
+              "type": "bearer",
+              "bearer": [
+                {
+                  "key": "token",
+                  "value": "{{auth_secret_0sj6}}",
+                  "type": "string"
+                }
+              ]
+            },
+            "method": "POST",
+            "header": [
+              {
+                "key": "App-Token",
+                "value": "{{json_web_token_05bq}}",
+                "type": "text"
+              },
+              {
+                "key": "Content-Type",
+                "value": "application/json",
+                "type": "text"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\r\n    \"uniquerefno\" : \"SMSY2608147AMRX065359\",\r\n    \"bus_refno\" : \"9BV4S6MT\"\r\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            },
+            "url": {
+              "raw": "http://13.200.42.214/book/mapp/mapp_bus/bus_cancellation",
+              "protocol": "http",
+              "host": [
+                "13",
+                "200",
+                "42",
+                "214"
+              ],
+              "path": [
+                "book",
+                "mapp",
+                "mapp_bus",
+                "bus_cancellation"
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "Cancel Submit",
+          "request": {
+            "auth": {
+              "type": "bearer",
+              "bearer": [
+                {
+                  "key": "token",
+                  "value": "{{auth_secret_0sj6}}",
+                  "type": "string"
+                }
+              ]
+            },
+            "method": "POST",
+            "header": [
+              {
+                "key": "App-Token",
+                "value": "{{json_web_token_05bq}}",
+                "type": "text"
+              },
+              {
+                "key": "Content-Type",
+                "value": "application/json",
+                "type": "text"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\r\n    \"remarks\": \"Test Cancel\",\r\n    \"uniquerefno\": \"SMSY2608147AMRX065359\",\r\n    \"BookingId\": \"9BV4S6MT\",\r\n    \"onwardcancel\": \"1\",\r\n    \"returncancel\": \"0\"\r\n}"
+            },
+            "url": {
+              "raw": "http://13.200.42.214/book/mapp/mapp_bus/bus_cancel_submit",
+              "protocol": "http",
+              "host": [
+                "13",
+                "200",
+                "42",
+                "214"
+              ],
+              "path": [
+                "book",
+                "mapp",
+                "mapp_bus",
+                "bus_cancel_submit"
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "Eticket Email",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "App-Token",
+                "value": "{{json_web_token_05bq}}",
+                "type": "text"
+              },
+              {
+                "key": "Content-Type",
+                "value": "application/json",
+                "type": "text"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\r\n    \"uniquerefno\" : \"SMSY2608147AMRX065359\"\r\n}"
+            },
+            "url": {
+              "raw": "http://13.200.42.214/book/mapp/mapp_bus/bus_eticket_email",
+              "protocol": "http",
+              "host": [
+                "13",
+                "200",
+                "42",
+                "214"
+              ],
+              "path": [
+                "book",
+                "mapp",
+                "mapp_bus",
+                "bus_eticket_email"
               ]
             }
           },
@@ -1683,6 +2172,158 @@
             }
           },
           "response": []
+        },
+        {
+          "name": "Cancel Request",
+          "request": {
+            "auth": {
+              "type": "bearer",
+              "bearer": [
+                {
+                  "key": "token",
+                  "value": "{{auth_secret_0sj6}}",
+                  "type": "string"
+                }
+              ]
+            },
+            "method": "POST",
+            "header": [
+              {
+                "key": "App-Token",
+                "value": "{{json_web_token_05bq}}",
+                "type": "text"
+              },
+              {
+                "key": "Content-Type",
+                "value": "application/json",
+                "type": "text"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\r\n    \"uniquerefno\" : \"SR2606037LMXL115500\"\r\n}"
+            },
+            "url": {
+              "raw": "http://13.200.42.214/book/mapp/mapp_cab/cab_cancellation",
+              "protocol": "http",
+              "host": [
+                "13",
+                "200",
+                "42",
+                "214"
+              ],
+              "path": [
+                "book",
+                "mapp",
+                "mapp_cab",
+                "cab_cancellation"
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "Cancel Submit",
+          "request": {
+            "auth": {
+              "type": "bearer",
+              "bearer": [
+                {
+                  "key": "token",
+                  "value": "{{auth_secret_0sj6}}",
+                  "type": "string"
+                }
+              ]
+            },
+            "method": "POST",
+            "header": [
+              {
+                "key": "App-Token",
+                "value": "{{json_web_token_05bq}}",
+                "type": "text"
+              },
+              {
+                "key": "Content-Type",
+                "value": "application/json",
+                "type": "text"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\r\n    \"uniquerefno\" : \"SR2606037LMXL115500\",\r\n    \"remarks\"     : \"Test Cancel\"\r\n}"
+            },
+            "url": {
+              "raw": "http://13.200.42.214/book/mapp/mapp_cab/cab_cancel_submit",
+              "protocol": "http",
+              "host": [
+                "13",
+                "200",
+                "42",
+                "214"
+              ],
+              "path": [
+                "book",
+                "mapp",
+                "mapp_cab",
+                "cab_cancel_submit"
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "Eticket Email",
+          "request": {
+            "auth": {
+              "type": "bearer",
+              "bearer": [
+                {
+                  "key": "token",
+                  "value": "{{auth_secret_0sj6}}",
+                  "type": "string"
+                }
+              ]
+            },
+            "method": "POST",
+            "header": [
+              {
+                "key": "App-Token",
+                "value": "{{json_web_token_05bq}}",
+                "type": "text"
+              },
+              {
+                "key": "Content-Type",
+                "value": "application/json",
+                "type": "text"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\r\n    \"uniquerefno\" : \"SR2606037LMXL115500\"\r\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            },
+            "url": {
+              "raw": "http://13.200.42.214/book/mapp/mapp_cab/cab_eticket_email",
+              "protocol": "http",
+              "host": [
+                "13",
+                "200",
+                "42",
+                "214"
+              ],
+              "path": [
+                "book",
+                "mapp",
+                "mapp_cab",
+                "cab_eticket_email"
+              ]
+            }
+          },
+          "response": []
         }
       ]
     },
@@ -1791,6 +2432,153 @@
             }
           },
           "response": []
+        },
+        {
+          "name": "Cancel Request",
+          "request": {
+            "auth": {
+              "type": "bearer",
+              "bearer": [
+                {
+                  "key": "token",
+                  "value": "{{auth_secret_0sj6}}",
+                  "type": "string"
+                }
+              ]
+            },
+            "method": "POST",
+            "header": [
+              {
+                "key": "App-Token",
+                "value": "{{json_web_token_05bq}}",
+                "type": "text"
+              },
+              {
+                "key": "Content-Type",
+                "value": "application/json",
+                "type": "text"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\r\n    \"uniquerefno\" : \"SQ2601287WFSB094709\"\r\n}"
+            },
+            "url": {
+              "raw": "http://13.200.42.214/book/mapp/mapp_hotel/hotel_cancellation",
+              "protocol": "http",
+              "host": [
+                "13",
+                "200",
+                "42",
+                "214"
+              ],
+              "path": [
+                "book",
+                "mapp",
+                "mapp_hotel",
+                "hotel_cancellation"
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "Cancel Submit",
+          "request": {
+            "auth": {
+              "type": "bearer",
+              "bearer": [
+                {
+                  "key": "token",
+                  "value": "{{auth_secret_0sj6}}",
+                  "type": "string"
+                }
+              ]
+            },
+            "method": "POST",
+            "header": [
+              {
+                "key": "App-Token",
+                "value": "{{json_web_token_05bq}}",
+                "type": "text"
+              },
+              {
+                "key": "Content-Type",
+                "value": "application/json",
+                "type": "text"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\r\n    \"remarks\": \"Test Cancel\",\r\n    \"uniquerefno\": \"SQ2601287WFSB094709\",\r\n    \"booking_id\": \"SNHAPI00008980\"\r\n}"
+            },
+            "url": {
+              "raw": "http://13.200.42.214/book/mapp/mapp_hotel/hotel_cancel_submit",
+              "protocol": "http",
+              "host": [
+                "13",
+                "200",
+                "42",
+                "214"
+              ],
+              "path": [
+                "book",
+                "mapp",
+                "mapp_hotel",
+                "hotel_cancel_submit"
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "Eticket Email",
+          "request": {
+            "auth": {
+              "type": "bearer",
+              "bearer": [
+                {
+                  "key": "token",
+                  "value": "{{auth_secret_0sj6}}",
+                  "type": "string"
+                }
+              ]
+            },
+            "method": "POST",
+            "header": [
+              {
+                "key": "App-Token",
+                "value": "{{json_web_token_05bq}}",
+                "type": "text"
+              },
+              {
+                "key": "Content-Type",
+                "value": "application/json",
+                "type": "text"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\r\n    \"uniquerefno\" : \"SQ2601287WFSB094709\"\r\n}"
+            },
+            "url": {
+              "raw": "http://13.200.42.214/book/mapp/mapp_hotel/hotel_eticket_email",
+              "protocol": "http",
+              "host": [
+                "13",
+                "200",
+                "42",
+                "214"
+              ],
+              "path": [
+                "book",
+                "mapp",
+                "mapp_hotel",
+                "hotel_eticket_email"
+              ]
+            }
+          },
+          "response": []
         }
       ]
     },
@@ -1890,6 +2678,55 @@
                 "mapp",
                 "mapp_insurance",
                 "modify_eticket"
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "Eticket Email",
+          "request": {
+            "auth": {
+              "type": "bearer",
+              "bearer": [
+                {
+                  "key": "token",
+                  "value": "{{auth_secret_009y}}",
+                  "type": "string"
+                }
+              ]
+            },
+            "method": "POST",
+            "header": [
+              {
+                "key": "App-Token",
+                "value": "{{json_web_token_05bq}}",
+                "type": "text"
+              },
+              {
+                "key": "Content-Type",
+                "value": "application/json",
+                "type": "text"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\r\n    \"uniquerefno\": \"SZ2607037A14410553730\",\r\n    \"noprice\": \"0\"\r\n}"
+            },
+            "url": {
+              "raw": "http://13.200.42.214/book/mapp/mapp_insurance/insurance_eticket_email",
+              "protocol": "http",
+              "host": [
+                "13",
+                "200",
+                "42",
+                "214"
+              ],
+              "path": [
+                "book",
+                "mapp",
+                "mapp_insurance",
+                "insurance_eticket_email"
               ]
             }
           },
@@ -1997,6 +2834,55 @@
             }
           },
           "response": []
+        },
+        {
+          "name": "Eticket Email",
+          "request": {
+            "auth": {
+              "type": "bearer",
+              "bearer": [
+                {
+                  "key": "token",
+                  "value": "{{auth_secret_009y}}",
+                  "type": "string"
+                }
+              ]
+            },
+            "method": "POST",
+            "header": [
+              {
+                "key": "App-Token",
+                "value": "{{json_web_token_05bq}}",
+                "type": "text"
+              },
+              {
+                "key": "Content-Type",
+                "value": "application/json",
+                "type": "text"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\r\n    \"uniquerefno\": \"SMSX2507048261730\",\r\n    \"noprice\": \"0\",\r\n    \"cancel_policy\": \"1\"\r\n}"
+            },
+            "url": {
+              "raw": "http://13.200.42.214/book/mapp/mapp_visa/visa_eticket_email",
+              "protocol": "http",
+              "host": [
+                "13",
+                "200",
+                "42",
+                "214"
+              ],
+              "path": [
+                "book",
+                "mapp",
+                "mapp_visa",
+                "visa_eticket_email"
+              ]
+            }
+          },
+          "response": []
         }
       ]
     },
@@ -2100,6 +2986,168 @@
             }
           },
           "response": []
+        },
+        {
+          "name": "Cancel Request",
+          "request": {
+            "auth": {
+              "type": "bearer",
+              "bearer": [
+                {
+                  "key": "token",
+                  "value": "41b5eeeb383e707703f00f5739402e3b73edd700345ed473a1b06e20afa514a2",
+                  "type": "string"
+                }
+              ]
+            },
+            "method": "POST",
+            "header": [
+              {
+                "key": "App-Token",
+                "value": "eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJpZCI6IjIiLCJhcHBUeXBlIjoiMSIsImFwcFVzZXIiOiJmdGRpb3N0ZXN0IiwiYXBwVmVyc2lvbiI6IjEuMCJ9.mJWgUwIU-doZyr_N1vpqqYJ3fM-H9mheOzKvRDLe8aI",
+                "type": "text"
+              },
+              {
+                "key": "Content-Type",
+                "value": "application/json",
+                "type": "text"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\r\n    \"uniquerefno\" : \"SU2608177JJXX080022\"\r\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            },
+            "url": {
+              "raw": "http://13.200.42.214/book/mapp/mapp_esim/esim_cancellation",
+              "protocol": "http",
+              "host": [
+                "13",
+                "200",
+                "42",
+                "214"
+              ],
+              "path": [
+                "book",
+                "mapp",
+                "mapp_esim",
+                "esim_cancellation"
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "Cancel Submit",
+          "request": {
+            "auth": {
+              "type": "bearer",
+              "bearer": [
+                {
+                  "key": "token",
+                  "value": "41b5eeeb383e707703f00f5739402e3b73edd700345ed473a1b06e20afa514a2",
+                  "type": "string"
+                }
+              ]
+            },
+            "method": "POST",
+            "header": [
+              {
+                "key": "App-Token",
+                "value": "eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJpZCI6IjIiLCJhcHBUeXBlIjoiMSIsImFwcFVzZXIiOiJmdGRpb3N0ZXN0IiwiYXBwVmVyc2lvbiI6IjEuMCJ9.mJWgUwIU-doZyr_N1vpqqYJ3fM-H9mheOzKvRDLe8aI",
+                "type": "text"
+              },
+              {
+                "key": "Content-Type",
+                "value": "application",
+                "type": "text"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\r\n    \"paxids\": [\r\n        \"SU260817081645714-1\"\r\n    ],\r\n    \"uniquerefno\": \"SU2608177JJXX080022\",\r\n    \"remarks\": \"Test Cancel\"\r\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            },
+            "url": {
+              "raw": "http://13.200.42.214/book/mapp/mapp_esim/esim_cancel_submit",
+              "protocol": "http",
+              "host": [
+                "13",
+                "200",
+                "42",
+                "214"
+              ],
+              "path": [
+                "book",
+                "mapp",
+                "mapp_esim",
+                "esim_cancel_submit"
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "Eticket Email",
+          "request": {
+            "auth": {
+              "type": "bearer",
+              "bearer": [
+                {
+                  "key": "token",
+                  "value": "41b5eeeb383e707703f00f5739402e3b73edd700345ed473a1b06e20afa514a2",
+                  "type": "string"
+                }
+              ]
+            },
+            "method": "POST",
+            "header": [
+              {
+                "key": "App-Token",
+                "value": "eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJpZCI6IjIiLCJhcHBUeXBlIjoiMSIsImFwcFVzZXIiOiJmdGRpb3N0ZXN0IiwiYXBwVmVyc2lvbiI6IjEuMCJ9.mJWgUwIU-doZyr_N1vpqqYJ3fM-H9mheOzKvRDLe8aI",
+                "type": "text"
+              },
+              {
+                "key": "Content-Type",
+                "value": "application/json",
+                "type": "text"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\r\n    \"uniquerefno\" : \"SU2608177JJXX080022\"\r\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            },
+            "url": {
+              "raw": "http://13.200.42.214/book/mapp/mapp_esim/esim_eticket_email",
+              "protocol": "http",
+              "host": [
+                "13",
+                "200",
+                "42",
+                "214"
+              ],
+              "path": [
+                "book",
+                "mapp",
+                "mapp_esim",
+                "esim_eticket_email"
+              ]
+            }
+          },
+          "response": []
         }
       ]
     },
@@ -2185,7 +3233,7 @@
       "response": []
     },
     {
-      "name": "Forgot Password",
+      "name": "Forgot Password Link",
       "request": {
         "method": "POST",
         "header": [
@@ -2202,10 +3250,10 @@
         ],
         "body": {
           "mode": "raw",
-          "raw": "{\r\n    \"email\": \"support@ftd.travel\",\r\n    \"agent_no\": \"SMSA18012166\",\r\n    \"password\" : \"Praveen01\",\r\n    \"passconf\" : \"Praveen01\"\r\n}"
+          "raw": "{\r\n    \"agent_email\": \"support@ftd.travel\"\r\n}"
         },
         "url": {
-          "raw": "http://13.200.42.214/book/mapp/mapp_general/forgot_password",
+          "raw": "http://13.200.42.214/book/mapp/mapp_general/forgot_password_link",
           "protocol": "http",
           "host": [
             "13",
@@ -2217,7 +3265,7 @@
             "book",
             "mapp",
             "mapp_general",
-            "forgot_password"
+            "forgot_password_link"
           ]
         }
       },
@@ -2390,9 +3438,22 @@
     {
       "key": "auth_secret_0qyu",
       "secret": true
+    },
+    {
+      "key": "auth_secret_1a9k",
+      "secret": true
+    },
+    {
+      "key": "auth_secret_12mq",
+      "secret": true
+    },
+    {
+      "key": "auth_secret_0sj6",
+      "secret": true
+    },
+    {
+      "key": "auth_secret_009y",
+      "secret": true
     }
   ]
 }
-
-
-

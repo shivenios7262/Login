@@ -9,27 +9,34 @@ enum FTDHomeTab: Int, CaseIterable, Identifiable {
     var title: String {
         switch self {
         case .home:       return "Home"
-        case .myTrips:    return "My Trips"
-        case .wishlists:  return "Wishlists"
-        case .creditCard: return "Credit Card"
+        case .myTrips:    return "Upload"
+        case .wishlists:  return "Markup"
+        case .creditCard: return "App Code"
         }
     }
 
     var icon: String {
         switch self {
         case .home:       return "house"
-        case .myTrips:    return "bag"
-        case .wishlists:  return "heart"
-        case .creditCard: return "creditcard"
+        case .myTrips:    return "wallet"
+        case .wishlists:  return "markup"
+        case .creditCard: return "appcode"
         }
     }
 
     var selectedIcon: String {
         switch self {
         case .home:       return "house.fill"
-        case .myTrips:    return "bag.fill"
-        case .wishlists:  return "heart.fill"
-        case .creditCard: return "creditcard.fill"
+        case .myTrips:    return "wallet"
+        case .wishlists:  return "markup"
+        case .creditCard: return "appcode"
+        }
+    }
+
+    var isSystemIcon: Bool {
+        switch self {
+        case .home: return true
+        default:    return false
         }
     }
 }

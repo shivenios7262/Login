@@ -1,12 +1,16 @@
 import Foundation
 import Observation
+import SwiftUI
 
 @Observable
 @MainActor
 final class FTDHomeViewModel {
-    private(set) var isSideMenuOpen = false
+    private(set) var isSideMenuOpen = true
     var selectedTab: FTDHomeTab = .home
     var selectedOfferFilter: OfferFilter = .trending
+    var showUpdateAlert = false
+    private(set) var appStoreURL: URL? = nil
+    private(set) var wallpaperImage: Image? = nil
 
     private let authManager: AuthManager
 
@@ -14,6 +18,16 @@ final class FTDHomeViewModel {
 
     init(authManager: AuthManager) {
         self.authManager = authManager
+        Task { await prefetchWallpaper() }
+    }
+
+    // MARK: - Wallpaper
+
+    func prefetchWallpaper() async {
+        guard wallpaperImage == nil else { return }
+        guard let (data, _) = try? await URLSession.shared.data(from: FTDImageURL.homeWallpaper),
+              let uiImage = UIImage(data: data) else { return }
+        wallpaperImage = Image(uiImage: uiImage)
     }
 
     // MARK: - Derived agent info
@@ -30,8 +44,10 @@ final class FTDHomeViewModel {
     var agentNo: String         { authManager.currentUser?.agentNo     ?? "" }
 
     var agentLogoURL: URL? {
-        guard let raw = authManager.currentUser?.agentLogo, !raw.isEmpty else { return nil }
-        return URL(string: raw)
+        let raw = authManager.currentUser?.agentLogo
+        let url = FTDImageURL.agentLogo(raw)
+        print("[FTDHome] agentLogo raw: \(raw ?? "nil") → url: \(url?.absoluteString ?? "nil")")
+        return url
     }
 
     var creditBalanceLabel: String {
@@ -92,8 +108,41 @@ final class FTDHomeViewModel {
         await authManager.checkAndRefreshTokenIfNeeded()
     }
 
+    func refreshBalance() async {
+        await authManager.refreshBalance()
+    }
+
     func logout() {
         closeSideMenu()
         authManager.logout()
+    }
+
+    // MARK: - App Store update check
+
+    func checkForAppStoreUpdate() async {
+        #if DEBUG
+        return
+        #endif
+        guard let bundleId = Bundle.main.bundleIdentifier,
+              let currentVersion = Bundle.main.infoDictionary?["APP_VERSION"] as? String,
+              let url = URL(string: "https://itunes.apple.com/lookup?bundleId=\(bundleId)") else { return }
+        guard let (data, _) = try? await URLSession.shared.data(from: url),
+              let json = try? JSONSerialization.jsonObject(with: data) as? [String: Any],
+              let result = (json["results"] as? [[String: Any]])?.first,
+              let storeVersion = result["version"] as? String else { return }
+        guard isVersion(storeVersion, newerThan: currentVersion) else { return }
+        appStoreURL = (result["trackViewUrl"] as? String).flatMap(URL.init)
+        showUpdateAlert = true
+    }
+
+    private func isVersion(_ a: String, newerThan b: String) -> Bool {
+        let aParts = a.split(separator: ".").compactMap { Int($0) }
+        let bParts = b.split(separator: ".").compactMap { Int($0) }
+        for i in 0..<max(aParts.count, bParts.count) {
+            let av = i < aParts.count ? aParts[i] : 0
+            let bv = i < bParts.count ? bParts[i] : 0
+            if av != bv { return av > bv }
+        }
+        return false
     }
 }

@@ -2,67 +2,68 @@ import SwiftUI
 
 struct CheckEmailView: View {
     let email: String
-    // let authManager: AuthManager  // kept for when Reset Password API is available
     let dismissSheet: DismissAction
 
     @Environment(\.openURL) private var openURL
     @State private var showMailUnavailableAlert = false
-    // @State private var showResetPassword = false  // reset password flow pending API
 
     var body: some View {
         ScrollView {
-            VStack(spacing: 28) {
-                FTDAuthLogo()
+            VStack(spacing: 0) {
+                // Logo — larger than the shared FTDAuthLogo default
+                Image("logo")
+                    .resizable()
+                    .scaledToFit()
+                    .frame(width: 160)
+                    .padding(.top, 44)
+                    .padding(.bottom, 44)
 
-                ZStack {
-                    Circle()
-                        .fill(Color.ftdAccentOrange.opacity(0.12))
-                        .frame(width: 96, height: 96)
-                    Image(systemName: "envelope.badge.checkmark.fill")
-                        .font(.system(size: 44))
+                Image("mail")
+                    .resizable()
+                    .scaledToFit()
+                    .frame(width: 200)
+                    .padding(.bottom, 36)
+
+                Text("Check Your Email")
+                    .font(.ftdTitleLG)
+                    .foregroundStyle(Color.ftdTextPrimary)
+                    .padding(.bottom, 12)
+
+                VStack(spacing: 4) {
+                    Text("We have sent a Password reset link to")
+                        .font(.ftdBodyMD)
+                        .foregroundStyle(Color.ftdTextSecondary)
+                    Text(email)
+                        .font(.ftdLabelSM)
                         .foregroundStyle(Color.ftdAccentOrange)
                 }
-                .padding(.top, 8)
+                .multilineTextAlignment(.center)
+                .padding(.horizontal, 32)
+                .padding(.bottom, 16)
 
-                VStack(spacing: 10) {
-                    Text("Check Your Email")
-                        .font(.title2)
-                        .fontWeight(.bold)
-                        .foregroundStyle(Color.ftdTextPrimary)
-                    Text("We have sent password recovery instructions to **\(email)**.")
-                        .font(.subheadline)
-                        .foregroundStyle(Color.ftdTextSecondary)
-                        .multilineTextAlignment(.center)
-                }
-
-                FTDPrimaryButton(title: String(localized: "Open Email App"), leadingIcon: "envelope.fill") {
-                    openMailApp()
-                }
-
-                Button(String(localized: "Cancel")) {
-                    dismissSheet()
-                }
-                .font(.subheadline)
-                .foregroundStyle(Color.ftdTextSecondary)
-
-                // Reset Password with OTP — commented until backend API is available
-                // Button(String(localized: "Reset Password with OTP")) {
-                //     showResetPassword = true
-                // }
-                // .font(.subheadline)
-                // .foregroundStyle(Color.ftdAccentOrange)
-
-                Text("Did not receive the email? Check your spam folder or try another address.")
-                    .font(.caption)
+                Text("Please check your inbox and click on the link\nto reset your password")
+                    .font(.ftdBodyMD)
                     .foregroundStyle(Color.ftdTextSecondary)
                     .multilineTextAlignment(.center)
-                    .padding(.horizontal, 8)
+                    .lineSpacing(5)
+                    .padding(.horizontal, 32)
+                    .padding(.bottom, 40)
+
+                FTDPrimaryButton(title: "Open Email", leadingIcon: "envelope.fill") {
+                    openMailApp()
+                }
+                .padding(.horizontal, 24)
+                .padding(.bottom, 20)
+
+                Button("Cancel") {
+                    dismissSheet()
+                }
+                .font(.ftdButton)
+                .foregroundStyle(Color.ftdTextSecondary)
+                .padding(.bottom, 40)
             }
-            .padding(.horizontal, 24)
-            .padding(.top, 32)
-            .padding(.bottom, 32)
         }
-        .background(Color.ftdCardBackground.ignoresSafeArea())
+        .background(Color(.systemBackground).ignoresSafeArea())
         .navigationTitle("")
         .navigationBarTitleDisplayMode(.inline)
         .alert("No Email App Found", isPresented: $showMailUnavailableAlert) {
@@ -70,13 +71,9 @@ struct CheckEmailView: View {
         } message: {
             Text("Please set up an email app on your device to open your email.")
         }
-        // .navigationDestination(isPresented: $showResetPassword) {
-        //     ResetPasswordView(email: email, authManager: authManager, dismissSheet: dismissSheet)
-        // }
     }
 
     private func openMailApp() {
-        // Try Apple Mail first, then a generic mailto scheme
         let mailURL = URL(string: "message://")!
         let mailtoURL = URL(string: "mailto:")!
         if UIApplication.shared.canOpenURL(mailURL) {

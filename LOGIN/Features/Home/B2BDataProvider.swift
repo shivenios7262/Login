@@ -13,7 +13,7 @@ protocol BookingsProvider: AnyObject, Observable {
 
 @MainActor
 protocol ProfileProvider: AnyObject, Observable {
-    var profile: AgentProfileData? { get }
+    var profile: AgentProfileFullData? { get }
     var isLoadingProfile: Bool { get }
     var profileError: String? { get }
     func fetchProfile() async

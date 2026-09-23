@@ -17,6 +17,7 @@ final class AuthManager {
     init(apiClient: APIClient, keychain: KeychainServiceProtocol) {
         self.apiClient = apiClient
         self.keychain = keychain
+        clearKeychainOnVersionChange()
         restoreSession()
     }
 
@@ -35,9 +36,14 @@ final class AuthManager {
         let response: AgentLoginResponse = try await apiClient.send(.agentLogin(request))
 
         guard response.status, let data = response.data else {
-            // Prefer ErrorDesc when the server returns an error code (e.g. 1104 KYC pending, 1105 account blocked).
             let message = response.errorDesc ?? response.message
                 ?? String(localized: "Login failed. Please check your credentials.")
+            if response.errorCode == 1104 {
+                throw NetworkError.kycPending
+            }
+            if response.errorCode == 1105 {
+                throw NetworkError.accountBlocked(message)
+            }
             throw NetworkError.serverError(message)
         }
 
@@ -56,7 +62,7 @@ final class AuthManager {
             otp: otp,
             deviceId: resolveDeviceId(),
             screenSize: "\(Int(bounds.width))x\(Int(bounds.height))",
-            deviceModel: UIDevice.current.model,
+            deviceModel: DeviceInfo.modelIdentifier,
             osVersion: UIDevice.current.systemVersion
         )
         let response: VerifyOTPResponse = try await apiClient.send(.verifyOTP(request))
@@ -101,8 +107,43 @@ final class AuthManager {
         return response.serverMessage
     }
 
+    func refreshBalance() async {
+        guard isLoggedIn, let user = currentUser else { return }
+        do {
+            let response: AgentBalanceResponse = try await apiClient.send(.agentBalance)
+            guard response.status, let data = response.data else { return }
+            let updated = user.withUpdatedBalance(
+                agencyName: data.agencyName,
+                mobileNo: data.mobileNo,
+                agentLogo: data.agentLogo,
+                credit: data.creditBalance,
+                booking: data.bookingBalance
+            )
+            currentUser = updated
+            if let encoded = try? JSONEncoder().encode(updated),
+               let json = String(data: encoded, encoding: .utf8) {
+                keychain.save(key: .userData, value: json)
+            }
+        } catch { /* fail silently — stale balance is acceptable */ }
+    }
+
+    @discardableResult
+    func submitGroupFaresRequest(_ request: GroupFaresRequest) async throws -> String {
+        let response: GroupFaresAPIResponse = try await apiClient.send(.groupFaresRequest(request))
+        guard response.status else {
+            throw NetworkError.serverError(
+                response.message ?? String(localized: "Failed to submit group fare request.")
+            )
+        }
+        return response.data?.referenceNo ?? ""
+    }
+
     func fetchBookings(request: AgentBookingsRequest) async throws -> AgentBookingsResponse {
         return try await apiClient.send(.agentBookings(request))
+    }
+
+    func fetchRefunds(request: AgentRefundsRequest) async throws -> AgentRefundsResponse {
+        return try await apiClient.send(.agentRefunds(request))
     }
 
     func fetchProfile() async throws -> AgentProfileResponse {
@@ -115,6 +156,15 @@ final class AuthManager {
 
     func fetchMarkups() async throws -> AgentMarkupsResponse {
         return try await apiClient.send(.agentMarkups)
+    }
+
+    func saveMarkups(_ request: AgentSaveMarkupsRequest) async throws {
+        let response: GenericAPIResponse = try await apiClient.send(.agentSaveMarkups(request))
+        guard response.status else {
+            throw NetworkError.serverError(
+                response.serverMessage ?? String(localized: "Failed to save markups.")
+            )
+        }
     }
 
     func fetchCountries() async throws -> [CountryItem] {
@@ -146,13 +196,16 @@ final class AuthManager {
         }
     }
 
-    func register(request: AgentRegisterRequest) async throws {
-        let response: GenericAPIResponse = try await apiClient.send(.agentRegister(request))
-        guard response.status else {
+    @discardableResult
+    func register(request: AgentRegisterRequest) async throws -> String? {
+        let response: AgentRegisterResponse = try await apiClient.send(.agentRegister(request))
+        guard response.isSuccessful else {
             throw NetworkError.serverError(
-                response.serverMessage ?? String(localized: "Registration failed. Please try again.")
+                response.effectiveMessage?.trimmingCharacters(in: .whitespacesAndNewlines)
+                    ?? String(localized: "Registration failed. Please try again.")
             )
         }
+        return response.data?.agentNo
     }
 
     func fetchTermsCondition() async throws -> PrivacyData {
@@ -175,13 +228,15 @@ final class AuthManager {
         return data
     }
 
-    func submitContact(_ request: ContactRequest) async throws {
+    @discardableResult
+    func submitContact(_ request: ContactRequest) async throws -> String {
         let response: GenericAPIResponse = try await apiClient.send(.contact(request))
         guard response.status else {
             throw NetworkError.serverError(
                 response.serverMessage ?? String(localized: "Failed to send your message. Please try again.")
             )
         }
+        return response.message ?? String(localized: "Your message has been sent! Our team will get back to you shortly.")
     }
 
     // MARK: - Payment
@@ -197,13 +252,31 @@ final class AuthManager {
         return data
     }
 
-    func confirmPayment(bodyData: Data) async throws {
-        let response: GenericAPIResponse = try await apiClient.send(.paymentCheckout(bodyData))
+    @discardableResult
+    func confirmPayment(bodyData: Data, isJSON: Bool = true) async throws -> String? {
+        // let accessToken = keychain.read(key: .authToken) ?? "nil"
+        // let agentId     = currentUser?.agentId ?? "nil"
+        // let requestBody = String(data: bodyData, encoding: .utf8) ?? "nil"
+        // print("""
+        // [payment_checkout REQUEST]
+        //   access_token : \(accessToken)
+        //   agent_id     : \(agentId)
+        //   body         : \(requestBody)
+        // """)
+        let response: GenericAPIResponse = try await apiClient.send(.paymentCheckout(body: bodyData, isJSON: isJSON))
+        // print("""
+        // [payment_checkout RESPONSE]
+        //   status       : \(response.status)
+        //   message      : \(response.message ?? "nil")
+        //   errorCode    : \(response.errorCode.map { "\($0)" } ?? "nil")
+        //   errorDesc    : \(response.errorDesc ?? "nil")
+        // """)
         guard response.status else {
             throw NetworkError.serverError(
                 response.serverMessage ?? String(localized: "Payment confirmation failed.")
             )
         }
+        return response.message
     }
 
     func fetchUploadMoney() async throws -> UploadMoneyData {
@@ -224,6 +297,104 @@ final class AuthManager {
             )
         }
         return data
+    }
+
+    // Returns the OTP code and parsed expiry date for the App Code sheet.
+    func getAppCode() async throws -> (code: String?, expiryDate: Date?) {
+        guard let agentNo = currentUser?.agentNo else {
+            throw NetworkError.serverError(String(localized: "No agent session found."))
+        }
+        let request = ResendOTPRequest(agentNo: agentNo)
+        let response: ResendOTPResponse = try await apiClient.send(.getOTP(request))
+        guard response.status else {
+            throw NetworkError.serverError(
+                response.serverMessage ?? String(localized: "Failed to load App Code.")
+            )
+        }
+        return (response.data?.otp, parseExpiryDate(response.data?.otpExpiry))
+    }
+
+    private func parseExpiryDate(_ string: String?) -> Date? {
+        guard let string else { return nil }
+        let formatter = DateFormatter()
+        formatter.locale = Locale(identifier: "en_US_POSIX")
+        formatter.dateFormat = "yyyy-MM-dd HH:mm:ss"
+        formatter.timeZone = TimeZone(identifier: "Asia/Kolkata")//formatter.timeZone = TimeZone(identifier: "UTC")
+        return formatter.date(from: string)
+    }
+
+    // MARK: - Profile Edit
+
+    func updateProfile(_ request: UpdateAgentProfileRequest) async throws {
+        let response: GenericAPIResponse = try await apiClient.send(.updateAgentProfile(request))
+        guard response.status else {
+            throw NetworkError.serverError(
+                response.serverMessage ?? String(localized: "Failed to update profile.")
+            )
+        }
+    }
+
+    func changePassword(_ request: ChangeAgentPasswordRequest) async throws {
+        let response: GenericAPIResponse = try await apiClient.send(.changeAgentPassword(request))
+        guard response.status else {
+            throw NetworkError.serverError(
+                response.serverMessage ?? String(localized: "Failed to change password.")
+            )
+        }
+    }
+
+    func addTraveller(_ request: AgentAddTravellerRequest) async throws {
+        let response: GenericAPIResponse = try await apiClient.send(.agentAddTraveller(request))
+        guard response.status else {
+            throw NetworkError.serverError(
+                response.serverMessage ?? String(localized: "Failed to add traveller.")
+            )
+        }
+    }
+
+    func updateTraveller(_ request: AgentUpdateTravellerRequest) async throws {
+        let response: GenericAPIResponse = try await apiClient.send(.agentUpdateTraveller(request))
+        guard response.status else {
+            throw NetworkError.serverError(
+                response.serverMessage ?? String(localized: "Failed to update traveller.")
+            )
+        }
+    }
+
+    func deleteTraveller(_ request: AgentDeleteTravellerRequest) async throws {
+        let response: GenericAPIResponse = try await apiClient.send(.agentDeleteTraveller(request))
+        guard response.status else {
+            throw NetworkError.serverError(
+                response.serverMessage ?? String(localized: "Failed to delete traveller.")
+            )
+        }
+    }
+
+    func addGST(_ request: AgentAddGSTRequest) async throws {
+        let response: GenericAPIResponse = try await apiClient.send(.agentAddGST(request))
+        guard response.status else {
+            throw NetworkError.serverError(
+                response.serverMessage ?? String(localized: "Failed to add GST.")
+            )
+        }
+    }
+
+    func updateGST(_ request: AgentUpdateGSTRequest) async throws {
+        let response: GenericAPIResponse = try await apiClient.send(.agentUpdateGST(request))
+        guard response.status else {
+            throw NetworkError.serverError(
+                response.serverMessage ?? String(localized: "Failed to update GST.")
+            )
+        }
+    }
+
+    func deleteGST(_ request: AgentDeleteGSTRequest) async throws {
+        let response: GenericAPIResponse = try await apiClient.send(.agentDeleteGST(request))
+        guard response.status else {
+            throw NetworkError.serverError(
+                response.serverMessage ?? String(localized: "Failed to delete GST.")
+            )
+        }
     }
 
     func cancelPendingOTP() {
@@ -256,6 +427,20 @@ final class AuthManager {
 
     // MARK: - Private
 
+    private static let lastLaunchVersionKey = "com.ftd.lastLaunchVersion"
+
+    // Clears all auth keychain data when the app version changes so the user
+    // sees the Splash screen after an update instead of jumping straight to sign-in.
+    private func clearKeychainOnVersionChange() {
+        let current = Bundle.main.infoDictionary?["CFBundleShortVersionString"] as? String ?? ""
+        let stored = UserDefaults.standard.string(forKey: Self.lastLaunchVersionKey)
+        guard stored != current else { return }
+        KeychainKey.allCases
+            .filter { $0 != .deviceId }
+            .forEach { keychain.delete(key: $0) }
+        UserDefaults.standard.set(current, forKey: Self.lastLaunchVersionKey)
+    }
+
     private func restoreSession() {
         isLoggedIn = keychain.read(key: .authToken) != nil
         hasAppToken = AppConfiguration.appCredentials.persistAppToken && keychain.read(key: .appToken) != nil
@@ -269,11 +454,11 @@ final class AuthManager {
 
     private func resolveDeviceId() -> String {
         // Prefer the hardware-stable vendor ID; fall back to a stored UUID if unavailable.
-//        if let vendorId = UIDevice.current.identifierForVendor?.uuidString {
-//            keychain.save(key: .deviceId, value: vendorId)
-//            return vendorId
-//        }
-//        if let existing = keychain.read(key: .deviceId) { return existing }
+        if let vendorId = UIDevice.current.identifierForVendor?.uuidString {
+            keychain.save(key: .deviceId, value: vendorId)
+            return vendorId
+        }
+        if let existing = keychain.read(key: .deviceId) { return existing }
         let newId = UUID().uuidString
         keychain.save(key: .deviceId, value: newId)
         return newId

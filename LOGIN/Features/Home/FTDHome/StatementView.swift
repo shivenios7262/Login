@@ -7,8 +7,12 @@ struct StatementView: View {
     @Bindable var viewModel: StatementViewModel
     @Environment(\.dismiss) private var dismiss
 
-    @State private var exportURL: URL? = nil
-    @State private var showExportSheet = false
+    @State private var exportFile: ExportFile?
+
+    private struct ExportFile: Identifiable {
+        let url: URL
+        var id: String { url.lastPathComponent }
+    }
 
     // MARK: - Column layout
 
@@ -38,6 +42,7 @@ struct StatementView: View {
     ]
 
     private static var tableWidth: CGFloat { cols.reduce(0) { $0 + $1.width } }
+    private static let pageWindowHalf = 2  // show current±2, giving a max 5-page window
 
     // MARK: - Body
 
@@ -47,7 +52,9 @@ struct StatementView: View {
             ScrollView(.vertical, showsIndicators: false) {
                 VStack(spacing: 0) {
                     filterCard
-                    formulaBar
+                    if !viewModel.statements.isEmpty {
+                        formulaBar
+                    }
                     controlsRow
                     tableSection
                     if !viewModel.pagedStatements.isEmpty {
@@ -61,11 +68,9 @@ struct StatementView: View {
         .task { await viewModel.fetchStatement() }
         .onChange(of: viewModel.searchText) { viewModel.resetPagination() }
         .onChange(of: viewModel.pageSize)   { viewModel.resetPagination() }
-        .sheet(isPresented: $showExportSheet) {
-            if let url = exportURL {
-                ActivityShareView(url: url)
-                    .presentationDetents([.medium])
-            }
+        .sheet(item: $exportFile) { file in
+            ActivityShareView(url: file.url)
+                .presentationDetents([.medium])
         }
     }
 
@@ -83,6 +88,7 @@ struct StatementView: View {
                     .font(.title3)
                     .foregroundStyle(Color.ftdTextSecondary)
             }
+            .accessibilityLabel("Dismiss")
         }
         .padding(.horizontal, DesignTokens.Spacing.lg)
         .padding(.vertical, DesignTokens.Spacing.md)
@@ -258,8 +264,7 @@ struct StatementView: View {
 
             // Export CSV button
             Button {
-                exportURL = viewModel.exportCSV()
-                if exportURL != nil { showExportSheet = true }
+                if let url = viewModel.exportCSV() { exportFile = ExportFile(url: url) }
             } label: {
                 HStack(spacing: 4) {
                     Image(systemName: "tablecells")
@@ -271,7 +276,7 @@ struct StatementView: View {
                 .foregroundStyle(.white)
                 .padding(.horizontal, 10)
                 .padding(.vertical, 7)
-                .background(Color(red: 0.12, green: 0.56, blue: 0.27))
+                .background(Color.ftdExcelGreen)
                 .clipShape(RoundedRectangle(cornerRadius: DesignTokens.Radius.field))
             }
             .buttonStyle(.plain)
@@ -430,14 +435,14 @@ struct StatementView: View {
     private func numCell(_ val: String?, col: Int, highlight: NumHighlight) -> some View {
         let c = Self.cols[col]
         let text = val?.trimmingCharacters(in: .whitespaces) ?? ""
-        let isZeroOrEmpty = text.isEmpty || text == "0" || text == "0.0"
+        let isZeroOrEmpty = text.isEmpty || Double(text) == 0
         let display = isZeroOrEmpty ? "0" : text
 
         let color: Color = {
             if isZeroOrEmpty { return Color.ftdTextSecondary.opacity(0.5) }
             switch highlight {
-            case .debit:   return Color(red: 0.85, green: 0.15, blue: 0.15)
-            case .credit:  return Color(red: 0.10, green: 0.60, blue: 0.25)
+            case .debit:   return Color.ftdDebitRed
+            case .credit:  return Color.ftdCreditGreen
             case .neutral: return Color.ftdTextPrimary
             }
         }()
@@ -482,10 +487,9 @@ struct StatementView: View {
         let total = viewModel.totalPages
         guard total > 1 else { return [1] }
         let cur = viewModel.currentPage
-        let half = 2
-        var start = max(1, cur - half)
-        let end   = min(total, start + 4)
-        start = max(1, end - 4)
+        var start = max(1, cur - Self.pageWindowHalf)
+        let end   = min(total, start + Self.pageWindowHalf * 2)
+        start = max(1, end - Self.pageWindowHalf * 2)
         return Array(start...end)
     }
 

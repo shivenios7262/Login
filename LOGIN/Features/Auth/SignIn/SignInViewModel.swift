@@ -13,6 +13,8 @@ final class SignInViewModel {
     private(set) var emailError: String? = nil
     private(set) var passwordError: String? = nil
     private(set) var apiError: String? = nil
+    private(set) var blockedError: String? = nil
+    private(set) var showKYCSheet: Bool = false
 
     private let authManager: AuthManager
     private let router: AppRouter
@@ -28,6 +30,8 @@ final class SignInViewModel {
         guard validate() else { return }
         isLoading = true
         apiError = nil
+        blockedError = nil
+        showKYCSheet = false
         defer { isLoading = false }
 
         do {
@@ -36,8 +40,13 @@ final class SignInViewModel {
                 password: password
             )
             router.presentAuth(.verifyOTP)
+        } catch NetworkError.kycPending {
+            showKYCSheet = true
+        } catch NetworkError.accountBlocked(let message) {
+            blockedError = "Your account is blocked due multiple wrong Password / OTP. Please contact admin for re-verification 73533 11550 or admin@ftd.travel."//message
         } catch let error as NetworkError {
             apiError = error.errorDescription
+            
         } catch {
             apiError = error.localizedDescription
         }
@@ -45,6 +54,10 @@ final class SignInViewModel {
 
     func tapForgotPassword() {
         router.presentAuth(.forgotPassword)
+    }
+
+    func dismissKYCSheet() {
+        showKYCSheet = false
     }
 
     // MARK: - Validation

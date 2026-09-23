@@ -29,10 +29,11 @@ enum APIEndpoint: Sendable {
     case agentSaveMarkups(AgentSaveMarkupsRequest)
     case agentCalendar
     case groupFaresRequest(GroupFaresRequest)
+    case agentBalance
     case uploadMoney
     case uploadMoneyRequest(UploadMoneyRequest)
     case createPaymentOrder(CreatePaymentOrderRequest)
-    case paymentCheckout(Data)
+    case paymentCheckout(body: Data, isJSON: Bool)
     case agentRegister(AgentRegisterRequest)
 
     // MARK: - General
@@ -159,6 +160,17 @@ enum APIEndpoint: Sendable {
                 requiresBearerToken: true
             )
         case .updateAgentProfile(let body):
+            if let logoData = body.logoData {
+                let boundary = "Boundary-\(UUID().uuidString)"
+                return APIRequest(
+                    path: "/book/mapp/mapp_b2b/update_agent_profile",
+                    method: .post,
+                    body: APIEndpoint.buildMultipartBody(from: body, logoData: logoData, boundary: boundary),
+                    contentType: "multipart/form-data; boundary=\(boundary)",
+                    requiresAppToken: true,
+                    requiresBearerToken: true
+                )
+            }
             return APIRequest(
                 path: "/book/mapp/mapp_b2b/update_agent_profile",
                 method: .post,
@@ -270,6 +282,14 @@ enum APIEndpoint: Sendable {
                 requiresAppToken: true,
                 requiresBearerToken: true
             )
+        case .agentBalance:
+            return APIRequest(
+                path: "/book/mapp/mapp_b2b/agent_balance",
+                method: .get,
+                body: nil,
+                requiresAppToken: true,
+                requiresBearerToken: true
+            )
         case .uploadMoney:
             return APIRequest(
                 path: "/book/mapp/mapp_b2b/upload_money",
@@ -294,11 +314,12 @@ enum APIEndpoint: Sendable {
                 requiresAppToken: true,
                 requiresBearerToken: true
             )
-        case .paymentCheckout(let bodyData):
+        case .paymentCheckout(let bodyData, let isJSON):
             return APIRequest(
                 path: "/book/mapp/mapp_b2b/payment_checkout",
                 method: .post,
                 body: bodyData,
+                contentType: isJSON ? "application/json" : "application/x-www-form-urlencoded",
                 requiresAppToken: true,
                 requiresBearerToken: true
             )
@@ -487,5 +508,53 @@ enum APIEndpoint: Sendable {
                 requiresBearerToken: true
             )
         }
+    }
+
+    // MARK: - Multipart Helper
+
+    nonisolated private static func buildMultipartBody(
+        from request: UpdateAgentProfileRequest,
+        logoData: Data,
+        boundary: String
+    ) -> Data {
+        var body = Data()
+        let crlf = "\r\n"
+
+        func append(_ string: String) {
+            if let data = string.data(using: .utf8) { body.append(data) }
+        }
+
+        let textFields: [(String, String?)] = [
+            ("title",           request.title),
+            ("first_name",      request.firstName),
+            ("middle_name",     request.middleName),
+            ("last_name",       request.lastName),
+            ("designation",     request.designation),
+            ("website",         request.website),
+            ("office_phone_no", request.officePhoneNo),
+            ("fax",             request.fax),
+            ("address",         request.address),
+            ("city",            request.city),
+            ("state",           request.state),
+            ("country",         request.country),
+            ("pin_code",        request.pinCode),
+            ("gst_number",      request.gstNumber),
+        ]
+
+        for (name, value) in textFields {
+            guard let value else { continue }
+            append("--\(boundary)\(crlf)")
+            append("Content-Disposition: form-data; name=\"\(name)\"\(crlf)\(crlf)")
+            append("\(value)\(crlf)")
+        }
+
+        append("--\(boundary)\(crlf)")
+        append("Content-Disposition: form-data; name=\"agency_logo\"; filename=\"logo.jpg\"\(crlf)")
+        append("Content-Type: image/jpeg\(crlf)\(crlf)")
+        body.append(logoData)
+        append(crlf)
+        append("--\(boundary)--\(crlf)")
+
+        return body
     }
 }

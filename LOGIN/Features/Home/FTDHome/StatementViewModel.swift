@@ -113,6 +113,10 @@ final class StatementViewModel: StatementProvider {
     // MARK: - Search button action
 
     func search() async {
+        if let toDate, toDate < fromDate {
+            statementError = "\"To Date\" must be on or after \"From Date\"."
+            return
+        }
         currentPage = 1
         await performFetch()
     }
@@ -148,7 +152,7 @@ final class StatementViewModel: StatementProvider {
                 csvEscape(item.creditBalance),
                 csvEscape(item.markup),
                 csvEscape(item.insuranceCharge),
-                csvEscape(item.remarks ?? item.addRemarks)
+                csvEscape(item.addRemarks ?? item.remarks)
             ].joined(separator: ",")
         }
 
@@ -156,13 +160,18 @@ final class StatementViewModel: StatementProvider {
         let toStr = toDate.map { apiFmt.string(from: $0) } ?? apiFmt.string(from: Date())
         let name = "Statement_\(apiFmt.string(from: fromDate))_to_\(toStr).csv"
         let url = FileManager.default.temporaryDirectory.appendingPathComponent(name)
-        try? csv.write(to: url, atomically: true, encoding: .utf8)
+        do {
+            try csv.write(to: url, atomically: true, encoding: .utf8)
+        } catch {
+            return nil
+        }
         return url
     }
 
     // MARK: - Private helpers
 
     private func performFetch() async {
+        guard !isLoadingStatement else { return }
         isLoadingStatement = true
         statementError = nil
         defer { isLoadingStatement = false }

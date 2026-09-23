@@ -5,6 +5,8 @@ enum NetworkError: Error, LocalizedError {
     case noData
     case decodingFailed(Error)
     case serverError(String)
+    case accountBlocked(String)
+    case kycPending
     case unauthorized
     case sessionExpired
     case noAppToken
@@ -19,6 +21,10 @@ enum NetworkError: Error, LocalizedError {
             return error.localizedDescription
         case .serverError(let message):
             return message
+        case .accountBlocked(let message):
+            return message
+        case .kycPending:
+            return String(localized: "KYC verification is pending.")
         case .unauthorized:
             return String(localized: "Unauthorized. Please log in again.")
         case .sessionExpired:

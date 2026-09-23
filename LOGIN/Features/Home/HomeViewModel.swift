@@ -30,7 +30,7 @@ final class HomeViewModel {
 
     // MARK: - Profile state
 
-    private(set) var profile: AgentProfileData? = nil
+    private(set) var profile: AgentProfileFullData? = nil
     private(set) var isLoadingProfile = false
     private(set) var profileError: String? = nil
 
@@ -174,7 +174,7 @@ final class HomeViewModel {
         do {
             let response = try await authManager.fetchMarkups()
             if response.status {
-                markups = response.data ?? []
+                markups = response.data?.allItems ?? []
             } else {
                 markupsError = response.message ?? String(localized: "Failed to load markups.")
             }

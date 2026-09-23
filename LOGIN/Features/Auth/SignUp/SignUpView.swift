@@ -33,33 +33,138 @@ struct SignUpView: View {
 
     private var thankYouView: some View {
         VStack(spacing: DesignTokens.Spacing.xl) {
-            Image(systemName: "checkmark.seal.fill")
-                .font(.system(size: 80))
-                .foregroundStyle(Color.ftdAccentOrange)
+            registrationIcon
 
-            VStack(spacing: DesignTokens.Spacing.sm) {
-                Text(String(localized: "Registration Submitted!"))
-                    .font(.title2.weight(.semibold))
-                    .foregroundStyle(Color.ftdTextPrimary)
+            VStack(spacing: DesignTokens.Spacing.xs) {
+                Text(String(localized: "Thank you for registering with us!"))
+                    .font(.title3.weight(.bold))
+                    .foregroundStyle(Color.ftdAccentTeal)
                     .multilineTextAlignment(.center)
 
-                Text(String(localized: "Thank you for registering with FTD Travel. Your application is under review. We'll notify you once your account is approved."))
+                Text(String(localized: "Your account details are as follows:"))
                     .font(.subheadline)
                     .foregroundStyle(Color.ftdTextSecondary)
                     .multilineTextAlignment(.center)
             }
 
-            FTDPrimaryButton(
-                title: String(localized: "Continue to Login"),
-                isLoading: false
-            ) {
+            accountDetailsCard
+
+            documentsSection
+
+            Text(String(localized: "Do check your email for complete details."))
+                .font(.footnote)
+                .foregroundStyle(Color.ftdTextSecondary)
+                .multilineTextAlignment(.center)
+
+            Button {
                 onSuccess()
+            } label: {
+                Text(String(localized: "Continue to Login"))
+                    .font(.ftdLabelMD)
+                    .foregroundStyle(Color.ftdAccentTeal)
+                    .frame(maxWidth: .infinity)
+                    .padding(.vertical, DesignTokens.Spacing.sm)
+                    .overlay(
+                        RoundedRectangle(cornerRadius: DesignTokens.Radius.field)
+                            .stroke(Color.ftdAccentTeal, lineWidth: 1)
+                    )
             }
+            .buttonStyle(.plain)
         }
         .padding(.horizontal, DesignTokens.Spacing.screenHorizontal)
         .padding(.vertical, DesignTokens.Spacing.xxl)
         .frame(maxWidth: .infinity, minHeight: 420)
         .background(Color.ftdCardBackground)
+    }
+
+    private var registrationIcon: some View {
+        ZStack {
+            Circle()
+                .fill(Color.ftdAccentTeal.opacity(0.10))
+                .frame(width: 110, height: 110)
+            Circle()
+                .fill(Color.ftdAccentTeal.opacity(0.18))
+                .frame(width: 82, height: 82)
+            Image(systemName: "hand.thumbsup")
+                .font(.system(size: 34, weight: .medium))
+                .foregroundStyle(Color.ftdAccentTeal)
+        }
+        .overlay(
+            Circle().fill(Color.ftdAccentOrange).frame(width: 9, height: 9)
+                .offset(x: 46, y: -30), alignment: .center
+        )
+        .overlay(
+            Circle().fill(Color.ftdAccentOrange).frame(width: 6, height: 6)
+                .offset(x: -50, y: -10), alignment: .center
+        )
+        .overlay(
+            Circle().fill(Color.ftdAccentOrange.opacity(0.6)).frame(width: 7, height: 7)
+                .offset(x: 38, y: 36), alignment: .center
+        )
+    }
+
+    private var accountDetailsCard: some View {
+        VStack(spacing: 0) {
+            accountDetailRow(
+                label: String(localized: "Agent ID:"),
+                value: viewModel.registeredAgentNo ?? "—"
+            )
+            Divider().padding(.vertical, DesignTokens.Spacing.sm)
+            accountDetailRow(
+                label: String(localized: "Company Name:"),
+                value: viewModel.companyName
+            )
+            Divider().padding(.vertical, DesignTokens.Spacing.sm)
+            accountDetailRow(
+                label: String(localized: "Agent Name:"),
+                value: "\(viewModel.firstName) \(viewModel.lastName)"
+            )
+        }
+        .padding(.vertical, DesignTokens.Spacing.md)
+        .padding(.horizontal, DesignTokens.Spacing.md)
+        .background(Color.ftdTextSecondary.opacity(0.04))
+        .overlay(
+            RoundedRectangle(cornerRadius: DesignTokens.Radius.field)
+                .stroke(Color.ftdTextSecondary.opacity(0.18))
+        )
+        .clipShape(RoundedRectangle(cornerRadius: DesignTokens.Radius.field))
+    }
+
+    private func accountDetailRow(label: String, value: String) -> some View {
+        HStack(alignment: .top, spacing: DesignTokens.Spacing.sm) {
+            Text(label)
+                .font(.caption)
+                .foregroundStyle(Color.ftdTextSecondary)
+                .fixedSize(horizontal: false, vertical: true)
+            Spacer()
+            Text(value.isEmpty ? "—" : value)
+                .font(.caption.weight(.semibold))
+                .foregroundStyle(Color.ftdTextPrimary)
+                .multilineTextAlignment(.trailing)
+                .fixedSize(horizontal: false, vertical: true)
+        }
+    }
+
+    private var documentsSection: some View {
+        VStack(spacing: DesignTokens.Spacing.sm) {
+            Text(String(localized: "Please provide the following documents ASAP for us to activate your account"))
+                .font(.subheadline.weight(.semibold))
+                .foregroundStyle(Color.ftdTextPrimary)
+                .multilineTextAlignment(.center)
+
+            HStack(spacing: DesignTokens.Spacing.lg) {
+                Label(String(localized: "PAN Card"), systemImage: "circle.fill")
+                    .font(.subheadline)
+                Label(String(localized: "Address Proof"), systemImage: "circle.fill")
+                    .font(.subheadline)
+            }
+            .foregroundStyle(Color.ftdAccentTeal)
+            .padding(.vertical, DesignTokens.Spacing.sm)
+            .padding(.horizontal, DesignTokens.Spacing.md)
+            .frame(maxWidth: .infinity)
+            .background(Color.ftdTextSecondary.opacity(0.06))
+            .clipShape(RoundedRectangle(cornerRadius: DesignTokens.Radius.field))
+        }
     }
 
     // MARK: - Form View
@@ -70,16 +175,23 @@ struct SignUpView: View {
                 .padding(.horizontal, DesignTokens.Spacing.screenHorizontal)
                 .padding(.top, DesignTokens.Spacing.xl)
 
-            VStack(spacing: Layout.fieldSpacing) {
-                personalInfoSection
-                contactSection
-                securitySection
-                complianceSection
-                businessSection
-                addressSection
-                apiErrorBanner
-                submitButton
-                termsDisclosure
+            ScrollViewReader { proxy in
+                VStack(spacing: Layout.fieldSpacing) {
+                    personalInfoSection.id(SignUpViewModel.FormField.personal)
+                    contactSection.id(SignUpViewModel.FormField.contact)
+                    securitySection.id(SignUpViewModel.FormField.security)
+                    complianceSection.id(SignUpViewModel.FormField.compliance)
+                    businessSection.id(SignUpViewModel.FormField.business)
+                    addressSection.id(SignUpViewModel.FormField.address)
+                    apiErrorBanner
+                    submitButton
+                    termsDisclosure
+                }
+                .onChange(of: viewModel.scrollToken) { _, _ in
+                    if let field = viewModel.scrollToField {
+                        withAnimation { proxy.scrollTo(field, anchor: .top) }
+                    }
+                }
             }
             .padding(.horizontal, DesignTokens.Spacing.screenHorizontal)
             .padding(.top, Layout.fieldSpacing)

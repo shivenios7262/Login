@@ -31,10 +31,26 @@ final class ContactSupportViewModel {
     }
 
     var isFormValid: Bool {
-        !name.trimmingCharacters(in: .whitespaces).isEmpty &&
-        !mobile.trimmingCharacters(in: .whitespaces).isEmpty &&
-        !email.trimmingCharacters(in: .whitespaces).isEmpty &&
-        !message.trimmingCharacters(in: .whitespaces).isEmpty
+        Validator.requiredText(name, fieldName: "Name") == nil &&
+        Validator.phone(mobile) == nil &&
+        Validator.email(email) == nil &&
+        Validator.requiredText(message, fieldName: "Message") == nil
+    }
+
+    var nameError: String? {
+        name.isEmpty ? nil : Validator.requiredText(name, fieldName: "Name")
+    }
+
+    var mobileError: String? {
+        mobile.isEmpty ? nil : Validator.phone(mobile)
+    }
+
+    var emailError: String? {
+        email.isEmpty ? nil : Validator.email(email)
+    }
+
+    var messageError: String? {
+        message.isEmpty ? nil : Validator.requiredText(message, fieldName: "Message")
     }
 
     func submit() async {
@@ -46,8 +62,8 @@ final class ContactSupportViewModel {
             message: message.trimmingCharacters(in: .whitespaces)
         )
         do {
-            try await authManager.submitContact(request)
-            phase = .success("Your message has been sent! Our team will get back to you shortly.")
+            let message = try await authManager.submitContact(request)
+            phase = .success(message)
         } catch {
             phase = .failure(error.localizedDescription)
         }

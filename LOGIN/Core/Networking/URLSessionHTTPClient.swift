@@ -1,5 +1,14 @@
 import Foundation
 
+private struct _ErrorBody: Decodable {
+    let message: String?
+    let errorDesc: String?
+    enum CodingKeys: String, CodingKey {
+        case message
+        case errorDesc = "ErrorDesc"
+    }
+}
+
 final class URLSessionHTTPClient: HTTPClientProtocol {
     private let session: URLSession
 
@@ -26,8 +35,12 @@ final class URLSessionHTTPClient: HTTPClientProtocol {
             throw NetworkError.unauthorized
         }
         guard (200..<300).contains(http.statusCode) else {
+            // Try to extract a human-readable message from the response body before
+            // falling back to the generic HTTP status phrase.
+            let bodyMessage = (try? JSONDecoder().decode(_ErrorBody.self, from: data))
+                .flatMap { $0.errorDesc ?? $0.message }
             throw NetworkError.serverError(
-                HTTPURLResponse.localizedString(forStatusCode: http.statusCode)
+                bodyMessage ?? HTTPURLResponse.localizedString(forStatusCode: http.statusCode)
             )
         }
         do {

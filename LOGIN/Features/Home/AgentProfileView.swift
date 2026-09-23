@@ -5,23 +5,21 @@ struct AgentProfileView<VM: ProfileProvider>: View {
     @Environment(\.dismiss) private var dismiss
 
     var body: some View {
-        NavigationStack {
-            content
-                .navigationTitle("My Profile")
-                .navigationBarTitleDisplayMode(.inline)
-                .toolbar {
-                    ToolbarItem(placement: .navigationBarLeading) {
-                        Button { dismiss() } label: {
-                            HStack(spacing: DesignTokens.Spacing.xs) {
-                                Image(systemName: "chevron.left").fontWeight(.semibold)
-                                Text("Back")
-                            }
-                            .foregroundStyle(Color.ftdAccentOrange)
+        content
+            .navigationTitle("My Profile")
+            .navigationBarTitleDisplayMode(.inline)
+            .toolbar {
+                ToolbarItem(placement: .navigationBarLeading) {
+                    Button { dismiss() } label: {
+                        HStack(spacing: DesignTokens.Spacing.xs) {
+                            Image(systemName: "chevron.left").fontWeight(.semibold)
+                            Text("Back")
                         }
+                        .foregroundStyle(Color.ftdAccentOrange)
                     }
                 }
-        }
-        .task { await viewModel.fetchProfile() }
+            }
+            .task { await viewModel.fetchProfile() }
     }
 
     @ViewBuilder
@@ -37,8 +35,9 @@ struct AgentProfileView<VM: ProfileProvider>: View {
         }
     }
 
-    private func profileContent(_ p: AgentProfileData) -> some View {
-        ScrollView {
+    private func profileContent(_ p: AgentProfileFullData) -> some View {
+        let info = p.agentInfo
+        return ScrollView {
             VStack(spacing: 0) {
                 VStack(spacing: DesignTokens.Spacing.sm) {
                     ZStack {
@@ -48,13 +47,13 @@ struct AgentProfileView<VM: ProfileProvider>: View {
                                 startPoint: .topLeading, endPoint: .bottomTrailing
                             ))
                             .frame(width: 72, height: 72)
-                        Text(initials(p))
+                        Text(initials(info))
                             .font(.system(size: 26, weight: .bold))
                             .foregroundStyle(.white)
                     }
-                    Text(fullName(p))
+                    Text(fullName(info))
                         .font(.title3).fontWeight(.bold).foregroundStyle(Color.ftdTextPrimary)
-                    if let agency = p.agencyName {
+                    if let agency = info?.agencyName {
                         Text(agency).font(.subheadline).foregroundStyle(Color.ftdTextSecondary)
                     }
                 }
@@ -62,32 +61,23 @@ struct AgentProfileView<VM: ProfileProvider>: View {
                 .padding(.vertical, DesignTokens.Spacing.xxl)
                 .background(Color.ftdCardBackground)
 
-                if p.creditBalance != nil || p.bookingBalance != nil {
-                    HStack(spacing: DesignTokens.Spacing.md) {
-                        balanceCard("Credit Balance",  amount: p.creditBalance,  color: Color.ftdAccentOrange)
-                        balanceCard("Booking Balance", amount: p.bookingBalance, color: Color.ftdAccentTeal)
-                    }
-                    .padding(DesignTokens.Spacing.lg)
-                }
-
                 infoSection("Contact", rows: [
-                    ("envelope",         "Email",   p.agentEmail),
-                    ("phone",            "Mobile",  p.mobileNo),
-                    ("phone.badge.plus", "Office",  p.officePhoneNo),
-                    ("globe",            "Website", p.website),
+                    ("envelope",         "Email",   info?.agentEmail),
+                    ("phone",            "Mobile",  info?.mobileNo),
+                    ("phone.badge.plus", "Office",  info?.officePhoneNo),
+                    ("globe",            "Website", info?.website),
                 ])
                 infoSection("Identity", rows: [
-                    ("number",     "Agent No",   p.agentNo),
-                    ("building.2", "Agent ID",   p.agentId),
-                    ("briefcase",  "Agent Type", p.agentType),
-                    ("doc.text",   "PAN No",     p.panNo),
+                    ("doc.text",   "PAN No",     info?.panNo),
+                    ("number",     "Aadhar",     info?.aadharNo),
+                    ("building.2", "Agency",     info?.agencyName),
                 ])
                 infoSection("Address", rows: [
-                    ("mappin",   "Address",  p.address),
-                    ("building", "City",     p.city),
-                    ("map",      "State",    p.state),
-                    ("globe",    "Country",  p.country),
-                    ("number",   "PIN Code", p.pinCode),
+                    ("mappin",   "Address",  info?.address),
+                    ("building", "City",     info?.city),
+                    ("map",      "State",    info?.state),
+                    ("globe",    "Country",  info?.country),
+                    ("number",   "PIN Code", info?.pinCode),
                 ])
             }
         }
@@ -147,16 +137,16 @@ struct AgentProfileView<VM: ProfileProvider>: View {
         )
     }
 
-    private func fullName(_ p: AgentProfileData) -> String {
-        [p.title, p.firstName, p.lastName]
+    private func fullName(_ info: AgentInfoData?) -> String {
+        [info?.title, info?.firstName, info?.lastName]
             .compactMap { $0?.trimmingCharacters(in: .whitespaces) }
             .filter { !$0.isEmpty }
             .joined(separator: " ")
-            .nilIfEmpty ?? p.agencyName ?? "Agent"
+            .nilIfEmpty ?? info?.agencyName ?? "Agent"
     }
 
-    private func initials(_ p: AgentProfileData) -> String {
-        let words = [p.firstName, p.lastName].compactMap { $0?.first.map { String($0).uppercased() } }
+    private func initials(_ info: AgentInfoData?) -> String {
+        let words = [info?.firstName, info?.lastName].compactMap { $0?.first.map { String($0).uppercased() } }
         return words.isEmpty ? "?" : words.joined()
     }
 }
@@ -210,10 +200,10 @@ struct MarkupView<VM: MarkupsProvider>: View {
 
                     ForEach(Array(viewModel.markups.enumerated()), id: \.offset) { idx, item in
                         HStack(spacing: 0) {
-                            dataCell(item.serviceType, flex: 2, primary: true)
-                            dataCell(item.airline ?? item.cabType, flex: 1)
+                            dataCell(item.airlines, flex: 2, primary: true)
+                            dataCell(item.airlineCode, flex: 1)
                             dataCell(item.markupType, flex: 1)
-                            dataCell(item.markupValue, flex: 1, accent: true)
+                            dataCell(item.markupValue1, flex: 1, accent: true)
                         }
                         .background(idx % 2 == 0 ? Color.ftdCardBackground : Color.ftdInputBackground)
                         if idx < viewModel.markups.count - 1 { Divider() }

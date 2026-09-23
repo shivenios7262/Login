@@ -444,118 +444,194 @@ struct AgentBookingsResponse: Codable, Sendable {
 
 // MARK: - Agent Profile Response
 
-struct AgentProfileData: Codable, Sendable {
-    let agentId: String?
-    let distId: String?
-    let agentNo: String?
-    let agencyName: String?
-    let agentEmail: String?
-    let agentLogo: String?
+struct AgentInfoData: Codable, Sendable {
     let title: String?
     let firstName: String?
     let lastName: String?
+    let designation: String?
+    let website: String?
+    let agentEmail: String?
+    let agencyName: String?
+    let agentLogo: String?
     let mobileNo: String?
     let officePhoneNo: String?
-    let creditBalance: String?
-    let bookingBalance: String?
     let address: String?
     let city: String?
     let state: String?
     let country: String?
     let pinCode: String?
     let panNo: String?
-    let website: String?
-    let agentType: String?
+    let namePanCard: String?
+    let aadharNo: String?
 
     enum CodingKeys: String, CodingKey {
-        case title, address, city, state, country, website
-        case agentId       = "agent_id"
-        case distId        = "dist_id"
-        case agentNo       = "agent_no"
-        case agencyName    = "agency_name"
-        case agentEmail    = "agent_email"
-        case agentLogo     = "agent_logo"
-        case firstName     = "first_name"
-        case lastName      = "last_name"
-        case mobileNo      = "mobile_no"
+        case title, address, city, state, country, designation, website
+        case firstName    = "first_name"
+        case lastName     = "last_name"
+        case agentEmail   = "agent_email"
+        case agencyName   = "agency_name"
+        case agentLogo    = "agent_logo"
+        case mobileNo     = "mobile_no"
         case officePhoneNo = "office_phone_no"
-        case creditBalance = "creditbalance"
-        case bookingBalance = "bookingbalance"
-        case pinCode       = "pin_code"
-        case panNo         = "pan_no"
-        case agentType     = "agent_type"
+        case pinCode      = "pin_code"
+        case panNo        = "pan_no"
+        case namePanCard  = "name_pan_card"
+        case aadharNo     = "aadhar_no"
     }
 
     nonisolated init(from decoder: any Decoder) throws {
         let c = try decoder.container(keyedBy: CodingKeys.self)
-        agentId       = try c.decodeIfPresent(String.self, forKey: .agentId)
-        distId        = try c.decodeIfPresent(String.self, forKey: .distId)
-        agentNo       = try c.decodeIfPresent(String.self, forKey: .agentNo)
-        agencyName    = try c.decodeIfPresent(String.self, forKey: .agencyName)
-        agentEmail    = try c.decodeIfPresent(String.self, forKey: .agentEmail)
-        agentLogo     = try c.decodeIfPresent(String.self, forKey: .agentLogo)
-        title         = try c.decodeIfPresent(String.self, forKey: .title)
-        firstName     = try c.decodeIfPresent(String.self, forKey: .firstName)
-        lastName      = try c.decodeIfPresent(String.self, forKey: .lastName)
-        mobileNo      = try c.decodeIfPresent(String.self, forKey: .mobileNo)
+        title        = try c.decodeIfPresent(String.self, forKey: .title)
+        firstName    = try c.decodeIfPresent(String.self, forKey: .firstName)
+        lastName     = try c.decodeIfPresent(String.self, forKey: .lastName)
+        designation  = try c.decodeIfPresent(String.self, forKey: .designation)
+        website      = try c.decodeIfPresent(String.self, forKey: .website)
+        agentEmail   = try c.decodeIfPresent(String.self, forKey: .agentEmail)
+        agencyName   = try c.decodeIfPresent(String.self, forKey: .agencyName)
+        agentLogo    = try c.decodeIfPresent(String.self, forKey: .agentLogo)
+        mobileNo     = try c.decodeIfPresent(String.self, forKey: .mobileNo)
         officePhoneNo = try c.decodeIfPresent(String.self, forKey: .officePhoneNo)
-        creditBalance = try c.decodeIfPresent(String.self, forKey: .creditBalance)
-        bookingBalance = try c.decodeIfPresent(String.self, forKey: .bookingBalance)
-        address       = try c.decodeIfPresent(String.self, forKey: .address)
-        city          = try c.decodeIfPresent(String.self, forKey: .city)
-        state         = try c.decodeIfPresent(String.self, forKey: .state)
-        country       = try c.decodeIfPresent(String.self, forKey: .country)
-        pinCode       = try c.decodeIfPresent(String.self, forKey: .pinCode)
-        panNo         = try c.decodeIfPresent(String.self, forKey: .panNo)
-        website       = try c.decodeIfPresent(String.self, forKey: .website)
-        agentType     = try c.decodeIfPresent(String.self, forKey: .agentType)
+        address      = try c.decodeIfPresent(String.self, forKey: .address)
+        city         = try c.decodeIfPresent(String.self, forKey: .city)
+        state        = try c.decodeIfPresent(String.self, forKey: .state)
+        country      = try c.decodeIfPresent(String.self, forKey: .country)
+        pinCode      = try c.decodeIfPresent(String.self, forKey: .pinCode)
+        panNo        = try c.decodeIfPresent(String.self, forKey: .panNo)
+        namePanCard  = try c.decodeIfPresent(String.self, forKey: .namePanCard)
+        aadharNo     = try c.decodeIfPresent(String.self, forKey: .aadharNo)
+    }
+}
+
+struct TravellerAPIItem: Codable, Sendable {
+    let travelId: String
+    let title: String?
+    let firstName: String?
+    let lastName: String?
+    let dob: String?
+    let nationality: String?
+    let passportNo: String?
+    let issueCountry: String?
+    let expiryDate: String?
+    let sex: String?
+    let age: String?
+    let paxType: String?
+
+    enum CodingKeys: String, CodingKey {
+        case title, nationality, sex, age
+        case travelId    = "travel_id"
+        case firstName   = "first_name"
+        case lastName    = "last_name"
+        case dob         = "DOB"
+        case passportNo  = "passport_no"
+        case issueCountry = "issue_country"
+        case expiryDate  = "expiry_date"
+        case paxType     = "pax_type"
     }
 
-    nonisolated func encode(to encoder: any Encoder) throws {
-        var c = encoder.container(keyedBy: CodingKeys.self)
-        try c.encodeIfPresent(agentId,        forKey: .agentId)
-        try c.encodeIfPresent(distId,         forKey: .distId)
-        try c.encodeIfPresent(agentNo,        forKey: .agentNo)
-        try c.encodeIfPresent(agencyName,     forKey: .agencyName)
-        try c.encodeIfPresent(agentEmail,     forKey: .agentEmail)
-        try c.encodeIfPresent(agentLogo,      forKey: .agentLogo)
-        try c.encodeIfPresent(title,          forKey: .title)
-        try c.encodeIfPresent(firstName,      forKey: .firstName)
-        try c.encodeIfPresent(lastName,       forKey: .lastName)
-        try c.encodeIfPresent(mobileNo,       forKey: .mobileNo)
-        try c.encodeIfPresent(officePhoneNo,  forKey: .officePhoneNo)
-        try c.encodeIfPresent(creditBalance,  forKey: .creditBalance)
-        try c.encodeIfPresent(bookingBalance, forKey: .bookingBalance)
-        try c.encodeIfPresent(address,        forKey: .address)
-        try c.encodeIfPresent(city,           forKey: .city)
-        try c.encodeIfPresent(state,          forKey: .state)
-        try c.encodeIfPresent(country,        forKey: .country)
-        try c.encodeIfPresent(pinCode,        forKey: .pinCode)
-        try c.encodeIfPresent(panNo,          forKey: .panNo)
-        try c.encodeIfPresent(website,        forKey: .website)
-        try c.encodeIfPresent(agentType,      forKey: .agentType)
+    nonisolated init(from decoder: any Decoder) throws {
+        let c = try decoder.container(keyedBy: CodingKeys.self)
+        travelId     = (try? c.decode(String.self, forKey: .travelId)) ?? ""
+        title        = try c.decodeIfPresent(String.self, forKey: .title)
+        firstName    = try c.decodeIfPresent(String.self, forKey: .firstName)
+        lastName     = try c.decodeIfPresent(String.self, forKey: .lastName)
+        dob          = try c.decodeIfPresent(String.self, forKey: .dob)
+        nationality  = try c.decodeIfPresent(String.self, forKey: .nationality)
+        passportNo   = try c.decodeIfPresent(String.self, forKey: .passportNo)
+        issueCountry = try c.decodeIfPresent(String.self, forKey: .issueCountry)
+        expiryDate   = try c.decodeIfPresent(String.self, forKey: .expiryDate)
+        sex          = try c.decodeIfPresent(String.self, forKey: .sex)
+        age          = try c.decodeIfPresent(String.self, forKey: .age)
+        paxType      = try c.decodeIfPresent(String.self, forKey: .paxType)
+    }
+}
+
+struct GSTAPIItem: Codable, Sendable {
+    let gstId: String
+    let gstNumber: String?
+    let gstCompany: String?
+    let gstMobileNo: String?
+    let gstEmail: String?
+    let gstAddress: String?
+
+    enum CodingKeys: String, CodingKey {
+        case gstId      = "gst_id"
+        case gstNumber  = "gst_number"
+        case gstCompany = "gst_company"
+        case gstMobileNo = "gst_mobile_no"
+        case gstEmail   = "gst_email"
+        case gstAddress = "gst_address"
+    }
+
+    nonisolated init(from decoder: any Decoder) throws {
+        let c = try decoder.container(keyedBy: CodingKeys.self)
+        if let str = try? c.decode(String.self, forKey: .gstId) {
+            gstId = str
+        } else if let int = try? c.decode(Int.self, forKey: .gstId) {
+            gstId = String(int)
+        } else {
+            gstId = ""
+        }
+        gstNumber  = try c.decodeIfPresent(String.self, forKey: .gstNumber)
+        gstCompany = try c.decodeIfPresent(String.self, forKey: .gstCompany)
+        gstMobileNo = try c.decodeIfPresent(String.self, forKey: .gstMobileNo)
+        gstEmail   = try c.decodeIfPresent(String.self, forKey: .gstEmail)
+        gstAddress = try c.decodeIfPresent(String.self, forKey: .gstAddress)
+    }
+}
+
+struct ProfileCountryItem: Codable, Sendable {
+    let id: String
+    let name: String
+
+    enum CodingKeys: String, CodingKey { case id, name }
+
+    nonisolated init(from decoder: any Decoder) throws {
+        let c = try decoder.container(keyedBy: CodingKeys.self)
+        id   = (try? c.decode(String.self, forKey: .id)) ?? ""
+        name = (try? c.decode(String.self, forKey: .name)) ?? ""
+    }
+}
+
+struct AgentProfileFullData: Codable, Sendable {
+    let agentInfo: AgentInfoData?
+    let travellersList: [TravellerAPIItem]
+    let gstList: [GSTAPIItem]
+    let countryList: [ProfileCountryItem]
+
+    enum CodingKeys: String, CodingKey {
+        case agentInfo      = "agent_info"
+        case travellersList = "travellers_list"
+        case gstList        = "gst_list"
+        case countryList    = "country_list"
+    }
+
+    nonisolated init(from decoder: any Decoder) throws {
+        let c = try decoder.container(keyedBy: CodingKeys.self)
+        agentInfo      = try c.decodeIfPresent(AgentInfoData.self,        forKey: .agentInfo)
+        travellersList = (try? c.decode([TravellerAPIItem].self,           forKey: .travellersList)) ?? []
+        gstList        = (try? c.decode([GSTAPIItem].self,                 forKey: .gstList)) ?? []
+        countryList    = (try? c.decode([ProfileCountryItem].self,         forKey: .countryList)) ?? []
     }
 }
 
 struct AgentProfileResponse: Codable, Sendable {
     let status: Bool
     let message: String?
-    let data: AgentProfileData?
+    let data: AgentProfileFullData?
 
     enum CodingKeys: String, CodingKey { case status, message, data }
 
     nonisolated init(from decoder: any Decoder) throws {
         let c = try decoder.container(keyedBy: CodingKeys.self)
         status  = try c.decode(Bool.self, forKey: .status)
-        message = try c.decodeIfPresent(String.self,          forKey: .message)
-        data    = try c.decodeIfPresent(AgentProfileData.self, forKey: .data)
+        message = try c.decodeIfPresent(String.self,              forKey: .message)
+        data    = try c.decodeIfPresent(AgentProfileFullData.self, forKey: .data)
     }
 
     nonisolated func encode(to encoder: any Encoder) throws {
         var c = encoder.container(keyedBy: CodingKeys.self)
         try c.encode(status, forKey: .status)
         try c.encodeIfPresent(message, forKey: .message)
-        try c.encodeIfPresent(data,    forKey: .data)
     }
 }
 
@@ -675,20 +751,28 @@ struct AgencyStatementData: Codable, Sendable {
     let toDate: String?
     let transactionType: String?
     let depositStatement: [StatementItem]?
+    let transactionTypes: [String: String]?
 
     enum CodingKeys: String, CodingKey {
         case fromDate         = "fromdate"
         case toDate           = "todate"
         case transactionType  = "trasactiontype"
         case depositStatement = "deposit_statement"
+        case transactionTypes = "transaction_types"
     }
 
     nonisolated init(from decoder: any Decoder) throws {
         let c = try decoder.container(keyedBy: CodingKeys.self)
-        fromDate         = try c.decodeIfPresent(String.self,        forKey: .fromDate)
-        toDate           = try c.decodeIfPresent(String.self,        forKey: .toDate)
-        transactionType  = try c.decodeIfPresent(String.self,        forKey: .transactionType)
-        depositStatement = try c.decodeIfPresent([StatementItem].self, forKey: .depositStatement)
+        fromDate         = try c.decodeIfPresent(String.self,            forKey: .fromDate)
+        toDate           = try c.decodeIfPresent(String.self,            forKey: .toDate)
+        transactionType  = try c.decodeIfPresent(String.self,            forKey: .transactionType)
+        // API returns `false` (not null) when there are no results; treat any type mismatch as empty.
+        do {
+            depositStatement = try c.decodeIfPresent([StatementItem].self, forKey: .depositStatement)
+        } catch DecodingError.typeMismatch {
+            depositStatement = nil
+        }
+        transactionTypes = try c.decodeIfPresent([String: String].self,  forKey: .transactionTypes)
     }
 
     nonisolated func encode(to encoder: any Encoder) throws {
@@ -697,6 +781,7 @@ struct AgencyStatementData: Codable, Sendable {
         try c.encodeIfPresent(toDate,           forKey: .toDate)
         try c.encodeIfPresent(transactionType,  forKey: .transactionType)
         try c.encodeIfPresent(depositStatement, forKey: .depositStatement)
+        try c.encodeIfPresent(transactionTypes, forKey: .transactionTypes)
     }
 }
 
@@ -724,53 +809,201 @@ struct AgencyStatementResponse: Codable, Sendable {
 
 // MARK: - Agent Markups Response
 
+// Per-airline flight markup entry (agent_b2b_markup_manager)
 struct MarkupItem: Codable, Sendable, Identifiable {
-    var id: String { serviceType ?? UUID().uuidString }
-    let serviceType: String?
-    let markupType: String?
-    let markupValue: String?
-    let airline: String?
-    let cabType: String?
+    var id: String { domId ?? UUID().uuidString }
+    let domId: String?
+    let agentId: String?
+    let airlines: String?       // e.g. "Generic International", "Air India"
+    let airlineCode: String?    // e.g. "INT", "DOM", "AI"
+    let airlineType: String?
+    let markupType: String?     // "Fixed" / "Percentage"
+    let markupValue1: String?
 
     enum CodingKeys: String, CodingKey {
-        case airline
-        case serviceType  = "service_type"
+        case airlines
+        case domId        = "dom_id"
+        case agentId      = "agent_id"
+        case airlineCode  = "airline_code"
+        case airlineType  = "airline_type"
         case markupType   = "markup_type"
-        case markupValue  = "markup_value"
-        case cabType      = "cab_type"
+        case markupValue1 = "markup_value1"
     }
 
     nonisolated init(from decoder: any Decoder) throws {
-        let c = try decoder.container(keyedBy: CodingKeys.self)
-        serviceType  = try c.decodeIfPresent(String.self, forKey: .serviceType)
+        let c        = try decoder.container(keyedBy: CodingKeys.self)
+        domId        = try c.decodeIfPresent(String.self, forKey: .domId)
+        agentId      = try c.decodeIfPresent(String.self, forKey: .agentId)
+        airlines     = try c.decodeIfPresent(String.self, forKey: .airlines)
+        airlineCode  = try c.decodeIfPresent(String.self, forKey: .airlineCode)
+        airlineType  = try c.decodeIfPresent(String.self, forKey: .airlineType)
         markupType   = try c.decodeIfPresent(String.self, forKey: .markupType)
-        markupValue  = try c.decodeIfPresent(String.self, forKey: .markupValue)
-        airline      = try c.decodeIfPresent(String.self, forKey: .airline)
-        cabType      = try c.decodeIfPresent(String.self, forKey: .cabType)
+        markupValue1 = try c.decodeIfPresent(String.self, forKey: .markupValue1)
     }
 
     nonisolated func encode(to encoder: any Encoder) throws {
         var c = encoder.container(keyedBy: CodingKeys.self)
-        try c.encodeIfPresent(serviceType,  forKey: .serviceType)
+        try c.encodeIfPresent(domId,        forKey: .domId)
+        try c.encodeIfPresent(agentId,      forKey: .agentId)
+        try c.encodeIfPresent(airlines,     forKey: .airlines)
+        try c.encodeIfPresent(airlineCode,  forKey: .airlineCode)
+        try c.encodeIfPresent(airlineType,  forKey: .airlineType)
         try c.encodeIfPresent(markupType,   forKey: .markupType)
-        try c.encodeIfPresent(markupValue,  forKey: .markupValue)
-        try c.encodeIfPresent(airline,      forKey: .airline)
-        try c.encodeIfPresent(cabType,      forKey: .cabType)
+        try c.encodeIfPresent(markupValue1, forKey: .markupValue1)
     }
+}
+
+// Master airline catalog (b2b_domestic_list)
+struct AirlineListItem: Codable, Sendable, Identifiable {
+    var id: String { airlineId }
+    let airlineId: String
+    let airlines: String
+    let airlineCode: String
+    let airlineType: String
+    let groupId: String
+
+    enum CodingKeys: String, CodingKey {
+        case airlines
+        case airlineId   = "airline_id"
+        case airlineCode = "airline_code"
+        case airlineType = "airline_type"
+        case groupId     = "group_id"
+    }
+
+    nonisolated init(from decoder: any Decoder) throws {
+        let c       = try decoder.container(keyedBy: CodingKeys.self)
+        airlineId   = (try? c.decode(String.self, forKey: .airlineId)) ?? ""
+        airlines    = (try? c.decode(String.self, forKey: .airlines))  ?? ""
+        airlineCode = (try? c.decode(String.self, forKey: .airlineCode)) ?? ""
+        airlineType = (try? c.decode(String.self, forKey: .airlineType)) ?? ""
+        groupId     = (try? c.decode(String.self, forKey: .groupId)) ?? ""
+    }
+}
+
+// Bus / Cab markup (b2b_bus_markup_list / b2b_cab_markup_list)
+// markup_process: "1" = Percentage, "2" = Fixed
+struct BusMarkupItem: Codable, Sendable {
+    let domId: String?
+    let agentId: String?
+    let markup: String?
+    let markupProcess: String?
+    let status: String?
+
+    enum CodingKeys: String, CodingKey {
+        case markup, status
+        case domId         = "dom_id"
+        case agentId       = "agent_id"
+        case markupProcess = "markup_process"
+    }
+
+    nonisolated init(from decoder: any Decoder) throws {
+        let c         = try decoder.container(keyedBy: CodingKeys.self)
+        domId         = try c.decodeIfPresent(String.self, forKey: .domId)
+        agentId       = try c.decodeIfPresent(String.self, forKey: .agentId)
+        markup        = try c.decodeIfPresent(String.self, forKey: .markup)
+        markupProcess = try c.decodeIfPresent(String.self, forKey: .markupProcess)
+        status        = try c.decodeIfPresent(String.self, forKey: .status)
+    }
+}
+
+// Hotel markup (b2b_hotel_markup_list)
+struct HotelMarkupItem: Codable, Sendable {
+    let domId: String?
+    let agentId: String?
+    let markup: String?           // domestic value
+    let intlMarkup: String?       // international value
+    let markupProcess: String?    // domestic: "1"=Pct, "2"=Fixed
+    let intlMarkupProcess: String? // international: "1"=Pct, "2"=Fixed
+
+    enum CodingKeys: String, CodingKey {
+        case markup
+        case domId             = "dom_id"
+        case agentId           = "agent_id"
+        case intlMarkup        = "intl_markup"
+        case markupProcess     = "markup_process"
+        case intlMarkupProcess = "intl_markup_process"
+    }
+
+    nonisolated init(from decoder: any Decoder) throws {
+        let c              = try decoder.container(keyedBy: CodingKeys.self)
+        domId              = try c.decodeIfPresent(String.self, forKey: .domId)
+        agentId            = try c.decodeIfPresent(String.self, forKey: .agentId)
+        markup             = try c.decodeIfPresent(String.self, forKey: .markup)
+        intlMarkup         = try c.decodeIfPresent(String.self, forKey: .intlMarkup)
+        markupProcess      = try c.decodeIfPresent(String.self, forKey: .markupProcess)
+        intlMarkupProcess  = try c.decodeIfPresent(String.self, forKey: .intlMarkupProcess)
+    }
+}
+
+// eSIM markup (b2b_esim_markup_list)
+struct EsimMarkupItem: Codable, Sendable {
+    let domId: String?
+    let agentId: String?
+    let markup: String?
+    let markupProcess: String?
+
+    enum CodingKeys: String, CodingKey {
+        case markup
+        case domId         = "dom_id"
+        case agentId       = "agent_id"
+        case markupProcess = "markup_process"
+    }
+
+    nonisolated init(from decoder: any Decoder) throws {
+        let c         = try decoder.container(keyedBy: CodingKeys.self)
+        domId         = try c.decodeIfPresent(String.self, forKey: .domId)
+        agentId       = try c.decodeIfPresent(String.self, forKey: .agentId)
+        markup        = try c.decodeIfPresent(String.self, forKey: .markup)
+        markupProcess = try c.decodeIfPresent(String.self, forKey: .markupProcess)
+    }
+}
+
+struct AgentMarkupsData: Codable, Sendable {
+    let b2bDomesticList: [AirlineListItem]?
+    let agentB2bMarkupManager: [MarkupItem]?
+    let b2bBusMarkupList: [BusMarkupItem]?
+    let b2bCabMarkupList: [BusMarkupItem]?
+    let b2bHotelMarkupList: [HotelMarkupItem]?
+    let b2bEsimMarkupList: [EsimMarkupItem]?
+    let displayNet: String?
+
+    enum CodingKeys: String, CodingKey {
+        case b2bDomesticList       = "b2b_domestic_list"
+        case agentB2bMarkupManager = "agent_b2b_markup_manager"
+        case b2bBusMarkupList      = "b2b_bus_markup_list"
+        case b2bCabMarkupList      = "b2b_cab_markup_list"
+        case b2bHotelMarkupList    = "b2b_hotel_markup_list"
+        case b2bEsimMarkupList     = "b2b_esim_markup_list"
+        case displayNet            = "display_net"
+    }
+
+    nonisolated init(from decoder: any Decoder) throws {
+        let c                  = try decoder.container(keyedBy: CodingKeys.self)
+        b2bDomesticList        = try c.decodeIfPresent([AirlineListItem].self, forKey: .b2bDomesticList)
+        agentB2bMarkupManager  = try c.decodeIfPresent([MarkupItem].self,      forKey: .agentB2bMarkupManager)
+        b2bBusMarkupList       = try c.decodeIfPresent([BusMarkupItem].self,   forKey: .b2bBusMarkupList)
+        b2bCabMarkupList       = try c.decodeIfPresent([BusMarkupItem].self,   forKey: .b2bCabMarkupList)
+        b2bHotelMarkupList     = try c.decodeIfPresent([HotelMarkupItem].self, forKey: .b2bHotelMarkupList)
+        b2bEsimMarkupList      = try c.decodeIfPresent([EsimMarkupItem].self,  forKey: .b2bEsimMarkupList)
+        displayNet             = try c.decodeIfPresent(String.self,            forKey: .displayNet)
+    }
+
+    // Per-airline flight markups — used by the profile markup table
+    var allItems: [MarkupItem] { agentB2bMarkupManager ?? [] }
 }
 
 struct AgentMarkupsResponse: Codable, Sendable {
     let status: Bool
     let message: String?
-    let data: [MarkupItem]?
+    let data: AgentMarkupsData?
 
     enum CodingKeys: String, CodingKey { case status, message, data }
 
     nonisolated init(from decoder: any Decoder) throws {
         let c = try decoder.container(keyedBy: CodingKeys.self)
         status  = try c.decode(Bool.self, forKey: .status)
-        message = try c.decodeIfPresent(String.self,     forKey: .message)
-        data    = try c.decodeIfPresent([MarkupItem].self, forKey: .data)
+        message = try c.decodeIfPresent(String.self,          forKey: .message)
+        data    = try c.decodeIfPresent(AgentMarkupsData.self, forKey: .data)
     }
 
     nonisolated func encode(to encoder: any Encoder) throws {
@@ -785,144 +1018,820 @@ struct AgentMarkupsResponse: Codable, Sendable {
 
 struct AgentRefundsRequest: Codable, Sendable {
     let searchType: Int
-    // Flight
-    let fromDate: String?
-    let toDate: String?
+
+    // Flight — no prefix (search_type = 1)
+    let fromDate: String?       // booking date from
+    let toDate: String?         // booking date to
+    let rFromDate: String?      // refund date from
+    let rToDate: String?        // refund date to
+    let fPnr: String?
     let bookingId: String?
-    // Hotel
-    let hFromDate: String?
-    let hToDate: String?
-    let hBookingId: String?
-    // Bus
+    let fRefunded: String?      // "0" = Under Process, "1" = Refunded
+
+    // Bus — b_ prefix (search_type = 2)
     let bFromDate: String?
     let bToDate: String?
+    let bRFromDate: String?
+    let bRToDate: String?
     let bBookingId: String?
-    // Cab
+    let bPnr: String?
+    let bRefundStatus: String?
+
+    // Cab — c_ prefix (search_type = 3)
     let cFromDate: String?
     let cToDate: String?
+    let cRFromDate: String?
+    let cRToDate: String?
     let cBookingId: String?
-    // Insurance
+    let cPnr: String?
+    let cRefunded: String?
+
+    // Hotel — h_ prefix (search_type = 4)
+    let hFromDate: String?
+    let hToDate: String?
+    let hRFromDate: String?
+    let hRToDate: String?
+    let hBookingId: String?
+    let hPnr: String?
+    let hRefundStatus: String?
+
+    // Insurance — i_ prefix (search_type = 5)
     let iFromDate: String?
     let iToDate: String?
+    let iRFromDate: String?
+    let iRToDate: String?
+    let iPolicy: String?
     let iBookingId: String?
-    // Visa
+    let iRefundStatus: String?
+
+    // Visa — v_ prefix (search_type = 6, no status/PNR)
     let vFromDate: String?
     let vToDate: String?
+    let vRFromDate: String?
+    let vRToDate: String?
     let vBookingId: String?
-    // eSIM
+
+    // eSIM — e_ prefix (search_type = 7)
     let eFromDate: String?
     let eToDate: String?
+    let eRFromDate: String?
+    let eRToDate: String?
     let eBookingId: String?
+    let eRefundStatus: String?
 
     enum CodingKeys: String, CodingKey {
-        case searchType = "search_type"
-        case fromDate   = "fromdate"
-        case toDate     = "todate"
-        case bookingId  = "bookingid"
-        case hFromDate  = "h_fromdate"
-        case hToDate    = "h_todate"
-        case hBookingId = "h_bookingid"
-        case bFromDate  = "b_fromdate"
-        case bToDate    = "b_todate"
-        case bBookingId = "b_bookingid"
-        case cFromDate  = "c_fromdate"
-        case cToDate    = "c_todate"
-        case cBookingId = "c_bookingid"
-        case iFromDate  = "i_fromdate"
-        case iToDate    = "i_todate"
-        case iBookingId = "i_bookingid"
-        case vFromDate  = "v_fromdate"
-        case vToDate    = "v_todate"
-        case vBookingId = "v_bookingid"
-        case eFromDate  = "e_fromdate"
-        case eToDate    = "e_todate"
-        case eBookingId = "e_bookingid"
+        case searchType    = "search_type"
+        case fromDate      = "fromdate"
+        case toDate        = "todate"
+        case rFromDate     = "rfromdate"
+        case rToDate       = "rtodate"
+        case fPnr          = "f_pnr"
+        case bookingId     = "bookingid"
+        case fRefunded     = "f_refunded"
+        case bFromDate     = "b_fromdate"
+        case bToDate       = "b_todate"
+        case bRFromDate    = "b_rfromdate"
+        case bRToDate      = "b_rtodate"
+        case bBookingId    = "b_bookingid"
+        case bPnr          = "b_pnr"
+        case bRefundStatus = "b_refund_status"
+        case cFromDate     = "c_fromdate"
+        case cToDate       = "c_todate"
+        case cRFromDate    = "c_rfromdate"
+        case cRToDate      = "c_rtodate"
+        case cBookingId    = "c_bookingid"
+        case cPnr          = "c_pnr"
+        case cRefunded     = "c_refunded"
+        case hFromDate     = "h_fromdate"
+        case hToDate       = "h_todate"
+        case hRFromDate    = "h_rfromdate"
+        case hRToDate      = "h_rtodate"
+        case hBookingId    = "h_bookingid"
+        case hPnr          = "h_pnr"
+        case hRefundStatus = "h_refund_status"
+        case iFromDate     = "i_fromdate"
+        case iToDate       = "i_todate"
+        case iRFromDate    = "i_rfromdate"
+        case iRToDate      = "i_rtodate"
+        case iPolicy       = "i_policy"
+        case iBookingId    = "i_bookingid"
+        case iRefundStatus = "i_refund_status"
+        case vFromDate     = "v_fromdate"
+        case vToDate       = "v_todate"
+        case vRFromDate    = "v_rfromdate"
+        case vRToDate      = "v_rtodate"
+        case vBookingId    = "v_bookingid"
+        case eFromDate     = "e_fromdate"
+        case eToDate       = "e_todate"
+        case eRFromDate    = "e_rfromdate"
+        case eRToDate      = "e_rtodate"
+        case eBookingId    = "e_bookingid"
+        case eRefundStatus = "e_refund_status"
     }
 
     nonisolated init(
         searchType: Int,
-        fromDate: String? = nil, toDate: String? = nil, bookingId: String? = nil,
-        hFromDate: String? = nil, hToDate: String? = nil, hBookingId: String? = nil,
-        bFromDate: String? = nil, bToDate: String? = nil, bBookingId: String? = nil,
-        cFromDate: String? = nil, cToDate: String? = nil, cBookingId: String? = nil,
-        iFromDate: String? = nil, iToDate: String? = nil, iBookingId: String? = nil,
-        vFromDate: String? = nil, vToDate: String? = nil, vBookingId: String? = nil,
-        eFromDate: String? = nil, eToDate: String? = nil, eBookingId: String? = nil
+        fromDate: String? = nil, toDate: String? = nil,
+        rFromDate: String? = nil, rToDate: String? = nil,
+        fPnr: String? = nil, bookingId: String? = nil, fRefunded: String? = nil,
+        bFromDate: String? = nil, bToDate: String? = nil,
+        bRFromDate: String? = nil, bRToDate: String? = nil,
+        bBookingId: String? = nil, bPnr: String? = nil, bRefundStatus: String? = nil,
+        cFromDate: String? = nil, cToDate: String? = nil,
+        cRFromDate: String? = nil, cRToDate: String? = nil,
+        cBookingId: String? = nil, cPnr: String? = nil, cRefunded: String? = nil,
+        hFromDate: String? = nil, hToDate: String? = nil,
+        hRFromDate: String? = nil, hRToDate: String? = nil,
+        hBookingId: String? = nil, hPnr: String? = nil, hRefundStatus: String? = nil,
+        iFromDate: String? = nil, iToDate: String? = nil,
+        iRFromDate: String? = nil, iRToDate: String? = nil,
+        iPolicy: String? = nil, iBookingId: String? = nil, iRefundStatus: String? = nil,
+        vFromDate: String? = nil, vToDate: String? = nil,
+        vRFromDate: String? = nil, vRToDate: String? = nil, vBookingId: String? = nil,
+        eFromDate: String? = nil, eToDate: String? = nil,
+        eRFromDate: String? = nil, eRToDate: String? = nil,
+        eBookingId: String? = nil, eRefundStatus: String? = nil
     ) {
-        self.searchType = searchType
-        self.fromDate   = fromDate
-        self.toDate     = toDate
-        self.bookingId  = bookingId
-        self.hFromDate  = hFromDate
-        self.hToDate    = hToDate
-        self.hBookingId = hBookingId
-        self.bFromDate  = bFromDate
-        self.bToDate    = bToDate
-        self.bBookingId = bBookingId
-        self.cFromDate  = cFromDate
-        self.cToDate    = cToDate
-        self.cBookingId = cBookingId
-        self.iFromDate  = iFromDate
-        self.iToDate    = iToDate
-        self.iBookingId = iBookingId
-        self.vFromDate  = vFromDate
-        self.vToDate    = vToDate
-        self.vBookingId = vBookingId
-        self.eFromDate  = eFromDate
-        self.eToDate    = eToDate
-        self.eBookingId = eBookingId
+        self.searchType    = searchType
+        self.fromDate      = fromDate;      self.toDate        = toDate
+        self.rFromDate     = rFromDate;     self.rToDate       = rToDate
+        self.fPnr          = fPnr;          self.bookingId     = bookingId;     self.fRefunded     = fRefunded
+        self.bFromDate     = bFromDate;     self.bToDate       = bToDate
+        self.bRFromDate    = bRFromDate;    self.bRToDate      = bRToDate
+        self.bBookingId    = bBookingId;    self.bPnr          = bPnr;          self.bRefundStatus = bRefundStatus
+        self.cFromDate     = cFromDate;     self.cToDate       = cToDate
+        self.cRFromDate    = cRFromDate;    self.cRToDate      = cRToDate
+        self.cBookingId    = cBookingId;    self.cPnr          = cPnr;          self.cRefunded     = cRefunded
+        self.hFromDate     = hFromDate;     self.hToDate       = hToDate
+        self.hRFromDate    = hRFromDate;    self.hRToDate      = hRToDate
+        self.hBookingId    = hBookingId;    self.hPnr          = hPnr;          self.hRefundStatus = hRefundStatus
+        self.iFromDate     = iFromDate;     self.iToDate       = iToDate
+        self.iRFromDate    = iRFromDate;    self.iRToDate      = iRToDate
+        self.iPolicy       = iPolicy;       self.iBookingId    = iBookingId;    self.iRefundStatus = iRefundStatus
+        self.vFromDate     = vFromDate;     self.vToDate       = vToDate
+        self.vRFromDate    = vRFromDate;    self.vRToDate      = vRToDate;      self.vBookingId    = vBookingId
+        self.eFromDate     = eFromDate;     self.eToDate       = eToDate
+        self.eRFromDate    = eRFromDate;    self.eRToDate      = eRToDate
+        self.eBookingId    = eBookingId;    self.eRefundStatus = eRefundStatus
     }
 
     nonisolated init(from decoder: any Decoder) throws {
         let c = try decoder.container(keyedBy: CodingKeys.self)
-        searchType = try c.decode(Int.self,    forKey: .searchType)
-        fromDate   = try c.decodeIfPresent(String.self, forKey: .fromDate)
-        toDate     = try c.decodeIfPresent(String.self, forKey: .toDate)
-        bookingId  = try c.decodeIfPresent(String.self, forKey: .bookingId)
-        hFromDate  = try c.decodeIfPresent(String.self, forKey: .hFromDate)
-        hToDate    = try c.decodeIfPresent(String.self, forKey: .hToDate)
-        hBookingId = try c.decodeIfPresent(String.self, forKey: .hBookingId)
-        bFromDate  = try c.decodeIfPresent(String.self, forKey: .bFromDate)
-        bToDate    = try c.decodeIfPresent(String.self, forKey: .bToDate)
-        bBookingId = try c.decodeIfPresent(String.self, forKey: .bBookingId)
-        cFromDate  = try c.decodeIfPresent(String.self, forKey: .cFromDate)
-        cToDate    = try c.decodeIfPresent(String.self, forKey: .cToDate)
-        cBookingId = try c.decodeIfPresent(String.self, forKey: .cBookingId)
-        iFromDate  = try c.decodeIfPresent(String.self, forKey: .iFromDate)
-        iToDate    = try c.decodeIfPresent(String.self, forKey: .iToDate)
-        iBookingId = try c.decodeIfPresent(String.self, forKey: .iBookingId)
-        vFromDate  = try c.decodeIfPresent(String.self, forKey: .vFromDate)
-        vToDate    = try c.decodeIfPresent(String.self, forKey: .vToDate)
-        vBookingId = try c.decodeIfPresent(String.self, forKey: .vBookingId)
-        eFromDate  = try c.decodeIfPresent(String.self, forKey: .eFromDate)
-        eToDate    = try c.decodeIfPresent(String.self, forKey: .eToDate)
-        eBookingId = try c.decodeIfPresent(String.self, forKey: .eBookingId)
+        searchType    = try c.decode(Int.self, forKey: .searchType)
+        fromDate      = try c.decodeIfPresent(String.self, forKey: .fromDate)
+        toDate        = try c.decodeIfPresent(String.self, forKey: .toDate)
+        rFromDate     = try c.decodeIfPresent(String.self, forKey: .rFromDate)
+        rToDate       = try c.decodeIfPresent(String.self, forKey: .rToDate)
+        fPnr          = try c.decodeIfPresent(String.self, forKey: .fPnr)
+        bookingId     = try c.decodeIfPresent(String.self, forKey: .bookingId)
+        fRefunded     = try c.decodeIfPresent(String.self, forKey: .fRefunded)
+        bFromDate     = try c.decodeIfPresent(String.self, forKey: .bFromDate)
+        bToDate       = try c.decodeIfPresent(String.self, forKey: .bToDate)
+        bRFromDate    = try c.decodeIfPresent(String.self, forKey: .bRFromDate)
+        bRToDate      = try c.decodeIfPresent(String.self, forKey: .bRToDate)
+        bBookingId    = try c.decodeIfPresent(String.self, forKey: .bBookingId)
+        bPnr          = try c.decodeIfPresent(String.self, forKey: .bPnr)
+        bRefundStatus = try c.decodeIfPresent(String.self, forKey: .bRefundStatus)
+        cFromDate     = try c.decodeIfPresent(String.self, forKey: .cFromDate)
+        cToDate       = try c.decodeIfPresent(String.self, forKey: .cToDate)
+        cRFromDate    = try c.decodeIfPresent(String.self, forKey: .cRFromDate)
+        cRToDate      = try c.decodeIfPresent(String.self, forKey: .cRToDate)
+        cBookingId    = try c.decodeIfPresent(String.self, forKey: .cBookingId)
+        cPnr          = try c.decodeIfPresent(String.self, forKey: .cPnr)
+        cRefunded     = try c.decodeIfPresent(String.self, forKey: .cRefunded)
+        hFromDate     = try c.decodeIfPresent(String.self, forKey: .hFromDate)
+        hToDate       = try c.decodeIfPresent(String.self, forKey: .hToDate)
+        hRFromDate    = try c.decodeIfPresent(String.self, forKey: .hRFromDate)
+        hRToDate      = try c.decodeIfPresent(String.self, forKey: .hRToDate)
+        hBookingId    = try c.decodeIfPresent(String.self, forKey: .hBookingId)
+        hPnr          = try c.decodeIfPresent(String.self, forKey: .hPnr)
+        hRefundStatus = try c.decodeIfPresent(String.self, forKey: .hRefundStatus)
+        iFromDate     = try c.decodeIfPresent(String.self, forKey: .iFromDate)
+        iToDate       = try c.decodeIfPresent(String.self, forKey: .iToDate)
+        iRFromDate    = try c.decodeIfPresent(String.self, forKey: .iRFromDate)
+        iRToDate      = try c.decodeIfPresent(String.self, forKey: .iRToDate)
+        iPolicy       = try c.decodeIfPresent(String.self, forKey: .iPolicy)
+        iBookingId    = try c.decodeIfPresent(String.self, forKey: .iBookingId)
+        iRefundStatus = try c.decodeIfPresent(String.self, forKey: .iRefundStatus)
+        vFromDate     = try c.decodeIfPresent(String.self, forKey: .vFromDate)
+        vToDate       = try c.decodeIfPresent(String.self, forKey: .vToDate)
+        vRFromDate    = try c.decodeIfPresent(String.self, forKey: .vRFromDate)
+        vRToDate      = try c.decodeIfPresent(String.self, forKey: .vRToDate)
+        vBookingId    = try c.decodeIfPresent(String.self, forKey: .vBookingId)
+        eFromDate     = try c.decodeIfPresent(String.self, forKey: .eFromDate)
+        eToDate       = try c.decodeIfPresent(String.self, forKey: .eToDate)
+        eRFromDate    = try c.decodeIfPresent(String.self, forKey: .eRFromDate)
+        eRToDate      = try c.decodeIfPresent(String.self, forKey: .eRToDate)
+        eBookingId    = try c.decodeIfPresent(String.self, forKey: .eBookingId)
+        eRefundStatus = try c.decodeIfPresent(String.self, forKey: .eRefundStatus)
     }
 
     nonisolated func encode(to encoder: any Encoder) throws {
         var c = encoder.container(keyedBy: CodingKeys.self)
         try c.encode(searchType, forKey: .searchType)
-        try c.encodeIfPresent(fromDate,   forKey: .fromDate)
-        try c.encodeIfPresent(toDate,     forKey: .toDate)
-        try c.encodeIfPresent(bookingId,  forKey: .bookingId)
-        try c.encodeIfPresent(hFromDate,  forKey: .hFromDate)
-        try c.encodeIfPresent(hToDate,    forKey: .hToDate)
-        try c.encodeIfPresent(hBookingId, forKey: .hBookingId)
-        try c.encodeIfPresent(bFromDate,  forKey: .bFromDate)
-        try c.encodeIfPresent(bToDate,    forKey: .bToDate)
-        try c.encodeIfPresent(bBookingId, forKey: .bBookingId)
-        try c.encodeIfPresent(cFromDate,  forKey: .cFromDate)
-        try c.encodeIfPresent(cToDate,    forKey: .cToDate)
-        try c.encodeIfPresent(cBookingId, forKey: .cBookingId)
-        try c.encodeIfPresent(iFromDate,  forKey: .iFromDate)
-        try c.encodeIfPresent(iToDate,    forKey: .iToDate)
-        try c.encodeIfPresent(iBookingId, forKey: .iBookingId)
-        try c.encodeIfPresent(vFromDate,  forKey: .vFromDate)
-        try c.encodeIfPresent(vToDate,    forKey: .vToDate)
-        try c.encodeIfPresent(vBookingId, forKey: .vBookingId)
-        try c.encodeIfPresent(eFromDate,  forKey: .eFromDate)
-        try c.encodeIfPresent(eToDate,    forKey: .eToDate)
-        try c.encodeIfPresent(eBookingId, forKey: .eBookingId)
+        try c.encodeIfPresent(fromDate,      forKey: .fromDate)
+        try c.encodeIfPresent(toDate,        forKey: .toDate)
+        try c.encodeIfPresent(rFromDate,     forKey: .rFromDate)
+        try c.encodeIfPresent(rToDate,       forKey: .rToDate)
+        try c.encodeIfPresent(fPnr,          forKey: .fPnr)
+        try c.encodeIfPresent(bookingId,     forKey: .bookingId)
+        try c.encodeIfPresent(fRefunded,     forKey: .fRefunded)
+        try c.encodeIfPresent(bFromDate,     forKey: .bFromDate)
+        try c.encodeIfPresent(bToDate,       forKey: .bToDate)
+        try c.encodeIfPresent(bRFromDate,    forKey: .bRFromDate)
+        try c.encodeIfPresent(bRToDate,      forKey: .bRToDate)
+        try c.encodeIfPresent(bBookingId,    forKey: .bBookingId)
+        try c.encodeIfPresent(bPnr,          forKey: .bPnr)
+        try c.encodeIfPresent(bRefundStatus, forKey: .bRefundStatus)
+        try c.encodeIfPresent(cFromDate,     forKey: .cFromDate)
+        try c.encodeIfPresent(cToDate,       forKey: .cToDate)
+        try c.encodeIfPresent(cRFromDate,    forKey: .cRFromDate)
+        try c.encodeIfPresent(cRToDate,      forKey: .cRToDate)
+        try c.encodeIfPresent(cBookingId,    forKey: .cBookingId)
+        try c.encodeIfPresent(cPnr,          forKey: .cPnr)
+        try c.encodeIfPresent(cRefunded,     forKey: .cRefunded)
+        try c.encodeIfPresent(hFromDate,     forKey: .hFromDate)
+        try c.encodeIfPresent(hToDate,       forKey: .hToDate)
+        try c.encodeIfPresent(hRFromDate,    forKey: .hRFromDate)
+        try c.encodeIfPresent(hRToDate,      forKey: .hRToDate)
+        try c.encodeIfPresent(hBookingId,    forKey: .hBookingId)
+        try c.encodeIfPresent(hPnr,          forKey: .hPnr)
+        try c.encodeIfPresent(hRefundStatus, forKey: .hRefundStatus)
+        try c.encodeIfPresent(iFromDate,     forKey: .iFromDate)
+        try c.encodeIfPresent(iToDate,       forKey: .iToDate)
+        try c.encodeIfPresent(iRFromDate,    forKey: .iRFromDate)
+        try c.encodeIfPresent(iRToDate,      forKey: .iRToDate)
+        try c.encodeIfPresent(iPolicy,       forKey: .iPolicy)
+        try c.encodeIfPresent(iBookingId,    forKey: .iBookingId)
+        try c.encodeIfPresent(iRefundStatus, forKey: .iRefundStatus)
+        try c.encodeIfPresent(vFromDate,     forKey: .vFromDate)
+        try c.encodeIfPresent(vToDate,       forKey: .vToDate)
+        try c.encodeIfPresent(vRFromDate,    forKey: .vRFromDate)
+        try c.encodeIfPresent(vRToDate,      forKey: .vRToDate)
+        try c.encodeIfPresent(vBookingId,    forKey: .vBookingId)
+        try c.encodeIfPresent(eFromDate,     forKey: .eFromDate)
+        try c.encodeIfPresent(eToDate,       forKey: .eToDate)
+        try c.encodeIfPresent(eRFromDate,    forKey: .eRFromDate)
+        try c.encodeIfPresent(eRToDate,      forKey: .eRToDate)
+        try c.encodeIfPresent(eBookingId,    forKey: .eBookingId)
+        try c.encodeIfPresent(eRefundStatus, forKey: .eRefundStatus)
+    }
+}
+
+// MARK: - Agent Refunds Response
+
+struct RefundAncillaryService: Codable, Sendable {
+    let paid: String?
+    let refund: String?
+}
+
+struct RefundAncillaryDetail: Codable, Sendable {
+    let airlineCharge: String?
+    let ftdFees: String?
+    let agentNet: String?
+    let refundAmt: String?
+    let seat: RefundAncillaryService?
+    let meal: RefundAncillaryService?
+    let baggage: RefundAncillaryService?
+    let specialService: RefundAncillaryService?
+    let webCheckin: RefundAncillaryService?
+    let refundAmounts: [Double]?
+
+    enum CodingKeys: String, CodingKey {
+        case airlineCharge  = "airline_charge"
+        case ftdFees        = "ftd_fees"
+        case agentNet       = "agent_net"
+        case refundAmt      = "refund_amt"
+        case seat, meal, baggage
+        case specialService = "special_service"
+        case webCheckin     = "web_checkin"
+        case refundAmounts  = "refund_amounts"
+    }
+
+    nonisolated init(from decoder: any Decoder) throws {
+        let c = try decoder.container(keyedBy: CodingKeys.self)
+        airlineCharge  = try c.decodeIfPresent(String.self,                    forKey: .airlineCharge)
+        ftdFees        = try c.decodeIfPresent(String.self,                    forKey: .ftdFees)
+        agentNet       = try c.decodeIfPresent(String.self,                    forKey: .agentNet)
+        refundAmt      = try c.decodeIfPresent(String.self,                    forKey: .refundAmt)
+        seat           = try? c.decodeIfPresent(RefundAncillaryService.self,   forKey: .seat)
+        meal           = try? c.decodeIfPresent(RefundAncillaryService.self,   forKey: .meal)
+        baggage        = try? c.decodeIfPresent(RefundAncillaryService.self,   forKey: .baggage)
+        specialService = try? c.decodeIfPresent(RefundAncillaryService.self,   forKey: .specialService)
+        webCheckin     = try? c.decodeIfPresent(RefundAncillaryService.self,   forKey: .webCheckin)
+        refundAmounts  = try? c.decodeIfPresent([Double].self,                 forKey: .refundAmounts)
+    }
+}
+
+struct RefundPassenger: Codable, Sendable {
+    let paxId: String?
+    let bookingId: String?
+    let ticketNo: String?
+    let name: String?
+    let pnr: String?
+    let cancelDate: String?
+    let fcid: String?
+    let paxType: String?
+    let refunded: Int?
+    let refundDate: String?
+    let cancelType: String?
+    let ancillaryRefund: RefundAncillaryDetail?
+    let refund: String?
+    let referenceId: [String]?
+    let valueDate: [String]?
+
+    enum CodingKeys: String, CodingKey {
+        case paxId      = "pax_id"
+        case bookingId  = "booking_id"
+        case ticketNo   = "ticket_no"
+        case name, pnr, fcid
+        case cancelDate = "cancel_date"
+        case paxType    = "pax_type"
+        case refunded
+        case refundDate = "refund_date"
+        case cancelType = "cancel_type"
+        case ancillaryRefund = "ancillary_refund"
+        case refund
+        case referenceId = "reference_id"
+        case valueDate   = "value_date"
+    }
+
+    nonisolated init(from decoder: any Decoder) throws {
+        let c = try decoder.container(keyedBy: CodingKeys.self)
+        paxId           = try c.decodeIfPresent(String.self,               forKey: .paxId)
+        bookingId       = try c.decodeIfPresent(String.self,               forKey: .bookingId)
+        ticketNo        = try c.decodeIfPresent(String.self,               forKey: .ticketNo)
+        name            = try c.decodeIfPresent(String.self,               forKey: .name)
+        pnr             = try c.decodeIfPresent(String.self,               forKey: .pnr)
+        cancelDate      = try c.decodeIfPresent(String.self,               forKey: .cancelDate)
+        fcid            = try c.decodeIfPresent(String.self,               forKey: .fcid)
+        paxType         = try c.decodeIfPresent(String.self,               forKey: .paxType)
+        refunded        = try? c.decodeIfPresent(Int.self,                 forKey: .refunded)
+        refundDate      = try c.decodeIfPresent(String.self,               forKey: .refundDate)
+        cancelType      = try c.decodeIfPresent(String.self,               forKey: .cancelType)
+        ancillaryRefund = try? c.decodeIfPresent(RefundAncillaryDetail.self, forKey: .ancillaryRefund)
+        refund          = try? c.decodeIfPresent(String.self,              forKey: .refund)
+        referenceId     = try? c.decodeIfPresent([String].self,            forKey: .referenceId)
+        valueDate       = try? c.decodeIfPresent([String].self,            forKey: .valueDate)
+    }
+}
+
+// Booking-level refund entry for flight (and other verticals that share the same shape).
+struct FlightRefundBooking: Codable, Sendable {
+    let uniqueRefNo: String?
+    let refundAmount: Int?
+    let status: String?
+    let agentNet: String?
+    let validatingCarrierName: String?
+    let fareType: String?
+    let passengers: [RefundPassenger]?
+
+    enum CodingKeys: String, CodingKey {
+        case uniqueRefNo           = "uniquerefno"
+        case refundAmount          = "refund_amount"
+        case status
+        case agentNet              = "agent_net"
+        case validatingCarrierName = "validating_carrier_name"
+        case fareType              = "fare_type"
+        case passengers
+    }
+
+    nonisolated init(from decoder: any Decoder) throws {
+        let c = try decoder.container(keyedBy: CodingKeys.self)
+        uniqueRefNo           = try? c.decodeIfPresent(String.self,            forKey: .uniqueRefNo)
+        refundAmount          = try? c.decodeIfPresent(Int.self,               forKey: .refundAmount)
+        status                = try? c.decodeIfPresent(String.self,            forKey: .status)
+        agentNet              = try? c.decodeIfPresent(String.self,            forKey: .agentNet)
+        validatingCarrierName = try? c.decodeIfPresent(String.self,            forKey: .validatingCarrierName)
+        fareType              = try? c.decodeIfPresent(String.self,            forKey: .fareType)
+        passengers            = try? c.decodeIfPresent([RefundPassenger].self, forKey: .passengers)
+    }
+
+    nonisolated func encode(to encoder: any Encoder) throws {
+        var c = encoder.container(keyedBy: CodingKeys.self)
+        try c.encodeIfPresent(uniqueRefNo,           forKey: .uniqueRefNo)
+        try c.encodeIfPresent(refundAmount,          forKey: .refundAmount)
+        try c.encodeIfPresent(status,                forKey: .status)
+        try c.encodeIfPresent(agentNet,              forKey: .agentNet)
+        try c.encodeIfPresent(validatingCarrierName, forKey: .validatingCarrierName)
+        try c.encodeIfPresent(fareType,              forKey: .fareType)
+        try c.encodeIfPresent(passengers,            forKey: .passengers)
+    }
+}
+
+// Passenger entry inside an insurance refund booking.
+// All refund/date/status fields are per-passenger, not booking-level.
+struct InsuranceRefundPassenger: Codable, Sendable {
+    let name: String?
+    let policyNo: String?
+    let cancelDate: String?
+    let refundAmount: String?
+    let refundDate: String?
+    let status: String?
+
+    enum CodingKeys: String, CodingKey {
+        case name
+        case policyNo     = "policy_no"
+        case cancelDate   = "cancel_date"
+        case refundAmount = "refund_amount"
+        case refundDate   = "refund_date"
+        case status
+    }
+
+    nonisolated init(from decoder: any Decoder) throws {
+        let c = try decoder.container(keyedBy: CodingKeys.self)
+        name         = try? c.decodeIfPresent(String.self, forKey: .name)
+        policyNo     = try? c.decodeIfPresent(String.self, forKey: .policyNo)
+        cancelDate   = try? c.decodeIfPresent(String.self, forKey: .cancelDate)
+        refundAmount = try? c.decodeIfPresent(String.self, forKey: .refundAmount)
+        refundDate   = try? c.decodeIfPresent(String.self, forKey: .refundDate)
+        status       = try? c.decodeIfPresent(String.self, forKey: .status)
+    }
+
+    nonisolated func encode(to encoder: any Encoder) throws {
+        var c = encoder.container(keyedBy: CodingKeys.self)
+        try c.encodeIfPresent(name,         forKey: .name)
+        try c.encodeIfPresent(policyNo,     forKey: .policyNo)
+        try c.encodeIfPresent(cancelDate,   forKey: .cancelDate)
+        try c.encodeIfPresent(refundAmount, forKey: .refundAmount)
+        try c.encodeIfPresent(refundDate,   forKey: .refundDate)
+        try c.encodeIfPresent(status,       forKey: .status)
+    }
+}
+
+// Booking-level refund entry for insurance (search_type = 5).
+// reference_no is the booking ref (not uniquerefno).
+// agent_net arrives as a number.
+// Status is per-passenger; booking status is derived as "Refunded" if all passengers are refunded.
+struct InsuranceRefundBooking: Codable, Sendable {
+    let referenceNo: String?
+    let agentNet: Double?
+    let passengers: [InsuranceRefundPassenger]?
+
+    enum CodingKeys: String, CodingKey {
+        case referenceNo = "reference_no"
+        case agentNet    = "agent_net"
+        case passengers
+    }
+
+    nonisolated init(from decoder: any Decoder) throws {
+        let c = try decoder.container(keyedBy: CodingKeys.self)
+        referenceNo = try? c.decodeIfPresent(String.self,                       forKey: .referenceNo)
+        agentNet    = try? c.decodeIfPresent(Double.self,                        forKey: .agentNet)
+        passengers  = try? c.decodeIfPresent([InsuranceRefundPassenger].self,    forKey: .passengers)
+    }
+
+    nonisolated func encode(to encoder: any Encoder) throws {
+        var c = encoder.container(keyedBy: CodingKeys.self)
+        try c.encodeIfPresent(referenceNo, forKey: .referenceNo)
+        try c.encodeIfPresent(agentNet,    forKey: .agentNet)
+        try c.encodeIfPresent(passengers,  forKey: .passengers)
+    }
+}
+
+// Passenger entry inside a visa refund booking.
+// charge_date = when the charge was made, reverse_date = when it was reversed.
+// status arrives as a human-readable string e.g. "Reversed".
+struct VisaRefundPassenger: Codable, Sendable {
+    let name: String?
+    let remarks: String?
+    let chargeDate: String?
+    let reverseDate: String?
+    let refundAmount: String?
+    let status: String?
+
+    enum CodingKeys: String, CodingKey {
+        case name, remarks, status
+        case chargeDate   = "charge_date"
+        case reverseDate  = "reverse_date"
+        case refundAmount = "refund_amount"
+    }
+
+    nonisolated init(from decoder: any Decoder) throws {
+        let c = try decoder.container(keyedBy: CodingKeys.self)
+        name         = try? c.decodeIfPresent(String.self, forKey: .name)
+        remarks      = try? c.decodeIfPresent(String.self, forKey: .remarks)
+        chargeDate   = try? c.decodeIfPresent(String.self, forKey: .chargeDate)
+        reverseDate  = try? c.decodeIfPresent(String.self, forKey: .reverseDate)
+        refundAmount = try? c.decodeIfPresent(String.self, forKey: .refundAmount)
+        status       = try? c.decodeIfPresent(String.self, forKey: .status)
+    }
+
+    nonisolated func encode(to encoder: any Encoder) throws {
+        var c = encoder.container(keyedBy: CodingKeys.self)
+        try c.encodeIfPresent(name,         forKey: .name)
+        try c.encodeIfPresent(remarks,      forKey: .remarks)
+        try c.encodeIfPresent(chargeDate,   forKey: .chargeDate)
+        try c.encodeIfPresent(reverseDate,  forKey: .reverseDate)
+        try c.encodeIfPresent(refundAmount, forKey: .refundAmount)
+        try c.encodeIfPresent(status,       forKey: .status)
+    }
+}
+
+// Booking-level refund entry for visa (search_type = 6).
+// reference_no is the booking ref. No agent_net at booking level.
+struct VisaRefundBooking: Codable, Sendable {
+    let referenceNo: String?
+    let passengers: [VisaRefundPassenger]?
+
+    enum CodingKeys: String, CodingKey {
+        case referenceNo = "reference_no"
+        case passengers
+    }
+
+    nonisolated init(from decoder: any Decoder) throws {
+        let c = try decoder.container(keyedBy: CodingKeys.self)
+        referenceNo = try? c.decodeIfPresent(String.self,                   forKey: .referenceNo)
+        passengers  = try? c.decodeIfPresent([VisaRefundPassenger].self,    forKey: .passengers)
+    }
+
+    nonisolated func encode(to encoder: any Encoder) throws {
+        var c = encoder.container(keyedBy: CodingKeys.self)
+        try c.encodeIfPresent(referenceNo, forKey: .referenceNo)
+        try c.encodeIfPresent(passengers,  forKey: .passengers)
+    }
+}
+
+// Passenger entry inside an eSIM refund booking.
+// Note: status field is "refund_status", not "status".
+struct EsimRefundPassenger: Codable, Sendable {
+    let name: String?
+    let remarks: String?
+    let cancelDate: String?
+    let refundAmount: String?
+    let refundDate: String?
+    let refundStatus: String?
+
+    enum CodingKeys: String, CodingKey {
+        case name, remarks
+        case cancelDate   = "cancel_date"
+        case refundAmount = "refund_amount"
+        case refundDate   = "refund_date"
+        case refundStatus = "refund_status"
+    }
+
+    nonisolated init(from decoder: any Decoder) throws {
+        let c = try decoder.container(keyedBy: CodingKeys.self)
+        name         = try? c.decodeIfPresent(String.self, forKey: .name)
+        remarks      = try? c.decodeIfPresent(String.self, forKey: .remarks)
+        cancelDate   = try? c.decodeIfPresent(String.self, forKey: .cancelDate)
+        refundAmount = try? c.decodeIfPresent(String.self, forKey: .refundAmount)
+        refundDate   = try? c.decodeIfPresent(String.self, forKey: .refundDate)
+        refundStatus = try? c.decodeIfPresent(String.self, forKey: .refundStatus)
+    }
+
+    nonisolated func encode(to encoder: any Encoder) throws {
+        var c = encoder.container(keyedBy: CodingKeys.self)
+        try c.encodeIfPresent(name,         forKey: .name)
+        try c.encodeIfPresent(remarks,      forKey: .remarks)
+        try c.encodeIfPresent(cancelDate,   forKey: .cancelDate)
+        try c.encodeIfPresent(refundAmount, forKey: .refundAmount)
+        try c.encodeIfPresent(refundDate,   forKey: .refundDate)
+        try c.encodeIfPresent(refundStatus, forKey: .refundStatus)
+    }
+}
+
+// Booking-level refund entry for eSIM (search_type = 7).
+// Both reference_no and uniquerefno are present (same value); we use uniquerefno.
+// agent_net arrives as a number.
+struct EsimRefundBooking: Codable, Sendable {
+    let uniqueRefNo: String?
+    let agentNet: Double?
+    let passengers: [EsimRefundPassenger]?
+
+    enum CodingKeys: String, CodingKey {
+        case uniqueRefNo = "uniquerefno"
+        case agentNet    = "agent_net"
+        case passengers
+    }
+
+    nonisolated init(from decoder: any Decoder) throws {
+        let c = try decoder.container(keyedBy: CodingKeys.self)
+        uniqueRefNo = try? c.decodeIfPresent(String.self,                  forKey: .uniqueRefNo)
+        agentNet    = try? c.decodeIfPresent(Double.self,                   forKey: .agentNet)
+        passengers  = try? c.decodeIfPresent([EsimRefundPassenger].self,    forKey: .passengers)
+    }
+
+    nonisolated func encode(to encoder: any Encoder) throws {
+        var c = encoder.container(keyedBy: CodingKeys.self)
+        try c.encodeIfPresent(uniqueRefNo, forKey: .uniqueRefNo)
+        try c.encodeIfPresent(agentNet,    forKey: .agentNet)
+        try c.encodeIfPresent(passengers,  forKey: .passengers)
+    }
+}
+
+// Booking-level refund entry for hotel (search_type = 4).
+// bookingId is camelCase in the JSON.
+// refund_amount arrives as a String (or null), not an Int.
+// passengers only carry the name field.
+// Status: "1" = Refunded, null = Unknown.
+struct HotelRefundBooking: Codable, Sendable {
+    let uniqueRefNo: String?
+    let bookingId: String?
+    let cancelDate: String?
+    let refundAmount: String?
+    let refundDate: String?
+    let agentNet: String?
+    let status: String?
+    let passengers: [RefundPassenger]?
+
+    enum CodingKeys: String, CodingKey {
+        case uniqueRefNo  = "uniquerefno"
+        case bookingId    = "bookingId"
+        case cancelDate   = "cancel_date"
+        case refundAmount = "refund_amount"
+        case refundDate   = "refund_date"
+        case agentNet     = "agent_net"
+        case status
+        case passengers
+    }
+
+    nonisolated init(from decoder: any Decoder) throws {
+        let c = try decoder.container(keyedBy: CodingKeys.self)
+        uniqueRefNo  = try? c.decodeIfPresent(String.self,            forKey: .uniqueRefNo)
+        bookingId    = try? c.decodeIfPresent(String.self,            forKey: .bookingId)
+        cancelDate   = try? c.decodeIfPresent(String.self,            forKey: .cancelDate)
+        refundAmount = try? c.decodeIfPresent(String.self,            forKey: .refundAmount)
+        refundDate   = try? c.decodeIfPresent(String.self,            forKey: .refundDate)
+        agentNet     = try? c.decodeIfPresent(String.self,            forKey: .agentNet)
+        status       = try? c.decodeIfPresent(String.self,            forKey: .status)
+        passengers   = try? c.decodeIfPresent([RefundPassenger].self, forKey: .passengers)
+    }
+
+    nonisolated func encode(to encoder: any Encoder) throws {
+        var c = encoder.container(keyedBy: CodingKeys.self)
+        try c.encodeIfPresent(uniqueRefNo,  forKey: .uniqueRefNo)
+        try c.encodeIfPresent(bookingId,    forKey: .bookingId)
+        try c.encodeIfPresent(cancelDate,   forKey: .cancelDate)
+        try c.encodeIfPresent(refundAmount, forKey: .refundAmount)
+        try c.encodeIfPresent(refundDate,   forKey: .refundDate)
+        try c.encodeIfPresent(agentNet,     forKey: .agentNet)
+        try c.encodeIfPresent(status,       forKey: .status)
+        try c.encodeIfPresent(passengers,   forKey: .passengers)
+    }
+}
+
+// Booking-level refund entry for cab (search_type = 3).
+// Cab has no passengers array — passenger name is in user_name.
+// cancel_date / refund_date are at booking level.
+// agent_net arrives as a number, not a string.
+// Status: "1" = Pending, "2" = Refunded, "3" = Rejected, null = Unknown.
+struct CabRefundBooking: Codable, Sendable {
+    let uniqueRefNo: String?
+    let bookingId: String?
+    let cancelDate: String?
+    let refundAmount: Int?
+    let status: String?
+    let refundDate: String?
+    let agentNet: Double?
+    let userName: String?
+
+    enum CodingKeys: String, CodingKey {
+        case uniqueRefNo  = "uniquerefno"
+        case bookingId    = "booking_id"
+        case cancelDate   = "cancel_date"
+        case refundAmount = "refund_amount"
+        case status
+        case refundDate   = "refund_date"
+        case agentNet     = "agent_net"
+        case userName     = "user_name"
+    }
+
+    nonisolated init(from decoder: any Decoder) throws {
+        let c = try decoder.container(keyedBy: CodingKeys.self)
+        uniqueRefNo  = try? c.decodeIfPresent(String.self, forKey: .uniqueRefNo)
+        bookingId    = try? c.decodeIfPresent(String.self, forKey: .bookingId)
+        cancelDate   = try? c.decodeIfPresent(String.self, forKey: .cancelDate)
+        refundAmount = try? c.decodeIfPresent(Int.self,    forKey: .refundAmount)
+        status       = try? c.decodeIfPresent(String.self, forKey: .status)
+        refundDate   = try? c.decodeIfPresent(String.self, forKey: .refundDate)
+        agentNet     = try? c.decodeIfPresent(Double.self, forKey: .agentNet)
+        userName     = try? c.decodeIfPresent(String.self, forKey: .userName)
+    }
+
+    nonisolated func encode(to encoder: any Encoder) throws {
+        var c = encoder.container(keyedBy: CodingKeys.self)
+        try c.encodeIfPresent(uniqueRefNo,  forKey: .uniqueRefNo)
+        try c.encodeIfPresent(bookingId,    forKey: .bookingId)
+        try c.encodeIfPresent(cancelDate,   forKey: .cancelDate)
+        try c.encodeIfPresent(refundAmount, forKey: .refundAmount)
+        try c.encodeIfPresent(status,       forKey: .status)
+        try c.encodeIfPresent(refundDate,   forKey: .refundDate)
+        try c.encodeIfPresent(agentNet,     forKey: .agentNet)
+        try c.encodeIfPresent(userName,     forKey: .userName)
+    }
+}
+
+// Booking-level refund entry for bus (search_type = 2).
+// Bus sends camelCase uniqueRefNo, agent_net_price, booking_reference_no, and
+// cancel_date / refund_date at booking level rather than passenger level.
+struct BusRefundBooking: Codable, Sendable {
+    let uniqueRefNo: String?
+    let refundAmount: Int?
+    let status: String?
+    let agentNetPrice: String?
+    let bookingReferenceNo: String?
+    let cancelDate: String?
+    let refundDate: String?
+    let passengers: [RefundPassenger]?
+
+    enum CodingKeys: String, CodingKey {
+        case uniqueRefNo        = "uniqueRefNo"
+        case refundAmount       = "refund_amount"
+        case status
+        case agentNetPrice      = "agent_net_price"
+        case bookingReferenceNo = "booking_reference_no"
+        case cancelDate         = "cancel_date"
+        case refundDate         = "refund_date"
+        case passengers
+    }
+
+    nonisolated init(from decoder: any Decoder) throws {
+        let c = try decoder.container(keyedBy: CodingKeys.self)
+        uniqueRefNo        = try? c.decodeIfPresent(String.self,            forKey: .uniqueRefNo)
+        refundAmount       = try? c.decodeIfPresent(Int.self,               forKey: .refundAmount)
+        status             = try? c.decodeIfPresent(String.self,            forKey: .status)
+        agentNetPrice      = try? c.decodeIfPresent(String.self,            forKey: .agentNetPrice)
+        bookingReferenceNo = try? c.decodeIfPresent(String.self,            forKey: .bookingReferenceNo)
+        cancelDate         = try? c.decodeIfPresent(String.self,            forKey: .cancelDate)
+        refundDate         = try? c.decodeIfPresent(String.self,            forKey: .refundDate)
+        passengers         = try? c.decodeIfPresent([RefundPassenger].self, forKey: .passengers)
+    }
+
+    nonisolated func encode(to encoder: any Encoder) throws {
+        var c = encoder.container(keyedBy: CodingKeys.self)
+        try c.encodeIfPresent(uniqueRefNo,        forKey: .uniqueRefNo)
+        try c.encodeIfPresent(refundAmount,       forKey: .refundAmount)
+        try c.encodeIfPresent(status,             forKey: .status)
+        try c.encodeIfPresent(agentNetPrice,      forKey: .agentNetPrice)
+        try c.encodeIfPresent(bookingReferenceNo, forKey: .bookingReferenceNo)
+        try c.encodeIfPresent(cancelDate,         forKey: .cancelDate)
+        try c.encodeIfPresent(refundDate,         forKey: .refundDate)
+        try c.encodeIfPresent(passengers,         forKey: .passengers)
+    }
+}
+
+struct AgentRefundsData: Codable, Sendable {
+    let flightBookings: [FlightRefundBooking]?
+    let busBookings: [BusRefundBooking]?
+    let cabBookings: [CabRefundBooking]?
+    let hotelBookings: [HotelRefundBooking]?
+    let insuranceBookings: [InsuranceRefundBooking]?
+    let visaBookings: [VisaRefundBooking]?
+    let esimBookings: [EsimRefundBooking]?
+
+    enum CodingKeys: String, CodingKey {
+        case flightBookings    = "flight_bookings"
+        case busBookings       = "bus_bookings"
+        case cabBookings       = "cab_bookings"
+        case hotelBookings     = "hotel_bookings"
+        case insuranceBookings = "insurance_bookings"
+        case visaBookings      = "visa_bookings"
+        case esimBookings      = "esim_bookings"
+    }
+
+    nonisolated init(from decoder: any Decoder) throws {
+        let c = try decoder.container(keyedBy: CodingKeys.self)
+        flightBookings    = try? c.decodeIfPresent([FlightRefundBooking].self, forKey: .flightBookings)
+        busBookings       = try? c.decodeIfPresent([BusRefundBooking].self,    forKey: .busBookings)
+        cabBookings       = try? c.decodeIfPresent([CabRefundBooking].self,    forKey: .cabBookings)
+        hotelBookings     = try? c.decodeIfPresent([HotelRefundBooking].self,   forKey: .hotelBookings)
+        insuranceBookings = try? c.decodeIfPresent([InsuranceRefundBooking].self, forKey: .insuranceBookings)
+        visaBookings      = try? c.decodeIfPresent([VisaRefundBooking].self,    forKey: .visaBookings)
+        esimBookings      = try? c.decodeIfPresent([EsimRefundBooking].self,    forKey: .esimBookings)
+    }
+
+    nonisolated func encode(to encoder: any Encoder) throws {
+        var c = encoder.container(keyedBy: CodingKeys.self)
+        try c.encodeIfPresent(flightBookings,    forKey: .flightBookings)
+        try c.encodeIfPresent(busBookings,       forKey: .busBookings)
+        try c.encodeIfPresent(cabBookings,       forKey: .cabBookings)
+        try c.encodeIfPresent(hotelBookings,     forKey: .hotelBookings)
+        try c.encodeIfPresent(insuranceBookings, forKey: .insuranceBookings)
+        try c.encodeIfPresent(visaBookings,      forKey: .visaBookings)
+        try c.encodeIfPresent(esimBookings,      forKey: .esimBookings)
+    }
+}
+
+struct AgentRefundsResponse: Codable, Sendable {
+    let status: Bool
+    let message: String?
+    let data: AgentRefundsData?
+
+    enum CodingKeys: String, CodingKey { case status, message, data }
+
+    nonisolated init(from decoder: any Decoder) throws {
+        let c = try decoder.container(keyedBy: CodingKeys.self)
+        status  = try c.decode(Bool.self, forKey: .status)
+        message = try c.decodeIfPresent(String.self,           forKey: .message)
+        data    = try c.decodeIfPresent(AgentRefundsData.self, forKey: .data)
+    }
+
+    nonisolated func encode(to encoder: any Encoder) throws {
+        var c = encoder.container(keyedBy: CodingKeys.self)
+        try c.encode(status, forKey: .status)
+        try c.encodeIfPresent(message, forKey: .message)
+        try c.encodeIfPresent(data,    forKey: .data)
     }
 }
 
@@ -1053,6 +1962,41 @@ struct GroupFaresRequest: Codable, Sendable {
     }
 }
 
+// MARK: - Group Fares Response
+
+struct GroupFaresResponseData: Decodable, Sendable {
+    let referenceNo: String?
+    let message: String?
+
+    enum CodingKeys: String, CodingKey {
+        case referenceNo = "reference_no"
+        case message
+    }
+
+    nonisolated init(from decoder: any Decoder) throws {
+        let c = try decoder.container(keyedBy: CodingKeys.self)
+        referenceNo = try c.decodeIfPresent(String.self, forKey: .referenceNo)
+        message     = try c.decodeIfPresent(String.self, forKey: .message)
+    }
+}
+
+struct GroupFaresAPIResponse: Decodable, Sendable {
+    let status: Bool
+    let message: String?
+    let data: GroupFaresResponseData?
+
+    enum CodingKeys: String, CodingKey {
+        case status, message, data
+    }
+
+    nonisolated init(from decoder: any Decoder) throws {
+        let c = try decoder.container(keyedBy: CodingKeys.self)
+        status  = try c.decode(Bool.self,                          forKey: .status)
+        message = try c.decodeIfPresent(String.self,               forKey: .message)
+        data    = try c.decodeIfPresent(GroupFaresResponseData.self, forKey: .data)
+    }
+}
+
 // MARK: - Upload Money Request
 
 struct UploadMoneyRequest: Codable, Sendable {
@@ -1133,6 +2077,9 @@ struct BankItem: Codable, Sendable, Identifiable {
     let bankRemarks: String?
     let cashRemarks: String?
     let chequeRemarks: String?
+    let showBank: String?
+    let showCash: String?
+    let showCheque: String?
 
     enum CodingKeys: String, CodingKey {
         case bankId          = "bank_id"
@@ -1148,6 +2095,9 @@ struct BankItem: Codable, Sendable, Identifiable {
         case bankRemarks     = "bank_remarks"
         case cashRemarks     = "cash_remarks"
         case chequeRemarks   = "cheque_remarks"
+        case showBank        = "show_bank"
+        case showCash        = "show_cash"
+        case showCheque      = "show_cheque"
     }
 
     nonisolated init(from decoder: any Decoder) throws {
@@ -1165,6 +2115,9 @@ struct BankItem: Codable, Sendable, Identifiable {
         bankRemarks     = try c.decodeIfPresent(String.self, forKey: .bankRemarks)
         cashRemarks     = try c.decodeIfPresent(String.self, forKey: .cashRemarks)
         chequeRemarks   = try c.decodeIfPresent(String.self, forKey: .chequeRemarks)
+        showBank        = try c.decodeIfPresent(String.self, forKey: .showBank)
+        showCash        = try c.decodeIfPresent(String.self, forKey: .showCash)
+        showCheque      = try c.decodeIfPresent(String.self, forKey: .showCheque)
     }
 
     nonisolated func encode(to encoder: any Encoder) throws {
@@ -1182,6 +2135,9 @@ struct BankItem: Codable, Sendable, Identifiable {
         try c.encodeIfPresent(bankRemarks,   forKey: .bankRemarks)
         try c.encodeIfPresent(cashRemarks,   forKey: .cashRemarks)
         try c.encodeIfPresent(chequeRemarks, forKey: .chequeRemarks)
+        try c.encodeIfPresent(showBank,      forKey: .showBank)
+        try c.encodeIfPresent(showCash,      forKey: .showCash)
+        try c.encodeIfPresent(showCheque,    forKey: .showCheque)
     }
 }
 
@@ -1215,8 +2171,14 @@ struct UploadPendingData: Codable, Sendable {
 
     nonisolated init(from decoder: any Decoder) throws {
         let c = try decoder.container(keyedBy: CodingKeys.self)
-        amount = try c.decode(String.self, forKey: .amount)
-        count  = try c.decode(String.self, forKey: .count)
+        amount = (try? c.decodeIfPresent(String.self, forKey: .amount))
+            ?? (try? c.decodeIfPresent(Int.self, forKey: .amount)).map(String.init)
+            ?? (try? c.decodeIfPresent(Double.self, forKey: .amount)).map { String($0) }
+            ?? "0"
+        count = (try? c.decodeIfPresent(String.self, forKey: .count))
+            ?? (try? c.decodeIfPresent(Int.self, forKey: .count)).map(String.init)
+            ?? (try? c.decodeIfPresent(Double.self, forKey: .count)).map { String($0) }
+            ?? "0"
     }
 
     nonisolated func encode(to encoder: any Encoder) throws {
@@ -1253,12 +2215,16 @@ struct UploadMoneyData: Codable, Sendable {
     let bankList: BankList
     let uploadTimings: UploadTimings
     let specialMessage: String?
+    let bookingBalance: String?
+    let cashDailyLimit: String?
 
     enum CodingKeys: String, CodingKey {
         case pendingData    = "pendingdata"
         case bankList       = "bank_list"
         case uploadTimings  = "upload_timings"
         case specialMessage = "special_message"
+        case bookingBalance = "bookingbalance"
+        case cashDailyLimit = "cash_daily_limit"
     }
 
     nonisolated init(from decoder: any Decoder) throws {
@@ -1267,6 +2233,10 @@ struct UploadMoneyData: Codable, Sendable {
         bankList       = try c.decode(BankList.self,            forKey: .bankList)
         uploadTimings  = try c.decode(UploadTimings.self,       forKey: .uploadTimings)
         specialMessage = try c.decodeIfPresent(String.self,     forKey: .specialMessage)
+        bookingBalance = (try? c.decodeIfPresent(String.self, forKey: .bookingBalance))
+            ?? (try? c.decodeIfPresent(Int.self, forKey: .bookingBalance)).map(String.init)
+            ?? (try? c.decodeIfPresent(Double.self, forKey: .bookingBalance)).map { String($0) }
+        cashDailyLimit = try c.decodeIfPresent(String.self,     forKey: .cashDailyLimit)
     }
 
     nonisolated func encode(to encoder: any Encoder) throws {
@@ -1274,7 +2244,9 @@ struct UploadMoneyData: Codable, Sendable {
         try c.encode(pendingData,   forKey: .pendingData)
         try c.encode(bankList,      forKey: .bankList)
         try c.encode(uploadTimings, forKey: .uploadTimings)
-        try c.encodeIfPresent(specialMessage, forKey: .specialMessage)
+        try c.encodeIfPresent(specialMessage,  forKey: .specialMessage)
+        try c.encodeIfPresent(bookingBalance,  forKey: .bookingBalance)
+        try c.encodeIfPresent(cashDailyLimit,  forKey: .cashDailyLimit)
     }
 }
 
@@ -1364,6 +2336,8 @@ struct UpdateAgentProfileRequest: Codable, Sendable {
     let country: String?
     let pinCode: String?
     let gstNumber: String?
+    // Excluded from CodingKeys — sent as multipart binary, never JSON-encoded.
+    let logoData: Data?
 
     enum CodingKeys: String, CodingKey {
         case title, designation, website, address, city, state, country, fax
@@ -1380,7 +2354,8 @@ struct UpdateAgentProfileRequest: Codable, Sendable {
         lastName: String? = nil, designation: String? = nil, website: String? = nil,
         officePhoneNo: String? = nil, fax: String? = nil,
         address: String? = nil, city: String? = nil, state: String? = nil,
-        country: String? = nil, pinCode: String? = nil, gstNumber: String? = nil
+        country: String? = nil, pinCode: String? = nil, gstNumber: String? = nil,
+        logoData: Data? = nil
     ) {
         self.title         = title
         self.firstName     = firstName
@@ -1396,6 +2371,7 @@ struct UpdateAgentProfileRequest: Codable, Sendable {
         self.country       = country
         self.pinCode       = pinCode
         self.gstNumber     = gstNumber
+        self.logoData      = logoData
     }
 
     nonisolated init(from decoder: any Decoder) throws {
@@ -1414,6 +2390,7 @@ struct UpdateAgentProfileRequest: Codable, Sendable {
         country        = try c.decodeIfPresent(String.self, forKey: .country)
         pinCode        = try c.decodeIfPresent(String.self, forKey: .pinCode)
         gstNumber      = try c.decodeIfPresent(String.self, forKey: .gstNumber)
+        logoData       = nil
     }
 
     nonisolated func encode(to encoder: any Encoder) throws {
@@ -1839,32 +2816,89 @@ struct MarkupEntry: Codable, Sendable {
 
 struct AgentSaveMarkupsRequest: Codable, Sendable {
     let module: String
+    // Flight only
     let displayNet: Int?
-    let markups: [MarkupEntry]
+    let markups: [MarkupEntry]?
+    // Bus / Cab / eSIM / Hotel (flat fields)
+    let domId: String?
+    let markupProcess: String?
+    let markup: String?
+    // Hotel international
+    let intlMarkupProcess: String?
+    let intlMarkup: String?
 
     enum CodingKeys: String, CodingKey {
-        case module, markups
-        case displayNet = "display_net"
+        case module, markups, markup
+        case displayNet        = "display_net"
+        case domId             = "dom_id"
+        case markupProcess     = "markup_process"
+        case intlMarkupProcess = "intl_markup_process"
+        case intlMarkup        = "intl_markup"
     }
 
+    // Flight
     nonisolated init(module: String, displayNet: Int? = nil, markups: [MarkupEntry]) {
-        self.module     = module
-        self.displayNet = displayNet
-        self.markups    = markups
+        self.module            = module
+        self.displayNet        = displayNet
+        self.markups           = markups
+        self.domId             = nil
+        self.markupProcess     = nil
+        self.markup            = nil
+        self.intlMarkupProcess = nil
+        self.intlMarkup        = nil
+    }
+
+    // Bus / Cab / eSIM
+    nonisolated init(module: String, domId: String?, markupProcess: String, markup: String) {
+        self.module            = module
+        self.displayNet        = nil
+        self.markups           = nil
+        self.domId             = domId
+        self.markupProcess     = markupProcess
+        self.markup            = markup
+        self.intlMarkupProcess = nil
+        self.intlMarkup        = nil
+    }
+
+    // Hotel
+    nonisolated init(module: String, domId: String?,
+                     markupProcess: String, markup: String,
+                     intlMarkupProcess: String, intlMarkup: String) {
+        self.module            = module
+        self.displayNet        = nil
+        self.markups           = nil
+        self.domId             = domId
+        self.markupProcess     = markupProcess
+        self.markup            = markup
+        self.intlMarkupProcess = intlMarkupProcess
+        self.intlMarkup        = intlMarkup
     }
 
     nonisolated init(from decoder: any Decoder) throws {
-        let c      = try decoder.container(keyedBy: CodingKeys.self)
-        module     = try c.decode(String.self,        forKey: .module)
-        displayNet = try c.decodeIfPresent(Int.self,  forKey: .displayNet)
-        markups    = try c.decode([MarkupEntry].self, forKey: .markups)
+        let c              = try decoder.container(keyedBy: CodingKeys.self)
+        module             = try c.decode(String.self, forKey: .module)
+        displayNet         = try c.decodeIfPresent(Int.self,          forKey: .displayNet)
+        markups            = try c.decodeIfPresent([MarkupEntry].self, forKey: .markups)
+        domId              = try c.decodeIfPresent(String.self,        forKey: .domId)
+        markupProcess      = try c.decodeIfPresent(String.self,        forKey: .markupProcess)
+        markup             = try c.decodeIfPresent(String.self,        forKey: .markup)
+        intlMarkupProcess  = try c.decodeIfPresent(String.self,        forKey: .intlMarkupProcess)
+        intlMarkup         = try c.decodeIfPresent(String.self,        forKey: .intlMarkup)
     }
 
     nonisolated func encode(to encoder: any Encoder) throws {
         var c = encoder.container(keyedBy: CodingKeys.self)
-        try c.encode(module,  forKey: .module)
-        try c.encodeIfPresent(displayNet, forKey: .displayNet)
-        try c.encode(markups, forKey: .markups)
+        try c.encode(module, forKey: .module)
+        if module == "flight" {
+            try c.encodeIfPresent(displayNet, forKey: .displayNet)
+            try c.encodeIfPresent(markups,    forKey: .markups)
+        } else {
+            try c.encodeIfPresent(domId,             forKey: .domId)
+            try c.encodeIfPresent(markupProcess,     forKey: .markupProcess)
+            try c.encodeIfPresent(markup,            forKey: .markup)
+            try c.encodeIfPresent(intlMarkupProcess, forKey: .intlMarkupProcess)
+            try c.encodeIfPresent(intlMarkup,        forKey: .intlMarkup)
+        }
     }
 }
 
@@ -1872,21 +2906,33 @@ struct AgentSaveMarkupsRequest: Codable, Sendable {
 
 struct CreatePaymentOrderRequest: Codable, Sendable {
     let transferAmount: Int
+    let callbackMode: String
+    let referrerPlatform: String
 
     enum CodingKeys: String, CodingKey {
-        case transferAmount = "transfer_amount"
+        case transferAmount   = "transfer_amount"
+        case callbackMode     = "callback_mode"
+        case referrerPlatform = "referrer_platform"
     }
 
-    nonisolated init(transferAmount: Int) { self.transferAmount = transferAmount }
+    nonisolated init(transferAmount: Int, callbackMode: String = "callback_mobile", referrerPlatform: String = "ios") {
+        self.transferAmount   = transferAmount
+        self.callbackMode     = callbackMode
+        self.referrerPlatform = referrerPlatform
+    }
 
     nonisolated init(from decoder: any Decoder) throws {
-        let c          = try decoder.container(keyedBy: CodingKeys.self)
-        transferAmount = try c.decode(Int.self, forKey: .transferAmount)
+        let c             = try decoder.container(keyedBy: CodingKeys.self)
+        transferAmount    = try c.decode(Int.self, forKey: .transferAmount)
+        callbackMode      = (try? c.decodeIfPresent(String.self, forKey: .callbackMode)) ?? "callback_mobile"
+        referrerPlatform  = (try? c.decodeIfPresent(String.self, forKey: .referrerPlatform)) ?? "ios"
     }
 
     nonisolated func encode(to encoder: any Encoder) throws {
         var c = encoder.container(keyedBy: CodingKeys.self)
-        try c.encode(transferAmount, forKey: .transferAmount)
+        try c.encode(transferAmount,   forKey: .transferAmount)
+        try c.encode(callbackMode,     forKey: .callbackMode)
+        try c.encode(referrerPlatform, forKey: .referrerPlatform)
     }
 }
 
@@ -2193,5 +3239,88 @@ struct AgentRegisterRequest: Codable, Sendable {
         try c.encodeIfPresent(referralCode,    forKey: .referralCode)
         try c.encodeIfPresent(saleId,          forKey: .saleId)
         try c.encodeIfPresent(adCampaign,      forKey: .adCampaign)
+    }
+}
+
+// The registration endpoint wraps the real result in a nested `data` object:
+// { "status": true, "message": "Success", "data": { "status": false, "message": "..." } }
+struct AgentRegisterResponse: Codable, Sendable {
+    let status: Bool
+    let message: String?
+    let data: NestedResult?
+
+    var isSuccessful: Bool { status && (data?.status ?? true) }
+    var effectiveMessage: String? { data?.message ?? message }
+
+    struct NestedResult: Codable, Sendable {
+        let status: Bool?
+        let message: String?
+        let agentNo: String?
+
+        nonisolated init(from decoder: any Decoder) throws {
+            let c = try decoder.container(keyedBy: CodingKeys.self)
+            status  = try c.decodeIfPresent(Bool.self,   forKey: .status)
+            message = try c.decodeIfPresent(String.self, forKey: .message)
+            agentNo = try c.decodeIfPresent(String.self, forKey: .agentNo)
+        }
+        enum CodingKeys: String, CodingKey {
+            case status, message
+            case agentNo = "agent_no"
+        }
+    }
+
+    nonisolated init(from decoder: any Decoder) throws {
+        let c = try decoder.container(keyedBy: CodingKeys.self)
+        status  = try c.decode(Bool.self,                    forKey: .status)
+        message = try c.decodeIfPresent(String.self,         forKey: .message)
+        data    = try c.decodeIfPresent(NestedResult.self,   forKey: .data)
+    }
+    enum CodingKeys: String, CodingKey { case status, message, data }
+}
+
+// MARK: - Agent Balance
+
+struct AgentBalanceData: Codable, Sendable {
+    let agencyName: String?
+    let mobileNo: String?
+    let agentLogo: String?
+    let creditBalance: String?
+    let bookingBalance: String?
+
+    enum CodingKeys: String, CodingKey {
+        case agencyName     = "agency_name"
+        case mobileNo       = "mobile_no"
+        case agentLogo      = "agent_logo"
+        case creditBalance  = "creditbalance"
+        case bookingBalance = "bookingbalance"
+    }
+
+    nonisolated init(from decoder: any Decoder) throws {
+        let c = try decoder.container(keyedBy: CodingKeys.self)
+        agencyName     = try c.decodeIfPresent(String.self, forKey: .agencyName)
+        mobileNo       = try c.decodeIfPresent(String.self, forKey: .mobileNo)
+        agentLogo      = try c.decodeIfPresent(String.self, forKey: .agentLogo)
+        // creditbalance arrives as integer (e.g. 0) or string — normalise to String
+        creditBalance  = (try? c.decodeIfPresent(String.self, forKey: .creditBalance))
+            ?? (try? c.decodeIfPresent(Int.self,    forKey: .creditBalance)).map { String($0) }
+            ?? (try? c.decodeIfPresent(Double.self, forKey: .creditBalance)).map { String($0) }
+        bookingBalance = (try? c.decodeIfPresent(String.self, forKey: .bookingBalance))
+            ?? (try? c.decodeIfPresent(Int.self,    forKey: .bookingBalance)).map { String($0) }
+            ?? (try? c.decodeIfPresent(Double.self, forKey: .bookingBalance)).map { String($0) }
+    }
+}
+
+struct AgentBalanceResponse: Codable, Sendable {
+    let status: Bool
+    let message: String?
+    let data: AgentBalanceData?
+
+    enum CodingKeys: String, CodingKey { case status, message, data }
+
+    nonisolated init(from decoder: any Decoder) throws {
+        let c = try decoder.container(keyedBy: CodingKeys.self)
+        status  = try c.decode(Bool.self, forKey: .status)
+        message = try c.decodeIfPresent(String.self,           forKey: .message)
+        data    = try c.decodeIfPresent(AgentBalanceData.self, forKey: .data)
     }
 }

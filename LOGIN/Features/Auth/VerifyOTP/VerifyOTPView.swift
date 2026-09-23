@@ -5,6 +5,7 @@ struct VerifyOTPView: View {
     @State private var digits: [String] = ["", "", "", ""]
     @State private var maskedDigits: Set<Int> = []
     @FocusState private var focusedField: Int?
+    private let maskingEnabled = false   // TODO: set to true before shipping
 
     init(authManager: AuthManager) {
         _viewModel = State(initialValue: VerifyOTPViewModel(authManager: authManager))
@@ -107,16 +108,12 @@ struct VerifyOTPView: View {
         let digit = digits[index]
 
         return ZStack {
-            RoundedRectangle(cornerRadius: DesignTokens.Radius.field)
-                .stroke(
-                    isFocused ? Color.ftdAccentOrange : Color.ftdBorder,
-                    lineWidth: 1.5
-                )
-                .background(
-                    RoundedRectangle(cornerRadius: DesignTokens.Radius.field)
-                        .fill(Color.ftdCardBackground)
-                )
-                .frame(width: 64, height: 64)
+            FTDOTPBox(
+                digit: digit,
+                isFocused: isFocused,
+                isMasked: maskedDigits.contains(index),
+                showCursor: digit.isEmpty && isFocused
+            )
 
             TextField("", text: $digits[index])
                 .keyboardType(.numberPad)
@@ -127,17 +124,23 @@ struct VerifyOTPView: View {
                 .foregroundColor(.clear)
                 .tint(.clear)
                 .onChange(of: digits[index]) { _, newVal in
-                    let clean = String(newVal.filter { $0.isNumber }.prefix(1))
+                    let filtered = newVal.filter { $0.isNumber }
+                    // When the box was already filled and the user types a new digit,
+                    // filtered has 2 chars — take the last one (the newly typed digit).
+                    let clean = filtered.count > 1
+                        ? String(filtered.suffix(1))
+                        : String(filtered.prefix(1))
                     if newVal != clean {
                         digits[index] = clean
                         return
                     }
                     if !clean.isEmpty {
-                        // Briefly reveal the digit, then mask after 0.6s
                         maskedDigits.remove(index)
-                        Task {
-                            try? await Task.sleep(for: .seconds(0.6))
-                            maskedDigits.insert(index)
+                        if maskingEnabled {
+                            Task {
+                                try? await Task.sleep(for: .seconds(0.6))
+                                maskedDigits.insert(index)
+                            }
                         }
                         if index < 3 { focusedField = index + 1 }
                     } else {
@@ -145,26 +148,14 @@ struct VerifyOTPView: View {
                     }
                     viewModel.otp = digits.joined()
                 }
-
-            if digit.isEmpty && isFocused {
-                Rectangle()
-                    .fill(Color.ftdAccentOrange)
-                    .frame(width: 2, height: 24)
-            } else if digit.isEmpty {
-                Text("✼")
-                    .font(.system(size: 18))
-                    .foregroundStyle(Color.ftdTextSecondary.opacity(0.4))
-            } else if maskedDigits.contains(index) {
-                Text("✼")
-                    .font(.system(size: 18))
-                    .foregroundStyle(Color.ftdTextPrimary)
-            } else {
-                Text(digit)
-                    .font(.ftdOTPDigit)
-                    .foregroundStyle(Color.ftdAccentOrange)
-            }
         }
         .onTapGesture {
+            // Tapping a filled box clears it so the user can re-enter the digit.
+            if !digits[index].isEmpty {
+                digits[index] = ""
+                maskedDigits.remove(index)
+                viewModel.otp = digits.joined()
+            }
             focusedField = index
         }
     }

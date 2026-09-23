@@ -4,6 +4,16 @@ struct AgencyStatementView: View {
     @State private var viewModel: AgencyStatementViewModel
     @Environment(\.dismiss) private var dismiss
 
+    @State private var showFromDatePicker = false
+    @State private var showToDatePicker   = false
+
+    private static let displayFmt: DateFormatter = {
+        let f = DateFormatter()
+        f.dateFormat = "yyyy-MM-dd"
+        f.locale = Locale(identifier: "en_US_POSIX")
+        return f
+    }()
+
     init(authManager: AuthManager) {
         _viewModel = State(initialValue: AgencyStatementViewModel(authManager: authManager))
     }
@@ -41,11 +51,11 @@ struct AgencyStatementView: View {
         HStack {
             Button { dismiss() } label: {
                 ZStack {
-                    Circle()
-                        .fill(Color.ftdCardBackground)
-                        .frame(width: 36, height: 36)
-                        .shadow(color: .black.opacity(0.08), radius: 4, y: 2)
-                    Image(systemName: "chevron.left")
+//                    Circle()
+//                        .fill(Color.ftdCardBackground)
+//                        .frame(width: 36, height: 36)
+//                        .shadow(color: .black.opacity(0.08), radius: 4, y: 2)
+                    Image("backImg")
                         .font(.system(size: 14, weight: .semibold))
                         .foregroundStyle(Color.ftdTextPrimary)
                 }
@@ -54,9 +64,8 @@ struct AgencyStatementView: View {
 
             Spacer()
 
-            Text("Agency Statements")
-                .font(.headline)
-                .fontWeight(.bold)
+            Text("Agency Statement")
+                .font(.ftdSectionHeaderMedium)
                 .foregroundStyle(Color.ftdTextPrimary)
 
             Spacer()
@@ -72,18 +81,21 @@ struct AgencyStatementView: View {
     // MARK: - Filter Area
 
     private var filterArea: some View {
-        VStack(spacing: DesignTokens.Spacing.sm) {
+        VStack(spacing: DesignTokens.Spacing.lg) {
             chipRow
             dateRow
             controlsRow
+                .padding(.bottom, DesignTokens.Spacing.md)
         }
         .padding(DesignTokens.Spacing.md)
+       // .padding(.top, DesignTokens.Spacing.sm)
+//        .padding(.bottom, DesignTokens.Spacing.sm)
         .background(Color.ftdCardBackground)
     }
 
     private var chipRow: some View {
         ScrollView(.horizontal, showsIndicators: false) {
-            HStack(spacing: DesignTokens.Spacing.sm) {
+            HStack(spacing: DesignTokens.Spacing.md) {
                 ForEach(AgencyStatementViewModel.DateChip.allCases) { chip in
                     chipButton(chip)
                 }
@@ -96,17 +108,15 @@ struct AgencyStatementView: View {
         let isSelected = viewModel.selectedChip == chip
         return Button { viewModel.selectChip(chip) } label: {
             Text(chip.rawValue)
-                .font(.subheadline)
-                .fontWeight(isSelected ? .semibold : .regular)
-                .foregroundStyle(isSelected ? .white : Color.ftdTextPrimary)
-                .padding(.horizontal, DesignTokens.Spacing.md)
-                .padding(.vertical, 7)
-                .background(isSelected ? Color.ftdAccentOrange : Color.ftdInputBackground)
-                .clipShape(Capsule())
+                .font(.ftdLabelXS)
+                .foregroundStyle(isSelected ? Color.ftdAccentOrange : Color.ftdChipDeselectedText)
+                .padding(.horizontal, DesignTokens.Spacing.xs)
+                .frame(height: 28)
+                .background(isSelected ? Color.ftdAccentOrangeAlpha : Color.ftdChipDeselectedBg)
+                .clipShape(RoundedRectangle(cornerRadius: 7))
                 .overlay {
-                    if !isSelected {
-                        Capsule().stroke(Color.ftdBorder, lineWidth: 1)
-                    }
+                    RoundedRectangle(cornerRadius: 7)
+                        .stroke(isSelected ? Color.ftdChipSelectedBg : Color.ftdDivider, lineWidth: 1)
                 }
         }
         .buttonStyle(.plain)
@@ -115,28 +125,36 @@ struct AgencyStatementView: View {
 
     private var typeDropdown: some View {
         Menu {
-            ForEach(TransactionType.allCases) { type in
+            Button {
+                viewModel.selectedType = nil
+            } label: {
+                Label("All Type", systemImage: viewModel.selectedType == nil ? "checkmark" : "")
+            }
+            ForEach(viewModel.availableTypes, id: \.self) { type in
                 Button {
                     viewModel.selectedType = type
-                    // filterKey changes automatically — task(id:) restarts the fetch
                 } label: {
-                    Label(type.rawValue, systemImage: viewModel.selectedType == type ? "checkmark" : "")
+                    Label(type, systemImage: viewModel.selectedType == type ? "checkmark" : "")
                 }
             }
         } label: {
+            let isTypeSelected = viewModel.selectedType != nil
             HStack(spacing: 4) {
-                Text(viewModel.selectedType == .all ? "All Type" : viewModel.selectedType.rawValue)
-                    .font(.subheadline)
+                Text(viewModel.selectedType ?? "All Type")
+                    .font(.ftdLabelXS)
                     .lineLimit(1)
                 Image(systemName: "chevron.down")
                     .font(.caption2)
             }
-            .foregroundStyle(Color.ftdTextPrimary)
-            .padding(.horizontal, DesignTokens.Spacing.md)
-            .padding(.vertical, 7)
-            .background(Color.ftdInputBackground)
-            .clipShape(Capsule())
-            .overlay(Capsule().stroke(Color.ftdBorder, lineWidth: 1))
+            .foregroundStyle(isTypeSelected ? Color.ftdAccentOrange : Color.ftdChipDeselectedText)
+            .padding(.horizontal, DesignTokens.Spacing.sm)
+            .frame(height: 28)
+            .background(isTypeSelected ? Color.ftdAccentOrangeAlpha : Color.ftdChipDeselectedBg)
+            .clipShape(RoundedRectangle(cornerRadius: 7))
+            .overlay {
+                RoundedRectangle(cornerRadius: 7)
+                    .stroke(isTypeSelected ? Color.ftdChipSelectedBg : Color.ftdDivider, lineWidth: 1)
+            }
         }
     }
 
@@ -150,71 +168,95 @@ struct AgencyStatementView: View {
     }
 
     private var fromDatePicker: some View {
+        Button { showFromDatePicker = true } label: {
+            dateFieldLabel(
+                icon: "cal",
+                text: Self.displayFmt.string(from: viewModel.fromDate),
+                isPlaceholder: false
+            )
+        }
+        .buttonStyle(.plain)
+        .frame(maxWidth: .infinity)
+        .sheet(isPresented: $showFromDatePicker) {
+            datePickerSheet(title: "From Date", date: $viewModel.fromDate) {
+                showFromDatePicker = false
+            }
+        }
+    }
+
+    private var toDatePicker: some View {
+        Button {
+            if viewModel.toDate == nil { viewModel.toDate = Date() }
+            showToDatePicker = true
+        } label: {
+            HStack(spacing: 8) {
+                dateFieldLabel(
+                    icon: "cal",
+                    text: viewModel.toDate.map { Self.displayFmt.string(from: $0) } ?? "To Date",
+                    isPlaceholder: viewModel.toDate == nil
+                )
+                if viewModel.toDate != nil {
+                    Button { viewModel.toDate = nil } label: {
+                        Image( "cancel")
+                            //.font(.caption)
+                            .foregroundStyle(Color.ftdTextSecondary)
+                    }
+                    .buttonStyle(.plain)
+                    .padding(.trailing, 10)
+                }
+            }
+        }
+        .buttonStyle(.plain)
+        .frame(maxWidth: .infinity)
+        .sheet(isPresented: $showToDatePicker) {
+            datePickerSheet(
+                title: "To Date",
+                date: Binding(
+                    get: { viewModel.toDate ?? Date() },
+                    set: { viewModel.toDate = $0 }
+                )
+            ) {
+                showToDatePicker = false
+            }
+        }
+    }
+
+    private func dateFieldLabel(icon: String, text: String, isPlaceholder: Bool) -> some View {
         HStack(spacing: 8) {
-            Image(systemName: "calendar")
+            Image(icon)
                 .font(.subheadline)
                 .foregroundStyle(Color.ftdTextSecondary)
-            DatePicker("", selection: $viewModel.fromDate, displayedComponents: .date)
-                .datePickerStyle(.compact)
-                .labelsHidden()
+            Text(text)
+                .font(.ftdBodySM)
+                .foregroundStyle(isPlaceholder ? Color.ftdTextTertiary/*.opacity(0.5)*/ : Color.ftdTextSecondary)
                 .frame(maxWidth: .infinity, alignment: .leading)
         }
         .padding(.horizontal, 10)
-        .padding(.vertical, 8)
-        .background(Color.ftdInputBackground)
+        .padding(.vertical, 10)
+        //.background(Color.ftdInputBackground)
         .clipShape(RoundedRectangle(cornerRadius: DesignTokens.Radius.field))
         .overlay(RoundedRectangle(cornerRadius: DesignTokens.Radius.field).stroke(Color.ftdBorder, lineWidth: 1))
-        .frame(maxWidth: .infinity)
     }
 
-    @ViewBuilder
-    private var toDatePicker: some View {
-        if let date = viewModel.toDate {
-            HStack(spacing: 8) {
-                Image(systemName: "calendar")
-                    .font(.subheadline)
-                    .foregroundStyle(Color.ftdTextSecondary)
-                DatePicker(
-                    "",
-                    selection: Binding(get: { date }, set: { viewModel.toDate = $0 }),
-                    displayedComponents: .date
-                )
-                .datePickerStyle(.compact)
-                .labelsHidden()
+    private func datePickerSheet(title: String, date: Binding<Date>, onDone: @escaping () -> Void) -> some View {
+        VStack(spacing: DesignTokens.Spacing.lg) {
+            Text(title)
+                .font(.ftdSectionHeaderMedium)
+                .foregroundStyle(Color.ftdTextPrimary)
                 .frame(maxWidth: .infinity, alignment: .leading)
-                Button { viewModel.toDate = nil } label: {
-                    Image(systemName: "xmark.circle.fill")
-                        .font(.caption)
-                        .foregroundStyle(Color.ftdTextSecondary)
-                }
-                .buttonStyle(.plain)
-            }
-            .padding(.horizontal, 10)
-            .padding(.vertical, 8)
-            .background(Color.ftdInputBackground)
-            .clipShape(RoundedRectangle(cornerRadius: DesignTokens.Radius.field))
-            .overlay(RoundedRectangle(cornerRadius: DesignTokens.Radius.field).stroke(Color.ftdBorder, lineWidth: 1))
-            .frame(maxWidth: .infinity)
-        } else {
-            Button { viewModel.toDate = Date() } label: {
-                HStack(spacing: 8) {
-                    Image(systemName: "calendar")
-                        .font(.subheadline)
-                        .foregroundStyle(Color.ftdTextSecondary)
-                    Text("To Date")
-                        .font(.subheadline)
-                        .foregroundStyle(Color.ftdTextSecondary.opacity(0.6))
-                    Spacer()
-                }
-                .padding(.horizontal, 10)
-                .padding(.vertical, 8)
-                .background(Color.ftdInputBackground)
-                .clipShape(RoundedRectangle(cornerRadius: DesignTokens.Radius.field))
-                .overlay(RoundedRectangle(cornerRadius: DesignTokens.Radius.field).stroke(Color.ftdBorder, lineWidth: 1))
-            }
-            .buttonStyle(.plain)
-            .frame(maxWidth: .infinity)
+                .padding(.horizontal, DesignTokens.Spacing.lg)
+                .padding(.top, DesignTokens.Spacing.lg)
+            DatePicker("", selection: date, displayedComponents: .date)
+                .datePickerStyle(.graphical)
+                .tint(Color.ftdAccentOrange)
+                .labelsHidden()
+                .padding(.horizontal, DesignTokens.Spacing.lg)
+            FTDPrimaryButton(title: "Done") { onDone() }
+                .padding(.horizontal, DesignTokens.Spacing.lg)
+                .padding(.bottom, DesignTokens.Spacing.lg)
         }
+        .presentationDetents([.large])
+        .background(Color.ftdCardBackground)
     }
 
     // MARK: - Controls Row
@@ -222,16 +264,16 @@ struct AgencyStatementView: View {
     private var controlsRow: some View {
         HStack(spacing: DesignTokens.Spacing.sm) {
             HStack(spacing: 6) {
-                Image(systemName: "magnifyingglass")
+                Image( "search")
                     .font(.caption)
                     .foregroundStyle(Color.ftdTextSecondary)
                 TextField("Search Transaction", text: $viewModel.searchText)
-                    .font(.subheadline)
-                    .foregroundStyle(Color.ftdTextPrimary)
+                    .font(.ftdBodySM)
+                    //.foregroundStyle(Color.ftdTextPrimary)
                     .autocorrectionDisabled()
                 if !viewModel.searchText.isEmpty {
                     Button { viewModel.searchText = "" } label: {
-                        Image(systemName: "xmark.circle.fill")
+                        Image("cancel")
                             .font(.caption)
                             .foregroundStyle(Color.ftdTextSecondary)
                     }
@@ -240,24 +282,25 @@ struct AgencyStatementView: View {
             }
             .padding(.horizontal, 10)
             .padding(.vertical, 8)
-            .background(Color.ftdInputBackground)
+            //.background(Color.ftdInputBackground)
             .clipShape(RoundedRectangle(cornerRadius: DesignTokens.Radius.field))
             .overlay(RoundedRectangle(cornerRadius: DesignTokens.Radius.field).stroke(Color.ftdBorder, lineWidth: 1))
             .frame(maxWidth: .infinity)
 
             Button { viewModel.triggerExport() } label: {
                 HStack(spacing: 4) {
-                    Image(systemName: "arrow.down.to.line")
+                    Image("download")
                         .font(.caption)
-                    Text("Export Excel")
-                        .font(.subheadline)
-                        .fontWeight(.medium)
+                    Text("Export CSV")
+                        .font(.ftdBodySM)
+                       
                 }
-                .foregroundStyle(.white)
+                .foregroundStyle(Color.ftdTextSecondary)
                 .padding(.horizontal, 10)
                 .padding(.vertical, 8)
-                .background(Color(red: 0.12, green: 0.56, blue: 0.27))
+                //.background(Color.ftdExcelGreen)
                 .clipShape(RoundedRectangle(cornerRadius: DesignTokens.Radius.field))
+                .overlay(RoundedRectangle(cornerRadius: DesignTokens.Radius.field).stroke(Color.ftdBorder, lineWidth: 1))
             }
             .buttonStyle(.plain)
         }
@@ -302,26 +345,25 @@ struct AgencyStatementView: View {
     private func groupHeader(_ group: StatementDateGroup) -> some View {
         HStack {
             Text(group.displayHeader)
-                .font(.subheadline)
+                .font(.ftdLabelMD)
                 .fontWeight(.semibold)
                 .foregroundStyle(Color.ftdTextPrimary)
             Spacer()
             Text("\(group.items.count) Transactions")
-                .font(.caption)
-                .foregroundStyle(Color.ftdTextSecondary)
+                .font(.ftdBodySM)
+                .foregroundStyle(Color.ftdTextTertiary)
         }
         .padding(.horizontal, DesignTokens.Spacing.lg)
-        .padding(.vertical, DesignTokens.Spacing.sm)
-        .background(Color.ftdAccentTeal.opacity(0.10))
+        .frame(height: 41)
+        .background(Color.ftdStatementSectionBg)
     }
 
     private func transactionRow(_ item: StatementItem) -> some View {
         Button { viewModel.selectItem(item) } label: {
-            VStack(spacing: DesignTokens.Spacing.xs) {
+            VStack(spacing: DesignTokens.Spacing.sm) {
                 HStack(alignment: .top) {
                     Text(item.trasactionType ?? "Transaction")
-                        .font(.subheadline)
-                        .fontWeight(.bold)
+                        .font(.ftdLabelMD)
                         .foregroundStyle(Color.ftdTextPrimary)
                         .lineLimit(1)
                     Spacer()
@@ -329,26 +371,49 @@ struct AgencyStatementView: View {
                 }
                 HStack {
                     Text("Ref ID: \(item.transactionId ?? item.referenceNo ?? "-")")
-                        .font(.caption)
-                        .foregroundStyle(Color.ftdTextSecondary)
+                        .font(.ftdPlaceholder)
+                        .foregroundStyle(Color.ftdTextTertiary)
                         .lineLimit(1)
                     Spacer()
                     Text(formatListDate(item.valueDate))
-                        .font(.caption)
-                        .foregroundStyle(Color.ftdTextSecondary)
+                        .font(.ftdPlaceholder)
+                        .foregroundStyle(Color.ftdTextTertiary)
                 }
-                HStack {
-                    Text("Credit Balance ₹\(item.creditBalance ?? "0")")
-                        .font(.caption)
+//                HStack {
+//                    Text("Credit Balance ₹\(item.creditBalance ?? "0")")
+//                        .font(.caption)
+//                        .foregroundStyle(Color.ftdTextSecondary)
+//                    Spacer()
+//                    Text("Balance ₹\(item.bookingBalance ?? "0")")
+//                        .font(.ftdLabelMD)
+//                        .foregroundStyle(Color.ftdTextSecondary)
+//                }
+//                Text("Balance ₹\(item.bookingBalance ?? "0")")
+//                    .font(.ftdLabelMD)
+//                    .foregroundStyle(Color.ftdTextSecondary)
+//                    .frame(maxWidth: .infinity, alignment: .trailing)
+//                Text("Balance ")
+//                        .font(.caption) // Style for the label
+//                        .foregroundStyle(Color.ftdTextSecondary)
+//                    +
+//                    Text("₹\(item.bookingBalance ?? "0")")
+//                        .font(.ftdLabelMD) // Style for the actual number
+//                        .foregroundStyle(Color.primary) // Example: making the amount stand out more
+                (
+                    Text("Balance ")
+                        .font(.ftdPlaceholder)
+                        .foregroundStyle(Color.ftdTextTertiary)
+                    +
+                    Text("₹\(item.bookingBalance ?? "0")")
+                        .font(.ftdLabelXS)
                         .foregroundStyle(Color.ftdTextSecondary)
-                    Spacer()
-                    Text("Balance ₹\(item.bookingBalance ?? "0")")
-                        .font(.caption)
-                        .foregroundStyle(Color.ftdTextSecondary)
-                }
+                )
+                .frame(maxWidth: .infinity, alignment: .trailing)
+                        
             }
             .padding(.horizontal, DesignTokens.Spacing.lg)
             .padding(.vertical, DesignTokens.Spacing.md)
+            .padding(.bottom, DesignTokens.Spacing.md)
             .background(Color.ftdCardBackground)
             .contentShape(Rectangle())
         }
@@ -359,17 +424,17 @@ struct AgencyStatementView: View {
     private func rowAmountView(_ item: StatementItem) -> some View {
         let debit = item.withdrawAmount?.trimmingCharacters(in: .whitespaces) ?? ""
         let credit = item.addBookingBalance?.trimmingCharacters(in: .whitespaces) ?? ""
-        let isDebit = !debit.isEmpty && debit != "0" && debit != "0.0"
+        let isDebit = !debit.isEmpty && Double(debit) != 0
         if isDebit {
             Text("– ₹\(debit)")
-                .font(.subheadline)
-                .fontWeight(.semibold)
-                .foregroundStyle(Color(red: 0.85, green: 0.15, blue: 0.15))
+                .font(.ftdLabelMD)
+                
+                .foregroundStyle(Color.ftdDebitRed)
         } else {
-            Text("+ ₹\(credit.isEmpty || credit == "0" || credit == "0.0" ? "0" : credit)")
-                .font(.subheadline)
-                .fontWeight(.semibold)
-                .foregroundStyle(Color(red: 0.10, green: 0.60, blue: 0.25))
+            Text("+ ₹\(credit.isEmpty || Double(credit) == 0 ? "0" : credit)")
+                .font(.ftdLabelMD)
+                
+                .foregroundStyle(Color.ftdCreditGreen)
         }
     }
 

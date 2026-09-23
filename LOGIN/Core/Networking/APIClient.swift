@@ -158,7 +158,7 @@ actor APIClient {
         let url = components.url!
         var request = URLRequest(url: url)
         request.httpMethod = apiRequest.method.rawValue
-        request.setValue("application/json", forHTTPHeaderField: "Content-Type")
+        request.setValue(apiRequest.contentType, forHTTPHeaderField: "Content-Type")
 
         if apiRequest.requiresAppToken, let token = appToken {
             request.setValue(token, forHTTPHeaderField: "App-Token")

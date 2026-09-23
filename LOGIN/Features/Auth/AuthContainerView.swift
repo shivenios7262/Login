@@ -82,7 +82,7 @@ struct AuthContainerView: View {
         .background(Color.ftdCardBackground.ignoresSafeArea())
     }
 
-    // MARK: - Header
+    // MARK: - Header AuthContainerView  tabSwitcher
 
     private var authHeader: some View {
         VStack(alignment: .leading, spacing: DesignTokens.Spacing.xs) {

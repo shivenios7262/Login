@@ -21,6 +21,25 @@ struct User: Codable, Equatable, Sendable {
         [title, firstName, lastName].compactMap { $0 }.joined(separator: " ")
     }
 
+    func withUpdatedBalance(
+        agencyName: String? = nil,
+        mobileNo: String? = nil,
+        agentLogo: String? = nil,
+        credit: String?,
+        booking: String?
+    ) -> User {
+        User(
+            agentId: agentId, distId: distId, agentNo: agentNo,
+            agencyName: agencyName ?? self.agencyName,
+            agentEmail: agentEmail,
+            agentLogo: agentLogo ?? self.agentLogo,
+            title: title, firstName: firstName, lastName: lastName,
+            mobileNo: mobileNo ?? self.mobileNo,
+            creditBalance: credit, bookingBalance: booking,
+            registerDate: registerDate, lastLogin: lastLogin, lastBooking: lastBooking
+        )
+    }
+
     enum CodingKeys: String, CodingKey {
         case title
         case agentId      = "agent_id"

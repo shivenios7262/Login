@@ -49,6 +49,9 @@ final class VerifyOTPViewModel {
         defer { isLoading = false }
         do {
             try await authManager.verifyOTP(otp: trimmed)
+            // Cancel the timer immediately so the ViewModel stops mutating state
+            // and SwiftUI can cleanly tear down this view during navigation.
+            timerTask?.cancel()
         } catch let error as NetworkError {
             apiError = error.errorDescription
         } catch {
@@ -88,8 +91,11 @@ final class VerifyOTPViewModel {
         timerTask?.cancel()
         timerTask = Task { [weak self] in
             while let self, self.resendCooldown > 0 {
-                try? await Task.sleep(for: .seconds(1))
-                if Task.isCancelled { break }
+                do {
+                    try await Task.sleep(for: .seconds(1))
+                } catch {
+                    return  // Task was cancelled — exit immediately without further mutation
+                }
                 self.resendCooldown -= 1
             }
         }
