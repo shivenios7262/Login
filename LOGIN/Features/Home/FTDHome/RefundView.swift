@@ -1309,16 +1309,20 @@ struct RefundView: View {
                 }
             }
 
-            // Unique Ref No (from record) / Ticket No
+            // Unique Ref No + FCID — grouped tightly
             let refId = record.bookingRef.isEmpty ? pax.ticketNo : record.bookingRef
-            if let id = refId {
-                Text(id).font(.ftdBodySM).foregroundStyle(Color.ftdTextSecondary)
-            }
-
-            // FCID (Cancel Type)
-            if let fcid = pax.fcid, !fcid.isEmpty {
-                Text("\(fcid)\(pax.cancelType.map { " (\($0))" } ?? "")")
-                    .font(.ftdBodySM).foregroundStyle(Color.ftdTextSecondary)
+            let fcidValue = pax.fcid.flatMap { $0.isEmpty ? nil : $0 }
+            if refId != nil || fcidValue != nil {
+                VStack(alignment: .leading, spacing: DesignTokens.Spacing.xxs) {
+                    if let id = refId {
+                        Text(id).font(.ftdLabelXS).foregroundStyle(Color.ftdTextSecondary)
+                    }
+                    if let fcid = fcidValue {
+                        Text("\(fcid)\(pax.cancelType.map { " (\($0))" } ?? "")")
+                            .font(.ftdLabelXS).foregroundStyle(Color.ftdTextSecondary)
+                    }
+                }
+                .padding(.top, DesignTokens.Spacing.xs)
             }
 
             // Amount | Cancelled two-column strip
@@ -1344,11 +1348,19 @@ struct RefundView: View {
                 .padding(.leading, DesignTokens.Spacing.md)
             }
 
-            // Route: Carrier · FareType · PNR
-            let routeParts = [record.carrierName, record.fareType, pax.pnr ?? record.pnr].compactMap { $0 }
-            if !routeParts.isEmpty {
-                Text(routeParts.joined(separator: " · "))
+            // Route: Carrier · FareType · PNR (PNR uses smaller medium font)
+            let mainRouteParts = [record.carrierName, record.fareType].compactMap { $0 }
+            let pnrValue = pax.pnr ?? record.pnr
+            if !mainRouteParts.isEmpty, let pnr = pnrValue {
+                (Text(mainRouteParts.joined(separator: " · "))
                     .font(.ftdBodySM).foregroundStyle(Color.ftdTextSecondary)
+                + Text(" · \(pnr)")
+                    .font(.ftdLabelXS).foregroundStyle(Color.ftdTextSecondary))
+            } else if !mainRouteParts.isEmpty {
+                Text(mainRouteParts.joined(separator: " · "))
+                    .font(.ftdBodySM).foregroundStyle(Color.ftdTextSecondary)
+            } else if let pnr = pnrValue {
+                Text(pnr).font(.ftdLabelXS).foregroundStyle(Color.ftdTextSecondary)
             }
 
             // Agent Net | Airline Charge | FTD Fees
