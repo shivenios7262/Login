@@ -89,13 +89,9 @@ struct RefundView: View {
         .safeAreaInset(edge: .top, spacing: 0) {
             HStack {
                 Button { dismiss() } label: {
-                    Image("back")
-                        .renderingMode(.template)
-                        .font(.system(size: 20, weight: .medium))
+                    Image("backImg")
+                        .font(.system(size: 14, weight: .semibold))
                         .foregroundStyle(Color.ftdTextPrimary)
-                        .frame(width: 36, height: 36)
-                        .background(Color.ftdInputBackground)
-                        .clipShape(Circle())
                 }
                 .buttonStyle(.plain)
 

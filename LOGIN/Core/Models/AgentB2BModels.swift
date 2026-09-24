@@ -315,10 +315,40 @@ struct FlightPassenger: Codable, Sendable {
     }
 }
 
+struct ReturnFlightBooking: Codable, Sendable {
+    let origin: String?
+    let destination: String?
+    let originCity: String?
+    let destinationCity: String?
+    let pnr: String?
+    let carrier: String?
+    let carrierName: String?
+    let validatingCarrierName: String?
+    let fareTypeDesc: String?
+    let departureDate: String?
+    let departureTime: String?
+    let totalFare: String?
+    let agentNetPrice: String?
+
+    enum CodingKeys: String, CodingKey {
+        case origin, destination, pnr, carrier
+        case originCity            = "origin_city"
+        case destinationCity       = "destination_city"
+        case carrierName           = "carriername"
+        case validatingCarrierName = "validatingcarriername"
+        case fareTypeDesc          = "faretypedesc"
+        case departureDate         = "departuredate"
+        case departureTime         = "departuretime"
+        case totalFare             = "totalfare"
+        case agentNetPrice         = "agent_net_price"
+    }
+}
+
 struct AgentFlightBooking: Codable, Sendable, Identifiable {
     var id: String { uniqueRefNo ?? pnr ?? UUID().uuidString }
     let uniqueRefNo: String?
     let tripType: String?
+    let serviceType: Int?
     let bookingDate: String?
     let status: String?
     let origin: String?
@@ -334,27 +364,48 @@ struct AgentFlightBooking: Codable, Sendable, Identifiable {
     let originCity: String?
     let destinationCity: String?
     let passengers: [FlightPassenger]?
+    let returnBooking: ReturnFlightBooking?
+    // Combined totals (Int in JSON, stored as String for display)
+    let totalAmount: String?
+    let totalNet: String?
+    let onwardTotalAmount: String?
+    let onwardTotalNet: String?
+    let returnTotalNet: String?
 
     enum CodingKeys: String, CodingKey {
-        case uniqueRefNo     = "uniquerefno"
-        case tripType        = "triptype"
-        case bookingDate     = "bookingdate"
+        case uniqueRefNo      = "uniquerefno"
+        case tripType         = "triptype"
+        case serviceType      = "servicetype"
+        case bookingDate      = "bookingdate"
         case status, origin, destination, pnr, carrier
-        case carrierName     = "carriername"
-        case fareTypeDesc    = "faretypedesc"
-        case departureDate   = "departuredate"
-        case departureTime   = "departuretime"
-        case totalFare       = "totalfare"
-        case agentNetPrice   = "agent_net_price"
-        case originCity      = "origin_city"
-        case destinationCity = "destination_city"
+        case carrierName      = "carriername"
+        case fareTypeDesc     = "faretypedesc"
+        case departureDate    = "departuredate"
+        case departureTime    = "departuretime"
+        case totalFare        = "totalfare"
+        case agentNetPrice    = "agent_net_price"
+        case originCity       = "origin_city"
+        case destinationCity  = "destination_city"
         case passengers
+        case returnBooking    = "return_booking"
+        case totalAmount      = "total_amount"
+        case totalNet         = "total_net"
+        case onwardTotalAmount = "onward_total_amount"
+        case onwardTotalNet    = "onward_total_net"
+        case returnTotalNet    = "return_total_net"
     }
 
     nonisolated init(from decoder: any Decoder) throws {
         let c = try decoder.container(keyedBy: CodingKeys.self)
         uniqueRefNo     = try c.decodeIfPresent(String.self, forKey: .uniqueRefNo)
         tripType        = try c.decodeIfPresent(String.self, forKey: .tripType)
+        if let i = try? c.decodeIfPresent(Int.self, forKey: .serviceType) {
+            serviceType = i
+        } else if let s = try? c.decodeIfPresent(String.self, forKey: .serviceType) {
+            serviceType = Int(s)
+        } else {
+            serviceType = nil
+        }
         bookingDate     = try c.decodeIfPresent(String.self, forKey: .bookingDate)
         status          = try c.decodeIfPresent(String.self, forKey: .status)
         origin          = try c.decodeIfPresent(String.self, forKey: .origin)
@@ -370,12 +421,27 @@ struct AgentFlightBooking: Codable, Sendable, Identifiable {
         originCity      = try c.decodeIfPresent(String.self, forKey: .originCity)
         destinationCity = try c.decodeIfPresent(String.self, forKey: .destinationCity)
         passengers      = try c.decodeIfPresent([FlightPassenger].self, forKey: .passengers)
+        returnBooking   = try c.decodeIfPresent(ReturnFlightBooking.self, forKey: .returnBooking)
+        // total_amount / total_net are Int in JSON
+        totalAmount     = (try? c.decodeIfPresent(Int.self, forKey: .totalAmount)).map { "\($0)" }
+        totalNet        = (try? c.decodeIfPresent(Int.self, forKey: .totalNet)).map { "\($0)" }
+        onwardTotalAmount = try c.decodeIfPresent(String.self, forKey: .onwardTotalAmount)
+        onwardTotalNet    = try c.decodeIfPresent(String.self, forKey: .onwardTotalNet)
+        // return_total_net is "3136" (String) for round trips and 0 (Int) for one-way
+        if let s = try? c.decodeIfPresent(String.self, forKey: .returnTotalNet), !s.isEmpty, s != "0" {
+            returnTotalNet = s
+        } else if let i = try? c.decodeIfPresent(Int.self, forKey: .returnTotalNet), i != 0 {
+            returnTotalNet = "\(i)"
+        } else {
+            returnTotalNet = nil
+        }
     }
 
     nonisolated func encode(to encoder: any Encoder) throws {
         var c = encoder.container(keyedBy: CodingKeys.self)
         try c.encodeIfPresent(uniqueRefNo,     forKey: .uniqueRefNo)
         try c.encodeIfPresent(tripType,        forKey: .tripType)
+        try c.encodeIfPresent(serviceType,     forKey: .serviceType)
         try c.encodeIfPresent(bookingDate,     forKey: .bookingDate)
         try c.encodeIfPresent(status,          forKey: .status)
         try c.encodeIfPresent(origin,          forKey: .origin)
@@ -390,7 +456,11 @@ struct AgentFlightBooking: Codable, Sendable, Identifiable {
         try c.encodeIfPresent(agentNetPrice,   forKey: .agentNetPrice)
         try c.encodeIfPresent(originCity,      forKey: .originCity)
         try c.encodeIfPresent(destinationCity, forKey: .destinationCity)
-        try c.encodeIfPresent(passengers,      forKey: .passengers)
+        try c.encodeIfPresent(passengers,         forKey: .passengers)
+        try c.encodeIfPresent(returnBooking,      forKey: .returnBooking)
+        try c.encodeIfPresent(onwardTotalAmount,  forKey: .onwardTotalAmount)
+        try c.encodeIfPresent(onwardTotalNet,     forKey: .onwardTotalNet)
+        try c.encodeIfPresent(returnTotalNet,     forKey: .returnTotalNet)
     }
 }
 

@@ -63,12 +63,13 @@ final class BookingsViewModel: BookingsProvider {
 
     // MARK: - Filters: Flight
 
-    var flightFromDate  = ""
-    var flightToDate    = ""
-    var flightPNR       = ""
-    var flightStatus    = ""
-    var flightAirline   = ""
-    var flightName      = ""
+    var flightFromDate   = ""
+    var flightToDate     = ""
+    var flightPNR        = ""
+    var flightStatus     = ""
+    var flightAirline    = ""
+    var flightName       = ""
+    var flightBookingId  = ""
 
     // MARK: - Filters: Bus
 
@@ -156,7 +157,7 @@ final class BookingsViewModel: BookingsProvider {
         switch selectedTab {
         case .flight:
             flightFromDate = ""; flightToDate = ""; flightPNR = ""
-            flightStatus   = ""; flightAirline = ""; flightName = ""
+            flightStatus   = ""; flightAirline = ""; flightName = ""; flightBookingId = ""
         case .bus:
             busFromDate = ""; busToDate = ""; busDepartDate = ""
             busBkgDate  = ""; busRefNo  = ""; busPassName   = ""; busStatus = ""
@@ -186,6 +187,7 @@ final class BookingsViewModel: BookingsProvider {
                 firstName:   flightName.bnil,
                 pnr:         flightPNR.bnil,
                 status:      flightStatus.bnil,
+                uniqueRefNo: flightBookingId.bnil,
                 fromDate:    flightFromDate.bnil,
                 toDate:      flightToDate.bnil,
                 airline:     flightAirline.bnil

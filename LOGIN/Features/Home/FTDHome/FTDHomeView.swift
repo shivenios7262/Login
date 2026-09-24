@@ -73,7 +73,7 @@ struct FTDHomeView: View {
         }
         .sheet(item: Bindable(router).homeSheet) { sheet in
             switch sheet {
-            case .myBookings:  MyBookingsView(viewModel: bookingsVM)
+            // .myBookings moved to fullScreenCover below
             // TODO: StatementView is an Excel export view — replaced by RefundView for the My Refund flow.
             // case .statement: StatementView(viewModel: statementVM)
             case .markups:     MarkupSummaryView(viewModel: markupsVM)
@@ -83,6 +83,9 @@ struct FTDHomeView: View {
             case .termsCondition:  NavigationStack { TermsConditionView(viewModel: termsVM) }
             case .appCode:         AppCodeView(viewModel: appCodeVM)
             }
+        }
+        .fullScreenCover(isPresented: Bindable(router).myBookingsPresented) {
+            MyBookingsView(viewModel: bookingsVM)
         }
         .fullScreenCover(isPresented: Bindable(router).uploadMoneyPresented) {
             UploadMoneyView(viewModel: uploadMoneyVM)
@@ -131,7 +134,7 @@ struct FTDHomeView: View {
             agentEmail:    viewModel.agentEmail,
             agentPhone:    viewModel.mobileNo,
             agentPhotoURL: viewModel.agentLogoURL,
-            onMyBookings:  { viewModel.closeSideMenu(); router.presentHome(.myBookings) },
+            onMyBookings:  { viewModel.closeSideMenu(); router.presentMyBookings() },
             onUploadMoney: { viewModel.closeSideMenu(); router.presentUploadMoney() },
             onMyRefund:    { viewModel.closeSideMenu(); router.presentRefund() },
             onAppCode:     { viewModel.closeSideMenu(); router.presentHome(.appCode) },

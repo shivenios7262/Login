@@ -26,6 +26,7 @@ final class AppRouter {
     var calendarPresented: Bool = false
     var refundPresented: Bool = false
     var markupsPresented: Bool = false
+    var myBookingsPresented: Bool = false
 
     // MARK: - Destination types
 
@@ -45,7 +46,7 @@ final class AppRouter {
     }
 
     enum HomeSheet: Identifiable {
-        case myBookings
+        // .myBookings moved to fullScreenCover — use presentMyBookings() / myBookingsPresented
         // .statement removed — StatementView is an Excel export view, replaced by RefundView
         case markups
         case aboutUs
@@ -96,6 +97,10 @@ final class AppRouter {
 
     func presentMarkups() {
         markupsPresented = true
+    }
+
+    func presentMyBookings() {
+        myBookingsPresented = true
     }
 
     func popToAuthRoot() {
